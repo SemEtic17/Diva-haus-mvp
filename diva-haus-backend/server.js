@@ -34,6 +34,10 @@ app.get('/api/products', (req, res) => {
   ]);
 });
 
+app.get('health', (req, res) => {
+  res.send('OK');
+});
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
