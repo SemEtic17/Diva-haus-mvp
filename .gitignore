@@ -1,0 +1,28 @@
+# General
+.DS_Store
+.env
+.env.local
+.vscode/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+*.tgz
+
+# Vite.js (Frontend)
+diva-haus-frontend/dist/
+diva-haus-frontend/build/
+diva-haus-frontend/.vite/
+diva-haus-frontend/.eslintcache
+diva-haus-frontend/coverage/
+
+# Node.js (Backend)
+diva-haus-backend/node_modules/
+diva-haus-backend/dist/
+diva-haus-backend/build/
+diva-haus-backend/.env
+diva-haus-backend/npm-debug.log*
+diva-haus-backend/yarn-debug.log*
