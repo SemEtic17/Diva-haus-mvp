@@ -1,20 +1,26 @@
-import './App.css';
+import { useEffect, useState } from "react";
+import { checkHealth } from "./api";
 
 function App() {
+  const [status, setStatus] = useState("Checking server...");
+
+  useEffect(() => {
+    const fetchHealth = async () => {
+      try {
+        const res = await checkHealth();
+        setStatus(res);
+      } catch (err) {
+        setStatus("Server unreachable");
+      }
+    };
+
+    fetchHealth();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Welcome to Diva Haus Frontend</h1>
-        <p>Edit <code>src/App.jsx</code> and save to reload.</p>
-        <a
-          className="App-link"
-          href="https://react.dev"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{ padding: "2rem" }}>
+      <h1>Diva Haus MVP</h1>
+      <p>Backend Status: {status}</p>
     </div>
   );
 }
