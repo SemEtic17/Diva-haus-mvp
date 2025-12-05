@@ -28,15 +28,8 @@ app.get('/', (req, res) => {
   res.send('Diva Haus Backend API is running!');
 });
 
-// Example API route (you'll add more later)
-app.get('/api/products', (req, res) => {
-  res.json([
-    { id: 1, name: 'Sample Product 1', price: 29.99 },
-    { id: 2, name: 'Sample Product 2', price: 49.99 },
-  ]);
-});
-
-app.get('health', (req, res) => {
+// Health Check
+app.get('/health', (req, res) => {
   res.send('OK');
 });
 

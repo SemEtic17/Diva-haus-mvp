@@ -3,6 +3,7 @@
 .env
 .env.local
 .vscode/
+gemini.md
 
 # Node.js
 node_modules/
