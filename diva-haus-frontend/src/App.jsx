@@ -1,26 +1,39 @@
-import { useEffect, useState } from "react";
-import { checkHealth } from "./api";
+import { useState, useEffect } from 'react';
+import './App.css';
 
 function App() {
-  const [status, setStatus] = useState("Checking server...");
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    const fetchHealth = async () => {
+    const fetchProducts = async () => {
       try {
-        const res = await checkHealth();
-        setStatus(res);
-      } catch (err) {
-        setStatus("Server unreachable");
+        const response = await fetch('http://localhost:5000/api/products');
+        const data = await response.json();
+        setProducts(data);
+      } catch (error) {
+        console.error('Error fetching products:', error);
       }
     };
 
-    fetchHealth();
+    fetchProducts();
   }, []);
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>Diva Haus MVP</h1>
-      <p>Backend Status: {status}</p>
+    <div className="App">
+      <header className="App-header">
+        <h1>Diva Haus</h1>
+      </header>
+      <main>
+        <div className="product-grid">
+          {products.map((product) => (
+            <div key={product._id} className="product-card">
+              <img src={product.image} alt={product.name} />
+              <h3>{product.name}</h3>
+              <p>${product.price.toFixed(2)}</p>
+            </div>
+          ))}
+        </div>
+      </main>
     </div>
   );
 }
