@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
+import { Routes, Route, Link } from 'react-router-dom';
+import ProductPage from './pages/ProductPage';
+import { getProducts } from './api';
 import './App.css';
 
-function App() {
+const ProductGrid = () => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/products');
-        const data = await response.json();
+        const data = await getProducts();
         setProducts(data);
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -19,20 +21,31 @@ function App() {
   }, []);
 
   return (
+    <div className="product-grid">
+      {products.map((product) => (
+        <div key={product._id} className="product-card">
+          <Link to={`/product/${product._id}`}>
+            <img src={product.image} alt={product.name} />
+            <h3>{product.name}</h3>
+            <p>${product.price.toFixed(2)}</p>
+          </Link>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+function App() {
+  return (
     <div className="App">
       <header className="App-header">
-        <h1>Diva Haus</h1>
+        <h1><Link to="/">Diva Haus</Link></h1>
       </header>
       <main>
-        <div className="product-grid">
-          {products.map((product) => (
-            <div key={product._id} className="product-card">
-              <img src={product.image} alt={product.name} />
-              <h3>{product.name}</h3>
-              <p>${product.price.toFixed(2)}</p>
-            </div>
-          ))}
-        </div>
+        <Routes>
+          <Route path="/" element={<ProductGrid />} />
+          <Route path="/product/:id" element={<ProductPage />} />
+        </Routes>
       </main>
     </div>
   );
