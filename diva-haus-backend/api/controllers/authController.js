@@ -27,11 +27,18 @@ export const registerUser = async (req, res, next) => {
     });
 
     if (user) {
+      const token = generateToken(user._id);
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+        sameSite: 'lax', // Prevent CSRF attacks
+        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+      });
       res.status(201).json({
         _id: user.id,
         name: user.name,
         email: user.email,
-        token: generateToken(user._id),
+        // token: token, // Token is now in HttpOnly cookie
       });
     } else {
       res.status(400);
@@ -52,11 +59,18 @@ export const loginUser = async (req, res, next) => {
     const user = await User.findOne({ email });
 
     if (user && (await user.matchPassword(password))) {
+      const token = generateToken(user._id);
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+        sameSite: 'lax', // Prevent CSRF attacks
+        maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+      });
       res.json({
         _id: user.id,
         name: user.name,
         email: user.email,
-        token: generateToken(user._id),
+        // token: token, // Token is now in HttpOnly cookie
       });
     } else {
       res.status(401);
@@ -67,9 +81,44 @@ export const loginUser = async (req, res, next) => {
   }
 };
 
+// @desc    Get user auth status
+// @route   GET /api/auth/status
+// @access  Private
+export const getAuthStatus = async (req, res, next) => {
+  try {
+    // req.user is set by the protect middleware
+    if (req.user) {
+      res.json({
+        _id: req.user.id,
+        name: req.user.name,
+        email: req.user.email,
+        isAuthenticated: true,
+      });
+    } else {
+      res.status(401);
+      throw new Error('Not authenticated');
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Logout user / clear cookie
+// @route   POST /api/auth/logout
+// @access  Private (though clearing cookie can be public if handled right)
+export const logoutUser = (req, res, next) => {
+  res.cookie('token', '', {
+    httpOnly: true,
+    expires: new Date(0), // Expire cookie immediately
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+  });
+  res.status(200).json({ message: 'Logged out successfully' });
+};
+
 // Generate JWT
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: '30d',
+    expiresIn: process.env.NODE_ENV === 'development' ? '1d' : '30d', // Shorter for dev
   });
 };

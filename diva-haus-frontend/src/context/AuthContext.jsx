@@ -1,59 +1,62 @@
 import { createContext, useState, useEffect } from 'react';
-import { loginUser } from '../api';
+import { loginUser, API_BASE_URL } from '../api'; // NEW: Import API_BASE_URL
+import { toast } from '../components/NotificationSystem';
 
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('token'));
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
+
+  const checkAuthStatus = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/status`, { credentials: 'include' }); // Add credentials: 'include'
+      if (response.ok) {
+        const data = await response.json();
+        setIsAuthenticated(true);
+        setUserInfo({ id: data._id, name: data.name, email: data.email });
+      } else {
+        setIsAuthenticated(false);
+        setUserInfo(null);
+      }
+    } catch (error) {
+      toast.error('Error checking authentication status.');
+      setIsAuthenticated(false);
+      setUserInfo(null);
+    }
+  };
 
   useEffect(() => {
-    // This effect could be used to verify the token with the backend
-    // and fetch user data. For now, we'll just decode it.
-    if (token) {
-      try {
-        // In a real app, you'd verify the token with the backend
-        // For simplicity, we'll decode it. Never trust the frontend!
-        const decoded = JSON.parse(atob(token.split('.')[1]));
-        // A simple check if token is expired
-        if (decoded.exp * 1000 < Date.now()) {
-            logout();
-        } else {
-            // You could fetch user data here if you store user id in token
-            setUser({ token }); // Simplified user object
-        }
-      } catch (error) {
-        logout();
-      }
-    }
-  }, [token]);
+    checkAuthStatus();
+  }, []);
 
   const login = async (email, password) => {
     try {
-      const data = await loginUser({ email, password });
-      localStorage.setItem('token', data.token);
-      setToken(data.token);
-      setUser({ token: data.token }); // Simplified user object
+      await loginUser({ email, password });
+      await checkAuthStatus();
+      toast.success('Logged in successfully!');
     } catch (error) {
-      console.error('Login failed:', error);
+      toast.error(error.message || 'Login failed.');
+      setIsAuthenticated(false);
+      setUserInfo(null);
       throw error;
     }
   };
 
-  const setUserAndToken = (data) => {
-    localStorage.setItem('token', data.token);
-    setToken(data.token);
-    setUser({ token: data.token });
-  };
-
-  const logout = () => {
-    localStorage.removeItem('token');
-    setToken(null);
-    setUser(null);
+  const logout = async () => {
+    try {
+      await fetch(`${API_BASE_URL}/auth/logout`, { method: 'POST', credentials: 'include' }); // Add credentials: 'include'
+      setIsAuthenticated(false);
+      setUserInfo(null);
+      toast.info('Logged out.');
+    } catch (error) {
+      toast.error(error.message || 'Logout failed.');
+      throw error;
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, token, setUserAndToken }}>
+    <AuthContext.Provider value={{ isAuthenticated, userInfo, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

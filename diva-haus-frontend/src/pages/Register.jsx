@@ -2,6 +2,7 @@ import { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { registerUser } from '../api';
+import { toast } from '../components/NotificationSystem'; // NEW: Import toast
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -11,7 +12,7 @@ const Register = () => {
     password2: '',
   });
 
-  const { setUserAndToken } = useContext(AuthContext);
+  const { login } = useContext(AuthContext); // Use login from AuthContext, setUserAndToken removed
   const navigate = useNavigate();
 
   const { name, email, password, password2 } = formData;
@@ -22,16 +23,14 @@ const Register = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     if (password !== password2) {
-      console.error('Passwords do not match');
-      // Handle password mismatch error
+      toast.error('Passwords do not match'); // Use toast.error
     } else {
       try {
-        const userData = await registerUser({ name, email, password });
-        setUserAndToken(userData); // Set user and token directly
-        navigate('/');
+        await registerUser({ name, email, password });
+        toast.success('Registration successful! Please login.');
+        navigate('/login');
       } catch (error) {
-        console.error('Failed to register', error);
-        // Handle registration error
+        toast.error(error.message || 'Failed to register'); // Use toast.error
       }
     }
   };

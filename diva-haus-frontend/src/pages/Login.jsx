@@ -1,6 +1,7 @@
 import { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { toast } from '../components/NotificationSystem'; // NEW: Import toast
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -21,7 +22,9 @@ const Login = () => {
       await login(email, password);
       navigate('/');
     } catch (error) {
-      console.error('Failed to log in', error);
+      // AuthContext handles toast.error, so no explicit toast here.
+      // But we still need to catch the error to prevent further execution.
+      // console.error('Failed to log in', error); // AuthContext already logs/toasts
       // Handle login error (e.g., show a message to the user)
     }
   };

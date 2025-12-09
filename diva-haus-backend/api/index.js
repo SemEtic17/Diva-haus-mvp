@@ -2,9 +2,11 @@ import dotenv from 'dotenv';
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
+import cookieParser from 'cookie-parser'; // Added
 import productRoutes from './routes/productRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import cartRoutes from './routes/cartRoutes.js';
+import userRoutes from './routes/userRoutes.js'; // NEW: Import userRoutes
 
 dotenv.config();
 
@@ -18,6 +20,7 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json()); // Body parser for JSON requests
+app.use(cookieParser()); // Added
 
 // Connect to MongoDB
 if (MONGO_URI) {
@@ -38,6 +41,7 @@ app.get('/', (req, res) => {
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/cart', cartRoutes);
+app.use('/api/users', userRoutes); // NEW: Use userRoutes
 
 
 // Health Check

@@ -1,20 +1,13 @@
-const API_BASE_URL = 'http://localhost:5000/api';
-
-const getToken = () => localStorage.getItem('token');
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // Helper for authenticated requests
 const fetchWithAuth = async (url, options = {}) => {
-  const token = getToken();
   const headers = {
     'Content-Type': 'application/json',
     ...options.headers,
   };
 
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-
-  const response = await fetch(url, { ...options, headers });
+  const response = await fetch(url, { ...options, headers, credentials: 'include' }); // Added credentials: 'include'
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({ message: response.statusText }));
@@ -30,6 +23,20 @@ const fetchWithAuth = async (url, options = {}) => {
   }
 };
 
+// --- User (Body Image) ---
+export const uploadBodyImage = async (formData) => {
+  const response = await fetch(`${API_BASE_URL}/users/upload-body-image`, {
+    method: 'POST',
+    body: formData, // formData will automatically set Content-Type: multipart/form-data
+    credentials: 'include', // Ensure cookies are sent
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({ message: response.statusText }));
+    throw new Error(errorData.message || 'Error uploading body image');
+  }
+  return response.json();
+};
 
 export const getProducts = async () => {
   const response = await fetch(`${API_BASE_URL}/products`);

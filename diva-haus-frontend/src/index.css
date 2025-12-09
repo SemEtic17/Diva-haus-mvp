@@ -1,4 +1,11 @@
-/* You can add your global styles here */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* You can add your global styles here if they don't fit Tailwind's utility-first approach */
+/* Basic reset/body styles could go here, or be handled by Tailwind's preflight */
+
+/* Keeping root styles if they are intended to override Tailwind's base for the main app container */
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -6,11 +13,8 @@
   text-align: center;
 }
 
-.App {
-  font-family: Arial, sans-serif;
-  text-align: center;
-}
-
+/* Consider replacing .App-header and .App-link with Tailwind classes directly in JSX components */
+/* For now, keeping as is, but marking for future refactor if desired */
 .App-header {
   background-color: #282c34;
   min-height: 10vh;

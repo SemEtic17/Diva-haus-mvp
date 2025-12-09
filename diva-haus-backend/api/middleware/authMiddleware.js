@@ -5,12 +5,8 @@ export const protect = async (req, res, next) => {
   try {
     let token;
 
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith('Bearer')
-    ) {
-      // Get token from header
-      token = req.headers.authorization.split(' ')[1];
+    if (req.cookies.token) { // NEW: Check for token in cookies
+      token = req.cookies.token;
 
       // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -24,9 +20,9 @@ export const protect = async (req, res, next) => {
       }
 
       next();
-    } else {
+    } else { // NEW: Simplified else block
       res.status(401);
-      throw new Error('Not authorized, no token provided');
+      throw new Error('Not authorized, no token');
     }
   } catch (error) {
     // Ensure status is set correctly for JWT-related errors before passing to global handler

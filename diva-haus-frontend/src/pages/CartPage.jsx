@@ -1,40 +1,27 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react'; // Removed useEffect, useState
 import { AuthContext } from '../context/AuthContext';
-import { getCart, removeFromCart } from '../api';
+// Removed getCart, removeFromCart
+import { CartContext } from '../context/CartContext'; // NEW: Import CartContext
 
 const CartPage = () => {
-  const { user } = useContext(AuthContext);
-  const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { isAuthenticated } = useContext(AuthContext); // Use isAuthenticated
+  const { cartItems, loading, error, removeItemFromCart, fetchUserCart } = useContext(CartContext); // NEW: Get cart state and functions
 
-  useEffect(() => {
-    const fetchCart = async () => {
-      try {
-        const items = await getCart();
-        setCartItems(items);
-      } catch (error) {
-        console.error('Failed to fetch cart', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (user) {
-      fetchCart();
-    }
-  }, [user]);
+  // Fetch cart on mount and when isAuthenticated changes
+  // This useEffect replaces the old one, but relies on CartContext's internal useEffect
+  // We can call fetchUserCart directly if needed, but CartContext already handles it on auth change
 
   const handleRemove = async (productId) => {
-    try {
-      const updatedCart = await removeFromCart(productId);
-      setCartItems(updatedCart);
-    } catch (error) {
-      console.error('Failed to remove item from cart', error);
-    }
+    await removeItemFromCart(productId); // NEW: Use removeItemFromCart from CartContext
   };
 
   if (loading) {
     return <div className="container mx-auto p-4">Loading...</div>;
+  }
+
+  // Handle error state
+  if (error) {
+    return <div className="container mx-auto p-4 text-red-500">Error: {error}</div>;
   }
 
   return (
