@@ -8,19 +8,20 @@ import PrivateRoute from './components/PrivateRoute';
 import Navbar from './components/Navbar'; // Import Navbar
 import ProductGrid from './components/ProductGrid'; // Import ProductGrid
 import ProfilePage from './pages/ProfilePage'; // NEW: Import ProfilePage
+import NotificationProvider from './components/NotificationProvider'; // NEW: Import NotificationProvider
 import './App.css';
 
 function App() {
   return (
     <div className="App">
       <Navbar />
-      <main className="p-4">
+      <main className="container mx-auto p-4 sm:p-6 lg:p-8">
         <Routes>
           <Route path="/" element={<ProductGrid />} />
           <Route path="/product/:id" element={<ProductPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/profile" element={<PrivateRoute />}> {/* NEW: Profile Route */}
+          <Route path="/profile" element={<PrivateRoute />}>
             <Route path="" element={<ProfilePage />} />
           </Route>
           <Route path="/cart" element={<PrivateRoute />}>
@@ -28,6 +29,7 @@ function App() {
           </Route>
         </Routes>
       </main>
+      <NotificationProvider />
     </div>
   );
 }
