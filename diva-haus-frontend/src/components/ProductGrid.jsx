@@ -12,24 +12,8 @@ const ProductGrid = () => {
     const fetchProducts = async () => {
       try {
         setIsLoading(true);
-        // In a real app, you'd fetch this from your API
-        // const fetchedProducts = await getProducts();
-        // setProducts(fetchedProducts);
-
-        // MOCK DATA until API is ready
-        const mockProducts = [
-          { _id: '1', name: 'Ethereal Gown', price: 250.00, imageUrl: 'https://i.pinimg.com/1200x/54/44/32/544432551193812f7e52c89f44841792.jpg', isSoldOut: false },
-          { _id: '2', name: 'Odyssey Blazer', price: 180.00, imageUrl: 'https://i.pinimg.com/1200x/54/44/32/544432551193812f7e52c89f44841792.jpg', isSoldOut: false },
-          { _id: '3', name: 'Silk Charmeuse Blouse', price: 95.00, imageUrl: 'https://i.pinimg.com/1200x/54/44/32/544432551193812f7e52c89f44841792.jpg', isSoldOut: true },
-          { _id: '4', name: 'Cosmos Trousers', price: 130.00, imageUrl: 'https://i.pinimg.com/1200x/54/44/32/544432551193812f7e52c89f44841792.jpg', isSoldOut: false },
-          { _id: '5', name: 'Celestial Skirt', price: 110.00, imageUrl: 'https://i.pinimg.com/1200x/54/44/32/544432551193812f7e52c89f44841792.jpg', isSoldOut: false },
-          { _id: '6', name: 'Nova Knit Top', price: 75.00, imageUrl: 'https://i.pinimg.com/1200x/54/44/32/544432551193812f7e52c89f44841792.jpg', isSoldOut: false },
-          { _id: '7', name: 'Luna Leather Jacket', price: 320.00, imageUrl: 'https://i.pinimg.com/1200x/54/44/32/544432551193812f7e52c89f44841792.jpg', isSoldOut: false },
-          { _id: '8', name: 'Orion Velvet Dress', price: 280.00, imageUrl: 'https://i.pinimg.com/1200x/54/44/32/544432551193812f7e52c89f44841792.jpg', isSoldOut: false },
-        ];
-        // Create placeholder image paths in public folder
-        console.log("Using mock data. Create a 'public/images' folder and add placeholder images like 'gown.jpg', 'blazer.jpg', etc.");
-        setProducts(mockProducts);
+        const fetchedProducts = await getProducts();
+        setProducts(fetchedProducts);
 
       } catch (err) {
         setError('Failed to load products. Please try again later.');

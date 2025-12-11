@@ -38,7 +38,7 @@ const ProductCard = ({ product }) => {
     >
       <div className="aspect-[3/4] overflow-hidden">
         <motion.img
-          src={product.imageUrl || 'https://via.placeholder.com/400x533'}
+          src={product.image || 'https://via.placeholder.com/400x533'}
           alt={product.name}
           className="h-full w-full object-cover object-center"
           whileHover={imageHover}
