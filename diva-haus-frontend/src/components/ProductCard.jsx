@@ -23,63 +23,170 @@ const ProductCard = ({ product }) => {
   };
 
   const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+    hidden: { opacity: 0, y: 30 },
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      transition: { 
+        duration: 0.6,
+        ease: [0.25, 0.46, 0.45, 0.94]
+      } 
+    },
   };
 
-  const imageHover = { scale: 1.1 };
-  const cardHover = { scale: 1.02, y: -5 };
+  const imageHover = { scale: 1.08 };
+  const cardHover = { scale: 1.03, y: -8 };
+  const tapAnimation = { scale: 0.97 };
 
   return (
     <motion.div
       variants={cardVariants}
-      className="group relative flex flex-col overflow-hidden rounded-lg border border-neutral-200/60 bg-white shadow-sm"
+      initial="hidden"
+      animate="visible"
       whileHover={cardHover}
+      whileTap={tapAnimation}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      className="group relative flex flex-col overflow-hidden rounded-2xl 
+                 bg-card/40 backdrop-blur-xl
+                 border border-glass-border/30
+                 shadow-luxury
+                 hover:shadow-luxury-hover
+                 transition-shadow duration-500
+                 holographic-shimmer"
     >
-      <div className="aspect-[3/4] overflow-hidden">
+      {/* Neon border gradient overlay */}
+      <div className="absolute inset-0 rounded-2xl p-[1px] pointer-events-none">
+        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-neon-cyan/20 via-transparent to-neon-pink/20 opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
+      </div>
+
+      {/* Image Container */}
+      <div className="relative aspect-[3/4] overflow-hidden rounded-t-2xl">
+        {/* Gradient overlay on image */}
+        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent z-10 pointer-events-none" />
+        
         <motion.img
-          src={product.image || 'https://via.placeholder.com/400x533'}
+          src={product.image || 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=533&fit=crop'}
           alt={product.name}
           className="h-full w-full object-cover object-center"
           whileHover={imageHover}
-          transition={{ duration: 0.3, ease: 'easeInOut' }}
+          transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
         />
+
+        {/* Sold Out Badge */}
         {product.isSoldOut && (
-          <div className="absolute top-4 left-4 rounded-full bg-neutral-900/70 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white">
-            Sold Out
-          </div>
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 }}
+            className="absolute top-4 left-4 z-20 
+                       rounded-full px-4 py-1.5
+                       bg-background/80 backdrop-blur-md
+                       border border-neon-pink/50
+                       shadow-neon-pink"
+          >
+            <span className="text-xs font-semibold uppercase tracking-widest text-neon-pink">
+              Sold Out
+            </span>
+          </motion.div>
         )}
+
+        {/* Decorative corner accent */}
+        <div className="absolute top-0 right-0 w-20 h-20 pointer-events-none">
+          <div className="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 border-gold/40 rounded-tr-lg" />
+        </div>
       </div>
-      <div className="flex flex-1 flex-col justify-between p-4 text-center">
-        <div>
-          <h3 className="truncate text-base font-medium text-neutral-800" title={product.name}>
+
+      {/* Content Container */}
+      <div className="relative flex flex-1 flex-col justify-between p-5 sm:p-6">
+        {/* Subtle glow effect behind content */}
+        <div className="absolute inset-0 bg-gradient-radial from-neon-cyan/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        
+        <div className="relative z-10 text-center space-y-3">
+          {/* Product Name */}
+          <h3 
+            className="font-serif text-lg sm:text-xl font-medium text-foreground/90 
+                       tracking-wide leading-tight line-clamp-2
+                       group-hover:text-foreground transition-colors duration-300"
+            title={product.name}
+          >
             {product.name}
           </h3>
-          <p className="mt-2 text-xl font-semibold text-neutral-900">
+
+          {/* Decorative divider */}
+          <div className="flex items-center justify-center gap-3">
+            <div className="h-px w-8 bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
+            <div className="w-1.5 h-1.5 rounded-full bg-gold/60" />
+            <div className="h-px w-8 bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
+          </div>
+
+          {/* Price */}
+          <motion.p 
+            className="text-2xl sm:text-3xl font-serif font-semibold text-gradient-gold"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+          >
             ${product.price.toFixed(2)}
-          </p>
+          </motion.p>
         </div>
-        <div className="mt-6">
-          <button
+
+        {/* Add to Cart Button */}
+        <div className="relative z-10 mt-6">
+          <motion.button
             onClick={handleAddToCart}
             disabled={isAdding || product.isSoldOut}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             aria-label={`Add ${product.name} to cart`}
-            className="w-full min-h-[44px] rounded-md border border-transparent bg-neutral-800 px-5 py-3 text-sm font-medium text-white shadow-sm transition-colors duration-200 ease-in-out hover:bg-neutral-900 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-neutral-400"
+            className="w-full min-h-[52px] rounded-xl
+                       bg-gradient-to-r from-gold to-gold-dark
+                       text-background font-sans font-semibold text-sm
+                       tracking-wider uppercase
+                       shadow-neon-gold
+                       transition-all duration-300
+                       hover:shadow-[0_0_30px_hsl(43_74%_53%/0.5)]
+                       focus:outline-none focus:ring-2 focus:ring-gold/50 focus:ring-offset-2 focus:ring-offset-background
+                       disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none
+                       relative overflow-hidden group/btn"
           >
+            {/* Button shimmer effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-foreground/10 to-transparent 
+                            translate-x-[-100%] group-hover/btn:translate-x-[100%] 
+                            transition-transform duration-700 ease-out" />
+            
             {isAdding ? (
-              <div className="flex items-center justify-center">
-                <svg className="mr-2 h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              <div className="flex items-center justify-center gap-2">
+                <svg 
+                  className="h-5 w-5 animate-spin-slow" 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  fill="none" 
+                  viewBox="0 0 24 24"
+                >
+                  <circle 
+                    className="opacity-25" 
+                    cx="12" 
+                    cy="12" 
+                    r="10" 
+                    stroke="currentColor" 
+                    strokeWidth="3"
+                  />
+                  <path 
+                    className="opacity-75" 
+                    fill="currentColor" 
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  />
                 </svg>
-                <span>Adding...</span>
+                <span className="relative">Adding...</span>
               </div>
             ) : (
-              'Add to Cart'
+              <span className="relative">Add to Cart</span>
             )}
-          </button>
+          </motion.button>
         </div>
       </div>
+
+      {/* Bottom accent line */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
     </motion.div>
   );
 };

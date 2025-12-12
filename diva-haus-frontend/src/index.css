@@ -13,6 +13,11 @@
   text-align: center;
 }
 
+body {
+  background-color: black;
+  color: white;
+}
+
 /* Consider replacing .App-header and .App-link with Tailwind classes directly in JSX components */
 /* For now, keeping as is, but marking for future refactor if desired */
 .App-header {
@@ -28,4 +33,54 @@
 
 .App-link {
   color: #61dafb;
+}
+
+@layer components {
+  .holographic-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .holographic-shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      110deg,
+      transparent 20%,
+      hsl(185 100% 50% / 0.08) 35%,
+      hsl(330 100% 60% / 0.08) 50%,
+      hsl(43 74% 53% / 0.08) 65%,
+      transparent 80%
+    );
+    background-size: 250% 100%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .holographic-shimmer:hover::after {
+    opacity: 1;
+    animation: holographic 2s ease-in-out infinite;
+  }
+}
+
+@layer utilities {
+  .text-gradient-gold {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(43 74% 65%), hsl(43 74% 53%), hsl(43 74% 40%));
+  }
+
+  .bg-gradient-radial {
+    background-image: radial-gradient(circle, var(--tw-gradient-stops));
+  }
+}
+
+@keyframes holographic {
+  0% {
+    background-position: -250% 0;
+  }
+  100% {
+    background-position: 250% 0;
+  }
 }
