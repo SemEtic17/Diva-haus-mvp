@@ -46,7 +46,7 @@ const ProductCard = ({ product }) => {
       whileHover={cardHover}
       whileTap={tapAnimation}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className={"group relative flex flex-col md:flex-row items-start gap-4 overflow-hidden rounded-xl w-full md:w-64 " +
+      className={"group relative flex flex-col md:flex-row items-start gap-4 overflow-hidden rounded-xl w-full md:w-64 max-w-[18rem] flex-shrink-0 " +
              "bg-card/40 backdrop-blur-xl border border-glass-border/30 " +
              "shadow-luxury hover:shadow-luxury-hover transition-shadow duration-500 holographic-shimmer"}
     >
