@@ -12,7 +12,6 @@ const ProductCard = ({ product }) => {
 
     setIsAdding(true);
     try {
-      // Assuming addItemToCart returns a promise that resolves on success
       await addItemToCart(product._id);
       toast.success(`${product.name} added to cart!`);
     } catch (error) {

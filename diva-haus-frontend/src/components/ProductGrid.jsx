@@ -64,18 +64,17 @@ const ProductGrid = () => {
     <section className="relative w-full py-12 md:py-16 lg:py-20">
       {/* Background luxury orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-neon-cyan/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-neon-pink/5 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gold/3 rounded-full blur-3xl" />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-neon-cyan/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-neon-pink/5 rounded-full blur-3xl" />
       </div>
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-10 md:mb-14 text-center">
           <motion.div
-            initial={{ opacity: 0, y: -18 }}
+            initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
+            transition={{ duration: 0.6 }}
             className="inline-block"
           >
             <span className="text-gold text-sm font-medium tracking-[0.3em] uppercase mb-3 block">Curated Collection</span>
@@ -87,11 +86,11 @@ const ProductGrid = () => {
         <motion.div variants={containerVariants} initial="hidden" animate="visible" className="relative">
           {/* Glass backdrop */}
           <div className="absolute -inset-4 md:-inset-6 lg:-inset-8 rounded-3xl bg-glass-light/30 backdrop-blur-sm border border-glass-border/20 -z-10" />
-
-          <div className="flex flex-wrap justify-center gap-6 sm:gap-8 relative z-10">
+          
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 p-4 md:p-6 lg:p-8">
             {products.map((product) => (
               <motion.div key={product._id} variants={itemVariants} className="relative flex justify-center">
-                <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-neon-cyan/10 via-transparent to-neon-pink/10 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500" />
+                <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-neon-cyan/10 via-transparent to-neon-pink/10 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500" />               
                 <ProductCard product={product} />
               </motion.div>
             ))}

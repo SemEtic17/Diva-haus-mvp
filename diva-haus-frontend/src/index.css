@@ -2,40 +2,180 @@
 @tailwind components;
 @tailwind utilities;
 
-/* You can add your global styles here if they don't fit Tailwind's utility-first approach */
-/* Basic reset/body styles could go here, or be handled by Tailwind's preflight */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap');
 
-/* Keeping root styles if they are intended to override Tailwind's base for the main app container */
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+@layer base {
+  :root {
+    --background: 222 47% 6%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 47% 8%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 8%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 43 74% 53%;
+    --primary-foreground: 222 47% 6%;
+
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 185 100% 50%;
+    --accent-foreground: 222 47% 6%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217 33% 20%;
+    --input: 217 33% 17%;
+    --ring: 43 74% 53%;
+
+    --radius: 1rem;
+
+    /* Custom luxury palette */
+    --gold: 43 74% 53%;
+    --gold-light: 43 74% 65%;
+    --gold-dark: 43 74% 40%;
+    
+    --neon-cyan: 185 100% 50%;
+    --neon-pink: 330 100% 60%;
+    --neon-purple: 280 100% 60%;
+    
+    --navy-deep: 222 47% 6%;
+    --navy-mid: 222 47% 10%;
+    --navy-light: 222 40% 15%;
+    
+    --glass-bg: 222 47% 12%;
+    --glass-border: 217 33% 25%;
+
+    /* Gradients */
+    --gradient-luxury: linear-gradient(135deg, hsl(222 47% 8%) 0%, hsl(222 47% 4%) 100%);
+    --gradient-neon: linear-gradient(135deg, hsl(185 100% 50% / 0.15) 0%, hsl(330 100% 60% / 0.15) 100%);
+    --gradient-gold: linear-gradient(135deg, hsl(43 74% 53%) 0%, hsl(43 74% 40%) 100%);
+    --gradient-shimmer: linear-gradient(110deg, transparent 25%, hsl(43 74% 53% / 0.1) 50%, transparent 75%);
+
+    --sidebar-background: 222 47% 8%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 43 74% 53%;
+    --sidebar-primary-foreground: 222 47% 6%;
+    --sidebar-accent: 217 33% 17%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217 33% 20%;
+    --sidebar-ring: 43 74% 53%;
+  }
+
+  .dark {
+    --background: 222 47% 6%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 47% 8%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 8%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 43 74% 53%;
+    --primary-foreground: 222 47% 6%;
+
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 185 100% 50%;
+    --accent-foreground: 222 47% 6%;
+
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217 33% 20%;
+    --input: 217 33% 17%;
+    --ring: 43 74% 53%;
+
+    --sidebar-background: 222 47% 8%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 43 74% 53%;
+    --sidebar-primary-foreground: 222 47% 6%;
+    --sidebar-accent: 217 33% 17%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217 33% 20%;
+    --sidebar-ring: 43 74% 53%;
+  }
 }
 
-body {
-  background-color: black;
-  color: white;
-}
+@layer base {
+  * {
+    @apply border-border;
+  }
 
-/* Consider replacing .App-header and .App-link with Tailwind classes directly in JSX components */
-/* For now, keeping as is, but marking for future refactor if desired */
-.App-header {
-  background-color: #282c34;
-  min-height: 10vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Montserrat', sans-serif;
+  }
 
-.App-link {
-  color: #61dafb;
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Cormorant Garamond', serif;
+  }
 }
 
 @layer components {
+  .glass-panel {
+    @apply bg-card/40 backdrop-blur-xl border border-glass-border/30;
+  }
+
+  .neon-glow-cyan {
+    box-shadow: 
+      0 0 20px hsl(var(--neon-cyan) / 0.3),
+      0 0 40px hsl(var(--neon-cyan) / 0.15),
+      inset 0 0 20px hsl(var(--neon-cyan) / 0.05);
+  }
+
+  .neon-glow-pink {
+    box-shadow: 
+      0 0 20px hsl(var(--neon-pink) / 0.3),
+      0 0 40px hsl(var(--neon-pink) / 0.15),
+      inset 0 0 20px hsl(var(--neon-pink) / 0.05);
+  }
+
+  .neon-border {
+    position: relative;
+  }
+
+  .neon-border::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      135deg,
+      hsl(var(--neon-cyan) / 0.5),
+      hsl(var(--neon-pink) / 0.3),
+      hsl(var(--neon-cyan) / 0.5)
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .gold-shimmer {
+    background: linear-gradient(
+      110deg,
+      transparent 25%,
+      hsl(var(--gold) / 0.2) 50%,
+      transparent 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
   .holographic-shimmer {
     position: relative;
     overflow: hidden;
@@ -48,9 +188,9 @@ body {
     background: linear-gradient(
       110deg,
       transparent 20%,
-      hsl(185 100% 50% / 0.08) 35%,
-      hsl(330 100% 60% / 0.08) 50%,
-      hsl(43 74% 53% / 0.08) 65%,
+      hsl(var(--neon-cyan) / 0.08) 35%,
+      hsl(var(--neon-pink) / 0.08) 50%,
+      hsl(var(--gold) / 0.08) 65%,
       transparent 80%
     );
     background-size: 250% 100%;
@@ -63,16 +203,51 @@ body {
     opacity: 1;
     animation: holographic 2s ease-in-out infinite;
   }
+
+  .luxury-button {
+    @apply relative overflow-hidden bg-gradient-to-r from-gold to-gold-dark text-background 
+           font-semibold tracking-wider uppercase transition-all duration-300;
+    box-shadow: 
+      0 4px 15px hsl(var(--gold) / 0.3),
+      inset 0 1px 0 hsl(var(--gold-light) / 0.5);
+  }
+
+  .luxury-button:hover {
+    box-shadow: 
+      0 6px 25px hsl(var(--gold) / 0.5),
+      inset 0 1px 0 hsl(var(--gold-light) / 0.7);
+    transform: translateY(-2px);
+  }
+
+  .luxury-button:active {
+    transform: translateY(0);
+  }
+
+  .luxury-button:disabled {
+    @apply opacity-50 cursor-not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
 }
 
 @layer utilities {
   .text-gradient-gold {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(43 74% 65%), hsl(43 74% 53%), hsl(43 74% 40%));
+    background-image: linear-gradient(135deg, hsl(var(--gold-light)), hsl(var(--gold)), hsl(var(--gold-dark)));
   }
 
-  .bg-gradient-radial {
-    background-image: radial-gradient(circle, var(--tw-gradient-stops));
+  .text-gradient-neon {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--neon-cyan)), hsl(var(--neon-pink)));
+  }
+}
+
+@keyframes shimmer {
+  0%, 100% {
+    background-position: -200% 0;
+  }
+  50% {
+    background-position: 200% 0;
   }
 }
 
@@ -82,5 +257,23 @@ body {
   }
   100% {
     background-position: 250% 0;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px hsl(var(--gold) / 0.3);
+  }
+  50% {
+    box-shadow: 0 0 40px hsl(var(--gold) / 0.5);
   }
 }
