@@ -46,24 +46,28 @@ const ProductCard = ({ product }) => {
       whileHover={cardHover}
       whileTap={tapAnimation}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className={"group relative flex flex-col md:flex-row items-start gap-4 overflow-hidden rounded-xl w-full md:w-64 max-w-[18rem] flex-shrink-0 " +
-             "bg-card/40 backdrop-blur-xl border border-glass-border/30 " +
-             "shadow-luxury hover:shadow-luxury-hover transition-shadow duration-500 holographic-shimmer"}
+      className="group relative flex flex-col overflow-hidden rounded-2xl 
+                 bg-card/40 backdrop-blur-xl
+                 border border-glass-border/30
+                 shadow-luxury
+                 hover:shadow-luxury-hover
+                 transition-shadow duration-500
+                 holographic-shimmer"
     >
       {/* Neon border gradient overlay */}
-      <div className="absolute inset-0 rounded-xl p-[1px] pointer-events-none">
-        <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-neon-cyan/20 via-transparent to-neon-pink/20 opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="absolute inset-0 rounded-2xl p-[1px] pointer-events-none">
+        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-neon-cyan/20 via-transparent to-neon-pink/20 opacity-50 group-hover:opacity-100 transition-opacity duration-500" />
       </div>
 
       {/* Image Container */}
-      <div className="relative w-full md:w-40 lg:w-44 overflow-hidden rounded-xl md:rounded-l-xl md:rounded-tr-none">
-        {/* Gradient overlay on image */}
+      <div className="relative aspect-[3/4] overflow-hidden rounded-t-2xl">
+          {/* Gradient overlay on image */}
         <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent z-10 pointer-events-none" />
         
         <motion.img
           src={product.image || 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=533&fit=crop'}
           alt={product.name}
-          className="w-full h-52 md:h-full object-cover object-center"
+          className="h-full w-full object-cover object-center"
           whileHover={imageHover}
           transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
         />
@@ -93,21 +97,23 @@ const ProductCard = ({ product }) => {
       </div>
 
       {/* Content Container */}
-      <div className="relative flex flex-1 flex-col justify-between p-4 sm:p-6 text-center md:text-left">
+      <div className="relative flex flex-1 flex-col justify-between p-5 sm:p-6">
         {/* Subtle glow effect behind content */}
         <div className="absolute inset-0 bg-gradient-radial from-neon-cyan/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         
-        <div className="relative z-10 text-center md:text-left space-y-3">
+          <div className="relative z-10 text-center space-y-3">
           {/* Product Name */}
           <h3 
-            className="font-serif text-base sm:text-lg font-medium text-foreground/90 tracking-wide leading-tight line-clamp-2 group-hover:text-foreground transition-colors duration-300"
+          className="font-serif text-lg sm:text-xl font-medium text-foreground/90 
+                       tracking-wide leading-tight line-clamp-2
+                       group-hover:text-foreground transition-colors duration-300"
             title={product.name}
           >
             {product.name}
           </h3>
 
           {/* Decorative divider */}
-          <div className="flex items-center md:justify-start justify-center gap-3">
+          <div className="flex items-center justify-center gap-3">
             <div className="h-px w-8 bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
             <div className="w-1.5 h-1.5 rounded-full bg-gold/60" />
             <div className="h-px w-8 bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
@@ -115,7 +121,7 @@ const ProductCard = ({ product }) => {
 
           {/* Price */}
           <motion.p 
-            className="text-xl sm:text-2xl font-serif font-semibold text-gradient-gold"
+            className="text-2xl sm:text-3xl font-serif font-semibold text-gradient-gold"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
@@ -132,7 +138,16 @@ const ProductCard = ({ product }) => {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             aria-label={`Add ${product.name} to cart`}
-            className="w-full min-h-[52px] rounded-xl luxury-button relative overflow-hidden"
+            className="w-full min-h-[52px] rounded-xl
+                       bg-gradient-to-r from-gold to-gold-dark
+                       text-background font-sans font-semibold text-sm
+                       tracking-wider uppercase
+                       shadow-neon-gold
+                       transition-all duration-300
+                       hover:shadow-[0_0_30px_hsl(var(--gold)/0.5)]
+                       focus:outline-none focus:ring-2 focus:ring-gold/50 focus:ring-offset-2 focus:ring-offset-background
+                       disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none
+                       relative overflow-hidden group/btn"
           >
             {/* Button shimmer effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-foreground/10 to-transparent 
