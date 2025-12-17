@@ -1,13 +1,20 @@
 import React, { useState, useContext } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 import { CartContext } from '../context/CartContext';
 
 const ProductCard = ({ product }) => {
   const [isAdding, setIsAdding] = useState(false);
   const { addItemToCart } = useContext(CartContext);
+  const navigate = useNavigate();
 
-  const handleAddToCart = async () => {
+  const handleNavigate = () => {
+    navigate(`/product/${product._id}`);
+  };
+
+  const handleAddToCart = async (e) => {
+    e.stopPropagation(); // Prevent the card's onClick from firing
     if (product.isSoldOut) return;
 
     setIsAdding(true);
@@ -39,6 +46,7 @@ const ProductCard = ({ product }) => {
 
   return (
     <motion.div
+      onClick={handleNavigate}
       variants={cardVariants}
       initial="hidden"
       animate="visible"
@@ -51,7 +59,8 @@ const ProductCard = ({ product }) => {
                  shadow-luxury
                  hover:shadow-luxury-hover
                  transition-shadow duration-500
-                 holographic-shimmer"
+                 holographic-shimmer
+                 cursor-pointer"
     >
       {/* Neon border gradient overlay */}
       <div className="absolute inset-0 rounded-2xl p-[1px] pointer-events-none">
