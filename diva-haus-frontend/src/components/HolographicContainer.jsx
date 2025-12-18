@@ -4,6 +4,7 @@ import ThreeScene from '../three/ThreeScene';
 import HoloPedestal from '../three/HoloPedestal';
 import GlassCube from '../three/GlassCube';
 import WireframeGrid from '../three/WireframeGrid';
+import MannequinModel from '../three/MannequinModel';
 
 const HolographicContainer = ({ children }) => {
   return (
@@ -13,6 +14,9 @@ const HolographicContainer = ({ children }) => {
         
         {/* We just need to provide the 3D objects to render. */}
         <HoloPedestal position={[0, -0.7, 0]} />
+
+        {/* Female mannequin placed above the pedestal. */}
+        <MannequinModel position={[0, -0.2, 0]} />
         
         {/* Corrected: GlassCube uses 'size' prop, not 'args'. */}
         <GlassCube size={1.5} />
