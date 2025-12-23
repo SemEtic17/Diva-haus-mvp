@@ -1,6 +1,7 @@
 import { useRef, useEffect } from 'react';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
+import GarmentPlaceholder from './GarmentPlaceholder';
 
 const MannequinModel = ({ position = [0, 0, 0], targetHeight = 1.7 }) => {
   const group = useRef();
@@ -34,8 +35,21 @@ const MannequinModel = ({ position = [0, 0, 0], targetHeight = 1.7 }) => {
   }, [scene, targetHeight]);
 
   return (
-    <group ref={group} position={position}>
+    <group ref={group} position={position} name="avatar-root">
       <primitive object={scene} />
+
+      {/* Garment placeholders */}
+      <GarmentPlaceholder
+        position={[0, 1.25, 0.05]}
+        size={[0.5, 0.6, 0.5]}
+        label="Torso"
+      />
+      <GarmentPlaceholder
+        position={[0, 0.7, 0]}
+        size={[0.55, 0.8, 0.55]}
+        label="Legs"
+        color="#40E0D0"
+      />
     </group>
   );
 };
