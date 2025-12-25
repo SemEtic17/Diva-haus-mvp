@@ -82,7 +82,7 @@ const ProductPage = () => {
       {/* 3D HERO SHOWCASE */}
       {/* ===================== */}
       <div className="relative w-full h-[500px] mb-12">
-        <HolographicContainer>
+        <HolographicContainer product={product}>
           <div className="flex flex-col items-center justify-center h-full text-white text-center">
             <h1 className="text-5xl font-bold drop-shadow-lg">
               {product.name}
