@@ -76,6 +76,10 @@ const ProductPage = () => {
     return <div className="text-center p-4">Product not found</div>;
   }
 
+  // --- DEBUGGING LOGS ---
+  console.log("📦 Product in ProductPage:", product);
+  // --- END DEBUGGING LOGS ---
+
   return (
     <div className="container mx-auto p-4">
       {/* ===================== */}
