@@ -1,19 +1,16 @@
-import React, { useRef, useImperativeHandle } from "react";
+import React, { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { MeshWobbleMaterial } from "@react-three/drei";
 import * as THREE from "three";
 
-const HoloPedestal = React.forwardRef(({
+export default function HoloPedestal({
   position = [0, -0.8, 0],
   radius = 1.0,
   height = 0.25,
   color = "#7C5CFF", // hero accent (muted violet)
-}, ref) => {
-  const group = useRef();
+}) {
   const topRef = useRef();
   const ringRef = useRef();
-
-  useImperativeHandle(ref, () => group.current);
 
   useFrame((state, delta) => {
     if (topRef.current) topRef.current.rotation.y += delta * 0.2;
@@ -21,7 +18,7 @@ const HoloPedestal = React.forwardRef(({
   });
 
   return (
-    <group ref={group} position={position}>
+    <group position={position}>
       {/* pedestal base */}
       <mesh receiveShadow castShadow position={[0, -height / 2, 0]}>
         <cylinderGeometry args={[radius * 0.85, radius, height, 36]} />
@@ -36,6 +33,7 @@ const HoloPedestal = React.forwardRef(({
       {/* top disc with emissive rim */}
       <mesh ref={topRef} position={[0, height * 0.4, 0]}>
         <cylinderGeometry args={[radius * 0.9, radius * 0.9, 0.08, 48]} />
+        {/* subtle holographic shimmer using MeshWobbleMaterial (drei) */}
         <MeshWobbleMaterial
           factor={0.2}
           speed={0.4}
@@ -61,6 +59,4 @@ const HoloPedestal = React.forwardRef(({
       </mesh>
     </group>
   );
-});
-
-export default HoloPedestal;
+}
