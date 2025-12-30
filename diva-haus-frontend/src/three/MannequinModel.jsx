@@ -1,5 +1,3 @@
-// src/components/MannequinModel.jsx
-
 import { useRef, useEffect } from 'react';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
@@ -12,7 +10,7 @@ const MannequinModel = ({ product, position = [0, 0, 0], targetHeight = 1.7 }) =
   useEffect(() => {
     if (!scene) return;
 
-    /** 📏 1. NORMALIZE SIZE & POSITION **/
+    /** 📏 1. Normalize model size */
     const bbox = new THREE.Box3().setFromObject(scene);
     const size = bbox.getSize(new THREE.Vector3());
     const scale = size.y > 0 ? targetHeight / size.y : 1;
@@ -22,97 +20,75 @@ const MannequinModel = ({ product, position = [0, 0, 0], targetHeight = 1.7 }) =
     const center = bbox.getCenter(new THREE.Vector3());
     scene.position.set(-center.x, -bbox.min.y, -center.z);
 
-    /** 🔍 2. FIND THE TORSO MESH (largest mesh) **/
-    let torsoMesh = null;
-    let maxHeight = 0;
+    /** 🎯 2. Define torso-related mesh names */
+    const torsoNames = [
+      "mesh_1","mesh_1_1","mesh_1_2","mesh_1_3","mesh_1_4","mesh_1_5",
+      "mesh_2","mesh_2_1" // hips/pelvis
+    ];
 
-    scene.traverse((child) => {
-      if (child.isMesh) {
-        const box = new THREE.Box3().setFromObject(child);
-        const size = box.getSize(new THREE.Vector3());
-
-        if (size.y > maxHeight) {
-          maxHeight = size.y;
-          torsoMesh = child;
+    /** 🔍 3. Collect torso meshes */
+    const bodyParts = [];
+    scene.traverse(child => {
+      if (child.isMesh && torsoNames.includes(child.name)) {
+        if (child.geometry?.getAttribute("uv")) {
+          bodyParts.push(child);
         }
       }
     });
 
-    if (!torsoMesh) {
-      console.error("❌ No mesh found in model.");
-      return;
-    }
+    console.log("👕 Detected torso parts:", bodyParts.map(p => p.name));
 
-    console.log(`🧍 BEST torso candidate: "${torsoMesh.name}" with height ${maxHeight.toFixed(2)}`);
-
-
-    /** 🧠 3. CHECK UV SUPPORT **/
-    const uvAttr = torsoMesh.geometry.getAttribute("uv");
-    if (!uvAttr) {
-      console.warn(`⚠️ "${torsoMesh.name}" has NO UVs — textures might not work.`);
-    } else {
-      console.log(`🎉 "${torsoMesh.name}" supports UV textures.`);
-    }
-
-
-    /** 🖼 4. APPLY PRODUCT TEXTURE **/
+    /** 🎨 4. Apply product texture to torso only */
     if (product?.image) {
-      const loader = new THREE.TextureLoader();
+      const textureLoader = new THREE.TextureLoader();
       console.log("🖼 Loading texture:", product.image);
 
-      loader.load(
+      textureLoader.load(
         product.image,
-        (texture) => {
+        texture => {
           texture.flipY = false;
+          texture.encoding = THREE.sRGBEncoding;
 
-          // FORCE UV MATERIAL + REMOVE OLD NODES
-torsoMesh.material = new THREE.MeshStandardMaterial({
-  map: texture,
-  color: new THREE.Color("white"),
-  roughness: 0.6,
-  metalness: 0.1,
-  side: THREE.DoubleSide
-});
+          bodyParts.forEach(mesh => {
+            mesh.material = new THREE.MeshStandardMaterial({
+              map: texture,
+              color: "white",
+              roughness: 0.6,
+              metalness: 0.1,
+              side: THREE.DoubleSide
+            });
 
-// Ensure UVs are used
-torsoMesh.material.needsUpdate = true;
+            mesh.material.needsUpdate = true;
+            mesh.castShadow = mesh.receiveShadow = true;
+          });
 
-// If model had multiple materials or shader nodes, clear them
-if (torsoMesh.material.map) {
-  torsoMesh.material.map.encoding = THREE.sRGBEncoding;
-  torsoMesh.material.map.needsUpdate = true;
-}
-
-torsoMesh.castShadow = true;
-torsoMesh.receiveShadow = true;
-
-
-console.log("🧪 UV Test (first 5 UV pairs):", uvAttr.array.slice(0, 10));
-
-
-          console.log(`✔️ Texture applied to "${torsoMesh.name}"`);
+          console.log("✨ Texture applied ONLY to:", bodyParts.map(p => p.name));
         },
         undefined,
-        () => console.error("❌ Failed to load image texture")
+        () => console.error("❌ Failed to load texture")
       );
+
     } else {
-      torsoMesh.material = new THREE.MeshStandardMaterial({
-        color: "lightgray",
-        roughness: 0.8,
+      /** ⚪ If no product image, default material */
+      bodyParts.forEach(mesh => {
+        mesh.material = new THREE.MeshStandardMaterial({
+          color: "lightgray",
+          roughness: 0.8
+        });
       });
-      console.log("⚪ No texture — using default material.");
+      console.log("⚪ No texture — defaulting to gray");
     }
 
   }, [scene, product, targetHeight]);
 
 
-
-  /** 🎨 5. RENDER **/
+  /** 🧱 5. Render mannequin + placeholders */
   return (
     <group ref={group} position={position} name="avatar-root">
       <primitive object={scene} />
 
-      <axesHelper args={[0.3]} />
+      {/* Debug Helper */}
+      {/* <axesHelper args={[0.3]} /> */}
 
       {!product?.image && (
         <>
