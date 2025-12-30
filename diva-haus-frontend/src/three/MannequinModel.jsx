@@ -7,7 +7,7 @@ import GarmentPlaceholder from './GarmentPlaceholder';
 
 const MannequinModel = ({ product, position = [0, 0, 0], targetHeight = 1.7 }) => {
   const group = useRef();
-  const { scene } = useGLTF('/models/manniquen_uv.glb', true);
+  const { scene } = useGLTF('/models/mannequin_uv.glb', true);
 
   useEffect(() => {
     if (!scene) return;
