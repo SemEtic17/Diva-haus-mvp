@@ -43,7 +43,7 @@ const Register = () => {
           <label className="block text-gray-700">Name</label>
           <input
             type="text"
-            className="w-full p-2 border border-gray-300 rounded"
+            className="w-full p-2 border border-gray-300 rounded text-gray-800"
             name="name"
             value={name}
             onChange={onChange}
@@ -54,7 +54,7 @@ const Register = () => {
           <label className="block text-gray-700">Email Address</label>
           <input
             type="email"
-            className="w-full p-2 border border-gray-300 rounded"
+            className="w-full p-2 border border-gray-300 rounded text-gray-800"
             name="email"
             value={email}
             onChange={onChange}
@@ -65,7 +65,7 @@ const Register = () => {
           <label className="block text-gray-700">Password</label>
           <input
             type="password"
-            className="w-full p-2 border border-gray-300 rounded"
+            className="w-full p-2 border border-gray-300 rounded text-gray-800"
             name="password"
             value={password}
             onChange={onChange}
@@ -77,7 +77,7 @@ const Register = () => {
           <label className="block text-gray-700">Confirm Password</label>
           <input
             type="password"
-            className="w-full p-2 border border-gray-300 rounded"
+            className="w-full p-2 border border-gray-300 rounded text-gray-800"
             name="password2"
             value={password2}
             onChange={onChange}

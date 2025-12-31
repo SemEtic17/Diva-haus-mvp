@@ -37,7 +37,7 @@ const Login = () => {
           <label className="block text-gray-700">Email Address</label>
           <input
             type="email"
-            className="w-full p-2 border border-gray-300 rounded"
+            className="w-full p-2 border border-gray-300 rounded text-gray-800"
             name="email"
             value={email}
             onChange={onChange}
@@ -48,7 +48,7 @@ const Login = () => {
           <label className="block text-gray-700">Password</label>
           <input
             type="password"
-            className="w-full p-2 border border-gray-300 rounded"
+            className="w-full p-2 border border-gray-300 rounded text-gray-800"
             name="password"
             value={password}
             onChange={onChange}
