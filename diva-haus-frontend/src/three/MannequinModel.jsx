@@ -7,79 +7,76 @@ const MannequinModel = ({ product, position = [0, 0, 0], targetHeight = 1.7 }) =
   const group = useRef();
   const { scene } = useGLTF('/models/mannequin_uv.glb', true);
 
-  useEffect(() => {
-    if (!scene) return;
+useEffect(() => {
+  if (!scene) return;
 
-    /** 📏 1. Normalize model size */
-    const bbox = new THREE.Box3().setFromObject(scene);
-    const size = bbox.getSize(new THREE.Vector3());
-    const scale = size.y > 0 ? targetHeight / size.y : 1;
-    scene.scale.setScalar(scale);
+  // Normalize scale & center
+  const bbox = new THREE.Box3().setFromObject(scene);
+  const size = bbox.getSize(new THREE.Vector3());
+  const scale = size.y > 0 ? targetHeight / size.y : 1;
+  scene.scale.setScalar(scale);
 
-    bbox.setFromObject(scene);
-    const center = bbox.getCenter(new THREE.Vector3());
-    scene.position.set(-center.x, -bbox.min.y, -center.z);
+  bbox.setFromObject(scene);
+  const center = bbox.getCenter(new THREE.Vector3());
+  scene.position.set(-center.x, -bbox.min.y, -center.z);
 
-    /** 🎯 2. Define torso-related mesh names */
-    const torsoNames = [
-      "mesh_1","mesh_1_1","mesh_1_2","mesh_1_3","mesh_1_4","mesh_1_5",
-      "mesh_2","mesh_2_1" // hips/pelvis
-    ];
+  /** 🎯 SELECT ONLY BODY PARTS FOR CLOTHING */
+  const torsoParts = [
+    "mesh_1", "mesh_1_1", "mesh_1_2", "mesh_1_3", "mesh_1_4", "mesh_1_5", // torso
+    "mesh_2", "mesh_2_1" // hips / waist
+  ];
 
-    /** 🔍 3. Collect torso meshes */
-    const bodyParts = [];
-    scene.traverse(child => {
-      if (child.isMesh && torsoNames.includes(child.name)) {
-        if (child.geometry?.getAttribute("uv")) {
-          bodyParts.push(child);
-        }
-      }
-    });
+  const headParts = [
+    "mesh_3", "mesh_3_1" // DON'T TOUCH THESE
+  ];
 
-    console.log("👕 Detected torso parts:", bodyParts.map(p => p.name));
+  // Convert to mesh references
+  const torsoMeshes = torsoParts
+    .map((name) => scene.getObjectByName(name))
+    .filter(Boolean);
 
-    /** 🎨 4. Apply product texture to torso only */
-    if (product?.image) {
-      const textureLoader = new THREE.TextureLoader();
-      console.log("🖼 Loading texture:", product.image);
+  const headMeshes = headParts
+    .map((name) => scene.getObjectByName(name))
+    .filter(Boolean);
 
-      textureLoader.load(
-        product.image,
-        texture => {
-          texture.flipY = false;
-          texture.encoding = THREE.sRGBEncoding;
+  console.log("🧍 Torso meshes to texture:", torsoMeshes.map(m => m.name));
+  console.log("🚫 These will NOT get texture:", headMeshes.map(m => m.name));
 
-          bodyParts.forEach(mesh => {
-            mesh.material = new THREE.MeshStandardMaterial({
-              map: texture,
-              color: "white",
-              roughness: 0.6,
-              metalness: 0.1,
-              side: THREE.DoubleSide
-            });
+  /** 🧥 APPLY CLOTHING TEXTURE */
+  if (product?.image) {
+    const loader = new THREE.TextureLoader();
+    loader.load(
+      product.image,
+      (texture) => {
+        texture.flipY = false;
+        texture.encoding = THREE.sRGBEncoding;
+        texture.needsUpdate = true;
 
-            mesh.material.needsUpdate = true;
-            mesh.castShadow = mesh.receiveShadow = true;
+        torsoMeshes.forEach(mesh => {
+          mesh.material = new THREE.MeshStandardMaterial({
+            map: texture,
+            roughness: 0.6,
+            metalness: 0.1,
+            side: THREE.DoubleSide,
           });
-
-          console.log("✨ Texture applied ONLY to:", bodyParts.map(p => p.name));
-        },
-        undefined,
-        () => console.error("❌ Failed to load texture")
-      );
-
-    } else {
-      /** ⚪ If no product image, default material */
-      bodyParts.forEach(mesh => {
-        mesh.material = new THREE.MeshStandardMaterial({
-          color: "lightgray",
-          roughness: 0.8
+          mesh.material.needsUpdate = true;
         });
-      });
-      console.log("⚪ No texture — defaulting to gray");
-    }
 
-  }, [scene, product, targetHeight]);
+        // Make head default skin color
+        headMeshes.forEach(mesh => {
+          mesh.material = new THREE.MeshStandardMaterial({
+            color: "#f5d6c8",
+            roughness: 0.8,
+            metalness: 0.1,
+          });
+        });
+
+        console.log("🎉 Final texture applied (only torso & hips)");
+      }
+    );
+  }
+}, [scene, product, targetHeight]);
+
 
 
   /** 🧱 5. Render mannequin + placeholders */
