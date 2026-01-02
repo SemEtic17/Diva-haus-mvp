@@ -7,6 +7,7 @@ const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const checkAuthStatus = async () => {
     try {
@@ -23,6 +24,8 @@ const AuthProvider = ({ children }) => {
       toast.error('Error checking authentication status.');
       setIsAuthenticated(false);
       setUserInfo(null);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -56,7 +59,7 @@ const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, userInfo, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, userInfo, isLoading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
