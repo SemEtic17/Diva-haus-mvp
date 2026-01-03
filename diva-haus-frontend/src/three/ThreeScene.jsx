@@ -10,10 +10,10 @@ export default function ThreeScene({ children, className = "", cameraProps = { p
     <div className={`w-full h-full ${className}`} style={{ minHeight: 300 }}>
       <Canvas shadows camera={cameraProps} gl={{ antialias: true, toneMappingExposure: 1 }}>
         {/* Environment for subtle lighting - small sRGB HDRI from drei */}
-        <ambientLight intensity={0.4} />
-        <directionalLight castShadow position={[10, 10, 5]} intensity={0.8} />
+        <ambientLight intensity={1.5} />
+        <directionalLight castShadow position={[10, 10, 5]} intensity={1} />
         <Suspense fallback={<Html center>Loading 3D...</Html>}>
-          <Environment preset="city" />
+          
           {children}
         </Suspense>
         {/* Controls: disable rotate on mobile pinch? Keep basic orbit */}
