@@ -3,9 +3,11 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingBag, User, Menu, X, Heart, LogOut } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
+import { CartContext } from '../context/CartContext';
 
 const Navbar = () => {
   const { isAuthenticated, logout } = useContext(AuthContext);
+  const { cartItems } = useContext(CartContext);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const linkHover = {
@@ -45,9 +47,7 @@ const Navbar = () => {
     },
   };
 
-  // Note: Cart count is static to match the design reference.
-  // The component's logic cannot be changed to fetch the real count.
-  const cartItemCount = 3;
+  const cartItemCount = cartItems.reduce((acc, item) => acc + item.qty, 0);
 
   return (
     <motion.header
