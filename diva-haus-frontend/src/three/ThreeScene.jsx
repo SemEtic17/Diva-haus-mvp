@@ -1,24 +1,41 @@
-import React, { Suspense } from "react";
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Environment, Html } from "@react-three/drei";
+import React, { Suspense } from 'react';
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls, Environment } from '@react-three/drei';
+import * as THREE from 'three';
+import MannequinModel from './MannequinModel';
+import WireframeGrid from './WireframeGrid';
 
-// A lightweight, reusable Canvas wrapper.
-// children should be procedural objects (HoloPedestal, GlassCube, etc.)
-// use frameloop="demand" for static scenes if you prefer one-off renders.
-export default function ThreeScene({ children, className = "", cameraProps = { position: [0, 2, 6], fov: 50 } }) {
+const ThreeScene = ({ product }) => {
   return (
-    <div className={`w-full h-full ${className}`} style={{ minHeight: 300 }}>
-      <Canvas shadows camera={cameraProps} gl={{ antialias: true, toneMappingExposure: 1 }}>
-        {/* Environment for subtle lighting - small sRGB HDRI from drei */}
-        <ambientLight intensity={1.5} />
-        <directionalLight castShadow position={[10, 10, 5]} intensity={1} />
-        <Suspense fallback={<Html center>Loading 3D...</Html>}>
-          
-          {children}
-        </Suspense>
-        {/* Controls: disable rotate on mobile pinch? Keep basic orbit */}
-        <OrbitControls enablePan={false} enableZoom={true} />
-      </Canvas>
-    </div>
+    <Canvas
+      shadows
+      camera={{ position: [0, 1.6, 3], fov: 50 }}
+      gl={{
+        outputColorSpace: THREE.SRGBColorSpace,
+        toneMapping: THREE.ACESFilmicToneMapping,
+        toneMappingExposure: 1.2,
+      }}
+    >
+      {/* 💡 Essential: Add HDR environment lighting for PBR materials to look correct */}
+      <Environment preset="sunset" />
+
+      <Suspense fallback={null}>
+        <MannequinModel product={product} />
+      </Suspense>
+
+      <OrbitControls
+        minPolarAngle={Math.PI / 4}
+        maxPolarAngle={Math.PI / 1.8}
+  enablePan={true}
+  minDistance={0.5}
+  maxDistance={10}
+  target={[0, 0.9, 0]}
+
+      />
+
+      <WireframeGrid />
+    </Canvas>
   );
-}
+};
+
+export default ThreeScene;
