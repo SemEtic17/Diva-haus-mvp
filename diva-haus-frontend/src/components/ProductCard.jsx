@@ -20,9 +20,8 @@ const ProductCard = ({ product }) => {
     setIsAdding(true);
     try {
       await addItemToCart(product._id);
-      toast.success(`${product.name} added to cart!`);
     } catch (error) {
-      toast.error(error.message || 'Could not add item to cart.');
+      console.error(error.message || 'Could not add item to cart.');
     } finally {
       setIsAdding(false);
     }
