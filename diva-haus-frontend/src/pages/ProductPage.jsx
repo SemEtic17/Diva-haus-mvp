@@ -87,19 +87,7 @@ const ProductPage = () => {
       {/* ===================== */}
       <div className="relative w-full h-[500px] mb-12">
         <HolographicContainer product={product}>
-          {/* Moved text overlay outside of HolographicContainer to ProductPage.jsx to allow OrbitControls interaction. */}
-          {/* This ensures the text is present but does not block the 3D model. */}
-          <div className="flex flex-col items-center justify-center h-full text-white text-center">
-            <h1 className="text-5xl font-bold drop-shadow-lg">
-              {product.name}
-            </h1>
-            <p className="mt-2 text-2xl drop-shadow-md">
-              ${product.price}
-            </p>
-            <p className="mt-4 text-lg max-w-xl">
-              Experience {product.name} in a new dimension.
-            </p>
-          </div>
+          
         </HolographicContainer>
       </div>
 
