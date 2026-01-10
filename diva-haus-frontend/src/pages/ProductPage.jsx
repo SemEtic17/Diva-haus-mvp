@@ -43,7 +43,7 @@ const ProductPage = () => {
 
     try {
       await addItemToCart(product._id, 1);
-      toast.success('Added to cart!');
+
     } catch (err) {
       toast.error(`Error: ${err.message}`);
     }
