@@ -24,13 +24,17 @@ const itemVariants = {
 };
 
 // Sub-component for Photo Guidelines
-const ExampleCard = ({ isGood, label, description }) => (
+const ExampleCard = ({ isGood, label, description, imageUrl }) => (
   <motion.div variants={itemVariants} className="relative group">
-    <div className={`relative overflow-hidden rounded-2xl border-2 aspect-[3/4] ${isGood ? 'border-yellow-400/40 bg-gradient-to-br from-yellow-400/10 to-yellow-400/5' : 'border-red-500/40 bg-gradient-to-br from-red-500/10 to-red-500/5'}`}>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <User className="w-16 h-16 text-gray-500/30" />
-      </div>
-      <div className={`absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center ${isGood ? 'bg-yellow-400/20 text-yellow-400' : 'bg-red-500/20 text-red-500'}`}>
+    <div className={`relative overflow-hidden rounded-2xl border-2 aspect-[3/4] ${isGood ? 'border-green-700 bg-gradient-to-br from-yellow-400/10 to-yellow-400/5' : 'border-red-500/40 bg-gradient-to-br from-red-500/10 to-red-500/5'}`}>
+      {imageUrl ? (
+        <img src={imageUrl} alt={label} className="w-full h-full object-cover" />
+      ) : (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <User className="w-16 h-16 text-gray-500/30" />
+        </div>
+      )}
+      <div className={`absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center ${isGood ? 'bg-green-400/20 text-green-700' : 'bg-red-500/20 text-red-500'}`}>
         {isGood ? <Check className="w-4 h-4" /> : <X className="w-4 h-4" />}
       </div>
     </div>
@@ -208,10 +212,10 @@ const ProfilePage = () => {
             <h2 className="text-xl font-serif font-semibold mb-2">Photo Guidelines</h2>
             <p className="text-gray-400 mb-6">Follow these tips for the best virtual try-on results.</p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
-              <ExampleCard isGood={true} label="Full Body" description="Head to toe visible" />
-              <ExampleCard isGood={true} label="Good Lighting" description="Even, natural light" />
-              <ExampleCard isGood={false} label="Cropped" description="Body cut off" />
-              <ExampleCard isGood={false} label="Dark/Blurry" description="Poor visibility" />
+              <ExampleCard isGood={true} label="Full Body" description="Head to toe visible" imageUrl="/assets/examples/full_body.jpeg" />
+              <ExampleCard isGood={true} label="Good Lighting" description="Even, natural light" imageUrl="/assets/examples/good_lighting.jpeg" />
+              <ExampleCard isGood={false} label="Cropped" description="Body cut off" imageUrl="/assets/examples/cropped.jpeg" />
+              <ExampleCard isGood={false} label="Dark/Blurry" description="Poor visibility" imageUrl="/assets/examples/blurry.jpeg" />
             </div>
           </div>
         </motion.div>
