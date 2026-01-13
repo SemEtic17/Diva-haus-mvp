@@ -2,11 +2,14 @@ import React, { useState, useContext } from 'react';
 import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { Heart } from 'lucide-react';
 import { CartContext } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 
 const ProductCard = ({ product }) => {
   const [isAdding, setIsAdding] = useState(false);
   const { addItemToCart } = useContext(CartContext);
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const navigate = useNavigate();
 
   const handleNavigate = () => {
@@ -27,6 +30,17 @@ const ProductCard = ({ product }) => {
     }
   };
 
+  const handleWishlistToggle = (e) => {
+    e.stopPropagation();
+    if (isInWishlist(product._id)) {
+      removeFromWishlist(product._id);
+      toast.success('Removed from Wishlist');
+    } else {
+      addToWishlist(product);
+      toast.success('Added to Wishlist');
+    }
+  };
+
   const cardVariants = {
     hidden: { opacity: 0, y: 30 },
     visible: { 
@@ -42,6 +56,7 @@ const ProductCard = ({ product }) => {
   const imageHover = { scale: 1.08 };
   const cardHover = { scale: 1.03, y: -8 };
   const tapAnimation = { scale: 0.97 };
+  const isWishlisted = isInWishlist(product._id);
 
   return (
     <motion.div
@@ -97,6 +112,22 @@ const ProductCard = ({ product }) => {
           </motion.div>
         )}
 
+        {/* Wishlist button */}
+        <motion.button
+          onClick={handleWishlistToggle}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          className="absolute top-4 right-4 z-20 p-2 bg-background/50 backdrop-blur-md rounded-full text-white/80 hover:text-white transition-colors group/wishlist"
+          aria-label={isWishlisted ? 'Remove from Wishlist' : 'Add to Wishlist'}
+        >
+          <Heart
+            className={`w-5 h-5 transition-all duration-300 ${isWishlisted ? 'text-gold fill-current' : 'text-white'}`}
+          />
+          <div className="absolute -top-8 right-1/2 translate-x-1/2 px-2 py-1 bg-black/80 text-white text-xs rounded-md opacity-0 group-hover/wishlist:opacity-100 transition-opacity whitespace-nowrap">
+            {isWishlisted ? 'Remove from Wishlist' : 'Add to Wishlist'}
+          </div>
+        </motion.button>
+        
         {/* Decorative corner accent */}
         <div className="absolute top-0 right-0 w-20 h-20 pointer-events-none">
           <div className="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 border-gold/40 rounded-tr-lg" />

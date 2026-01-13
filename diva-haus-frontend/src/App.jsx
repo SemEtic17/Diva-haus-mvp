@@ -4,6 +4,7 @@ import ProductPage from './pages/ProductPage';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import CartPage from './pages/CartPage';
+import WishlistPage from './pages/WishlistPage';
 import PrivateRoute from './components/PrivateRoute';
 import Navbar from './components/Navbar'; // Import Navbar
 import ProductGrid from './components/ProductGrid'; // Import ProductGrid
@@ -26,6 +27,9 @@ function App() {
           </Route>
           <Route path="/cart" element={<PrivateRoute />}>
             <Route path="" element={<CartPage />} />
+          </Route>
+          <Route path="/wishlist" element={<PrivateRoute />}>
+            <Route path="" element={<WishlistPage />} />
           </Route>
         </Routes>
       </main>

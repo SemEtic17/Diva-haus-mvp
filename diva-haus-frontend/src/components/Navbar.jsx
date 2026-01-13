@@ -4,10 +4,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingBag, User, Menu, X, Heart, LogOut } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 import { CartContext } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 
 const Navbar = () => {
   const { isAuthenticated, logout } = useContext(AuthContext);
   const { cartItems } = useContext(CartContext);
+  const { wishlist } = useWishlist();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const linkHover = {
@@ -48,6 +50,7 @@ const Navbar = () => {
   };
 
   const cartItemCount = cartItems.reduce((acc, item) => acc + item.qty, 0);
+  const wishlistItemCount = wishlist.length;
 
   return (
     <motion.header
@@ -99,14 +102,19 @@ const Navbar = () => {
             </motion.div>
 
             <div className="flex-1 flex items-center justify-end space-x-2 md:space-x-4">
-              <motion.a
-                href="#wishlist"
-                whileHover={linkHover}
-                className="hidden md:flex p-2 text-gray-300/70 hover:text-yellow-400 transition-colors duration-300"
-                aria-label="Wishlist"
-              >
-                <Heart size={20} />
-              </motion.a>
+              <Link to="/wishlist" aria-label="Wishlist">
+                <motion.div
+                  whileHover={linkHover}
+                  className="relative p-2 text-gray-300/70 hover:text-yellow-400 transition-colors duration-300"
+                >
+                  <Heart size={20} />
+                  {wishlistItemCount > 0 && (
+                    <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center text-[10px] font-medium bg-gradient-to-r from-cyan-400 to-pink-500 text-black rounded-full px-1">
+                      {wishlistItemCount}
+                    </span>
+                  )}
+                </motion.div>
+              </Link>
 
 <Link to={isAuthenticated ? '/profile' : '/login'} aria-label={isAuthenticated ? 'Profile' : 'Login'}>
                 <motion.div
@@ -182,7 +190,7 @@ const Navbar = () => {
                   </>
                 )}
                 <div className="my-4 h-px bg-gradient-to-r from-transparent via-yellow-400/30 to-transparent" />
-                <Link to="#wishlist" className="flex items-center gap-3 py-3 px-4 text-base font-medium text-gray-200/80 hover:text-yellow-400 hover:bg-white/10 rounded-lg transition-all duration-200">
+                <Link to="/wishlist" className="flex items-center gap-3 py-3 px-4 text-base font-medium text-gray-200/80 hover:text-yellow-400 hover:bg-white/10 rounded-lg transition-all duration-200">
                   <Heart size={18} />
                   Wishlist
                 </Link>
