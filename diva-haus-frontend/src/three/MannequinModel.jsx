@@ -1,98 +1,96 @@
 import { useEffect, useMemo } from 'react';
-     import { useGLTF, useTexture } from '@react-three/drei';
-     import * as THREE from 'three';
-     
-     useGLTF.preload('/models/mannequin_cloth_ready.glb');
-     
-     // Helper component to safely load and apply textures.
-     function ApplyTexture({ clonedScene, product }) {
-       // This hook triggers a re-render once the texture is loaded.
-      const texture = useTexture(product.image);
-   
-      useEffect(() => {
-        // This effect runs whenever the texture object or scene clone changes.
-        if (!texture) return;
+import { useGLTF } from '@react-three/drei';
+import * as THREE from 'three';
+
+useGLTF.preload('/models/mannequin_cloth_ready.glb');
+
+export default function MannequinModel({ product, targetHeight = 1.7, ...props }) {
+  const { scene } = useGLTF('/models/mannequin_cloth_ready.glb');
+
+  // useMemo with just [scene] is correct. A new clone is created when the
+  // component remounts due to its `key` prop changing.
+  const clonedScene = useMemo(() => scene.clone(), [scene]);
+
+  // --- One-time model setup effect ---
+  useEffect(() => {
+    // This guard prevents re-running setup on the same clone instance.
+    if (clonedScene.userData.isSetup) return;
+
+    console.log('--- A. ON MODEL LOAD ---');
+    console.log('Full scene object:', scene);
+    console.log('scene.children:', scene.children);
+    const meshNames = [];
+    scene.traverse((child) => {
+      if (child.isMesh) {
+        meshNames.push(child.name);
+      }
+    });
+    console.log('scene.traverse mesh names:', meshNames);
+    console.log('------------------------');
+
+    // Auto-scaling and centering logic
+    const box = new THREE.Box3().setFromObject(clonedScene);
+    const size = box.getSize(new THREE.Vector3());
+    const scale = targetHeight / size.y;
+    clonedScene.scale.set(scale, scale, scale);
+
+    const postScaleBox = new THREE.Box3().setFromObject(clonedScene);
+    const center = postScaleBox.getCenter(new THREE.Vector3());
+    clonedScene.position.x -= center.x;
+    clonedScene.position.y -= postScaleBox.min.y; // Place on the ground
+    clonedScene.position.z -= center.z;
     
-        // Standard texture setup for PBR materials in a linear workflow.
-        texture.colorSpace = THREE.SRGBColorSpace;
-        texture.flipY = false;
-    
-        const clothMesh = clonedScene.getObjectByName('Body_Cloth');
-        if (clothMesh && clothMesh.material) {
-         // MANDATORY FIXES START
-          // 1. Clone material to avoid mutating cached GLTF material and ensure
-          //    our properties apply cleanly without side effects.
-          clothMesh.material = clothMesh.material.clone();
-    
-          // 2. Set base color to white to ensure the texture's true colors
-          //    are displayed accurately.
-          clothMesh.material.color.set('white');
-    
-          // 3. Set render side to ensure both front and back faces are visible.
-          clothMesh.material.side = THREE.DoubleSide;
-   
-          // 4. Apply the loaded texture map.
-          clothMesh.material.map = texture;
-    
-          // 5. Notify Three.js that the material and texture have been updated.
-          clothMesh.material.needsUpdate = true;
-          texture.needsUpdate = true; // CRITICAL: Ensure texture update is propagated.
-          // MANDATORY FIXES END
-    
-          console.log('✅ TEXTURE APPLIED:', texture.image?.src);
+    console.log('--- C. BOUNDING INFO ---');
+    console.log('Box3 size:', size);
+    console.log('Box3 center:', center);
+    console.log('------------------------');
+
+    // Set up shadows and default material states.
+    clonedScene.traverse((child) => {
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+
+        console.log('--- B. PER MESH ---');
+        console.log('name:', child.name);
+        console.log('uuid:', child.uuid);
+        console.log('geometry.uuid:', child.geometry.uuid);
+        console.log('isSkinnedMesh:', child.isSkinnedMesh);
+        console.log('geometry.attributes:', child.geometry.attributes);
+
+        // Ensure we have a unique material instance
+        child.material = child.material.clone();
+        
+        if (child.name === 'Body_Cloth') {
+            child.material.color.set('#ff0000'); // Pure red
+        } else {
+            child.material.color.set('#0000ff'); // Pure blue
         }
-     }, [clonedScene, texture]); // Effect dependencies are correct.
-    
-      // This component manages logic and does not render any of its own JSX.
-      return null;
-    }
-    
-    export default function MannequinModel({ product, targetHeight = 1.7, ...props }) {
-      const { scene } = useGLTF('/models/mannequin_cloth_ready.glb');
-      // useMemo with just [scene] is correct. A new clone is created when the
-      // component remounts due to its `key` prop changing.
-      const clonedScene = useMemo(() => scene.clone(), [scene]);
-   
-      // --- One-time model setup effect ---
-      useEffect(() => {
-        // This guard prevents re-running setup on the same clone instance.
-        if (clonedScene.userData.isSetup) return;
-    
-        // Auto-scaling and centering logic
-        const box = new THREE.Box3().setFromObject(clonedScene);
-        const size = box.getSize(new THREE.Vector3());
-        const scale = targetHeight / size.y;
-        clonedScene.scale.set(scale, scale, scale);
-   
-        const postScaleBox = new THREE.Box3().setFromObject(clonedScene);
-        const center = postScaleBox.getCenter(new THREE.Vector3());
-        clonedScene.position.x -= center.x;
-        clonedScene.position.y -= postScaleBox.min.y; // Place on the ground
-        clonedScene.position.z -= center.z;
-    
-        // Set up shadows and default material states.
-        clonedScene.traverse((child) => {
-          if (child.isMesh) {
-            child.castShadow = true;
-           child.receiveShadow = true;
-            // When no texture is applied, default the cloth to a neutral grey.
-            // This is overridden by ApplyTexture when a product is available.
-            if (child.name === 'Body_Cloth' && child.material) {
-              child.material.map = null;
-              child.material.color.set('grey');
-            }
-          }
-        });
-    
-        // Mark this clone as configured.
-       clonedScene.userData.isSetup = true;
-    
-   }, [clonedScene, targetHeight]); // Dependencies are correct.
- 
-   return (
-     <primitive object={clonedScene} {...props}>
-       {/* Conditionally mount the texture applicator only when we have a product image. */}
-       {product?.image && <ApplyTexture clonedScene={clonedScene} product={product} />}
-     </primitive>
-   );
- }
+
+        child.material.side = THREE.DoubleSide;
+        child.material.map = null; // Ensure no texture map is used
+        child.material.needsUpdate = true;
+        
+        console.log('material type:', child.material.type);
+        console.log('material.uuid:', child.material.uuid);
+        console.log('material.side:', child.material.side);
+        console.log('material.map:', child.material.map);
+        console.log('material.color (RGB):', child.material.color);
+        console.log('material.color (HEX):', `#${child.material.color.getHexString()}`);
+        console.log('material.metalness:', child.material.metalness);
+        console.log('material.roughness:', child.material.roughness);
+        console.log('--------------------');
+      }
+    });
+
+    // Mark this clone as configured.
+    clonedScene.userData.isSetup = true;
+
+}, [clonedScene, scene, targetHeight]); // Dependencies are correct.
+
+  return (
+    <primitive object={clonedScene} {...props}>
+      {/* All texture application logic has been removed */}
+    </primitive>
+  );
+}
