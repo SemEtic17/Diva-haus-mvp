@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect } from 'react';
 import { loginUser, API_BASE_URL } from '../api'; // NEW: Import API_BASE_URL
-import { toast } from '../components/NotificationSystem';
+import { toast } from '../components/Toaster';
 
 const AuthContext = createContext();
 

@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect, useContext } from 'react';
 import { getCart, addToCart, removeFromCart } from '../api';
 import { AuthContext } from './AuthContext';
-import { toast } from '../components/NotificationSystem'; // NEW: Import toast
+import { toast } from '../components/Toaster'; // NEW: Import toast
 
 const CartContext = createContext();
 

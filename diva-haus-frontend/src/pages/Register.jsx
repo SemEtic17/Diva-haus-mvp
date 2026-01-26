@@ -2,7 +2,7 @@ import { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { registerUser } from '../api';
-import { toast } from '../components/NotificationSystem'; // NEW: Import toast
+import { toast } from '../components/Toaster'; // NEW: Import toast
 
 const Register = () => {
   const [formData, setFormData] = useState({

@@ -5,7 +5,7 @@ import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext.jsx';
 import App from './App.jsx';
-import NotificationSystem from './components/NotificationSystem.jsx'; // NEW: Import NotificationSystem
+import Toaster from './components/Toaster.jsx'; // NEW: Import Toaster
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -15,7 +15,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <CartProvider>
           <WishlistProvider>
             <App />
-            <NotificationSystem /> {/* NEW: Add NotificationSystem */}
+            <Toaster /> {/* NEW: Add Toaster */}
           </WishlistProvider>
         </CartProvider>
       </AuthProvider>

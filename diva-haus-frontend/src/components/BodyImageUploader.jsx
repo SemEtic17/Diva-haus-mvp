@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { uploadBodyImage } from '../api'; // This API call needs to be created
-import { toast } from './NotificationSystem';
+import { toast } from './Toaster';
 
 const BodyImageUploader = ({ onUploadSuccess }) => {
   const [selectedFile, setSelectedFile] = useState(null);

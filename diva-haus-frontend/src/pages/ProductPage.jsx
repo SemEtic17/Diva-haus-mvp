@@ -5,7 +5,7 @@ import { AuthContext } from '../context/AuthContext';
 import { CartContext } from '../context/CartContext';
 import VirtualTryOnPlaceholder from '../components/VirtualTryOnPlaceholder';
 import HolographicContainer from '../components/HolographicContainer';
-import { toast } from '../components/NotificationSystem';
+import { toast } from '../components/Toaster';
 import { isTryOnEnabled } from '../config/features';
 
 const ProductPage = () => {

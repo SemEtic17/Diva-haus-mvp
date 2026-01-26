@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AuthContext } from '../context/AuthContext';
 import { uploadBodyImage } from '../api';
-import { toast } from '../components/NotificationSystem';
+import { toast } from '../components/Toaster';
 import { Upload, User, Check, X, Camera, Sparkles, LogOut, Mail, Trash2 } from 'lucide-react';
 
 // Animation Variants
