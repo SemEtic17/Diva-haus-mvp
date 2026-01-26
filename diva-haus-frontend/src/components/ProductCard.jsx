@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import { motion } from 'framer-motion';
-import { toast } from 'react-hot-toast';
+import { toast } from './NotificationSystem';
 import { useNavigate } from 'react-router-dom';
 import { Heart } from 'lucide-react';
 import { CartContext } from '../context/CartContext';

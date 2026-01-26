@@ -1,4 +1,3 @@
-import { useContext } from 'react';
 import { Routes, Route, Link } from 'react-router-dom';
 import ProductPage from './pages/ProductPage';
 import Login from './pages/Login';
@@ -9,7 +8,6 @@ import PrivateRoute from './components/PrivateRoute';
 import Navbar from './components/Navbar'; // Import Navbar
 import ProductGrid from './components/ProductGrid'; // Import ProductGrid
 import ProfilePage from './pages/ProfilePage'; // NEW: Import ProfilePage
-import NotificationProvider from './components/NotificationProvider'; // NEW: Import NotificationProvider
 import './App.css';
 
 function App() {
@@ -33,7 +31,6 @@ function App() {
           </Route>
         </Routes>
       </main>
-      <NotificationProvider />
     </div>
   );
 }
