@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Environment, Html } from '@react-three/drei';
+import { OrbitControls, Environment } from '@react-three/drei';
 import * as THREE from 'three';
 
 export default function ThreeScene({ children }) {
@@ -23,7 +23,7 @@ export default function ThreeScene({ children }) {
           position={[5, 10, 7.5]}
           intensity={1.0}
         />
-        <Suspense fallback={<Html center>Loading...</Html>}>
+        <Suspense fallback={null}>
           {children}
         </Suspense>
         <OrbitControls

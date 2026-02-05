@@ -4,113 +4,130 @@ import * as THREE from 'three';
 
 useGLTF.preload('/models/mannequin_cloth_ready.glb');
 
-// Helper to generate a random bright color
-const getRandomColor = () => {
-  const letters = '0123456789ABCDEF';
-  let color = '#';
-  // Simplified to generate brighter colors
-  for (let i = 0; i < 3; i++) {
-    color += letters[Math.floor(Math.random() * 6) + 10]; // Use brighter half
-  }
-  // Ensure it's a 6-digit hex
-  if (color.length === 4) {
-    color = `#${color[1]}${color[1]}${color[2]}${color[2]}${color[3]}${color[3]}`;
-  }
-  return color;
-};
-
+// --- Classifier Keywords ---
+const CLOTH_MATERIAL_KEYWORDS = ['cloth', 'dress', 'fabric', 'body_cloth', 'garment', 'outfit', 'clothe'];
+const CLOTH_MESH_KEYWORDS = ['cloth', 'dress', 'garment', 'top', 'skirt', 'pants', 'jacket', 'shirt'];
+const SKIN_MATERIAL_KEYWORDS = ['std_skin_head', 'std_skin_body', 'std_skin_arm', 'std_skin_leg', 'skin'];
+const EYE_NAIL_MATERIAL_KEYWORDS = ['std_eyelash', 'std_eye', 'eye', 'teeth', 'tongue', 'nail'];
 
 export default function MannequinModel({ product, targetHeight = 1.7, ...props }) {
   const { scene } = useGLTF('/models/mannequin_cloth_ready.glb');
-
   const clonedScene = useMemo(() => scene.clone(), [scene]);
 
   useEffect(() => {
     if (clonedScene.userData.isSetup) return;
 
-    console.log('%c--- MODEL DIAGNOSTICS INITIATED ---', 'color: yellow; font-weight: bold;');
+    console.clear();
+    console.log('%c--- SMART CLASSIFIER ANALYSIS ---', 'color: yellow; font-weight: bold; font-size: 14px;');
 
-    const materialColorMap = new Map();
-    const materialSharingMap = new Map();
-    const meshes = [];
+    // 2) Compute full model bounding box once
+    const modelBox = new THREE.Box3().setFromObject(clonedScene);
+    const modelSize = modelBox.getSize(new THREE.Vector3());
+    console.log('MODEL GLOBAL BOUNDS:', { min: modelBox.min, max: modelBox.max, size: modelSize });
+    console.log('-------------------------------------------');
 
-    // 1. Traverse the scene to analyze and color meshes
-    clonedScene.traverse((node) => {
-      if (node.isMesh) {
-        meshes.push(node);
+    const classifiedMeshes = {
+      CLOTH: [],
+      SKIN: [],
+      EYE_NAIL: [],
+      OTHER: [],
+    };
 
-        // Ensure we have a unique material instance per mesh for individual coloring
-        const originalMaterial = node.material;
-        node.material = originalMaterial.clone();
+    // 3) For each mesh...
+    clonedScene.traverse((mesh) => {
+      if (!mesh.isMesh) return;
 
-        // Track material sharing based on the ORIGINAL material's UUID
-        if (!materialSharingMap.has(originalMaterial.uuid)) {
-          materialSharingMap.set(originalMaterial.uuid, []);
-        }
-        materialSharingMap.get(originalMaterial.uuid).push(node.name);
+      const originalMaterial = mesh.material;
 
-        // Assign a consistent color based on the ORIGINAL material's UUID
-        if (!materialColorMap.has(originalMaterial.uuid)) {
-          const newColor = new THREE.Color(getRandomColor());
-          materialColorMap.set(originalMaterial.uuid, newColor);
-        }
-        
-        const assignedColor = materialColorMap.get(originalMaterial.uuid);
-        node.material.color = assignedColor;
-        node.material.map = null; // Ensure no texture is used
-        node.material.needsUpdate = true;
+      const meshBox = new THREE.Box3().setFromObject(mesh);
+      const meshSize = meshBox.getSize(new THREE.Vector3());
+      const meshCenter = meshBox.getCenter(new THREE.Vector3());
+      const meshAreaScore = meshSize.x * meshSize.z;
+      const normalizedY = modelSize.y > 0 ? (meshCenter.y - modelBox.min.y) / modelSize.y : 0;
+
+      let classification = 'OTHER';
+      let reason = 'fallback';
+
+      const lowerMatName = originalMaterial.name.toLowerCase();
+      const lowerMeshName = mesh.name.toLowerCase();
+
+      // 4) Classification logic
+      // A) Material name check
+      if (CLOTH_MATERIAL_KEYWORDS.some(kw => lowerMatName.includes(kw))) {
+        classification = 'CLOTH';
+        reason = `material name match ('${originalMaterial.name}')`;
       }
-    });
-
-    console.log('%c--- MESH & MATERIAL DETAILS ---', 'color: cyan;');
-    meshes.forEach((mesh, index) => {
-      const originalMaterialUUID = mesh.material.uuid; // In this new logic, this is the CLONED uuid
+      // B) Mesh name check
+      else if (CLOTH_MESH_KEYWORDS.some(kw => lowerMeshName.includes(kw))) {
+        classification = 'CLOTH';
+        reason = `mesh name match ('${mesh.name}')`;
+      }
+      // C) Heuristic bounding-box
+      else if (normalizedY >= 0.25 && normalizedY <= 0.7 && meshAreaScore >= 0.05 * (modelSize.x * modelSize.z)) {
+        classification = 'CLOTH';
+        reason = `bbox torso heuristic (y: ${normalizedY.toFixed(2)}, area: ${meshAreaScore.toFixed(4)})`;
+      }
+      // D) Skin material check
+      else if (SKIN_MATERIAL_KEYWORDS.some(kw => lowerMatName.includes(kw))) {
+        classification = 'SKIN';
+        reason = `material name skin ('${originalMaterial.name}')`;
+      }
+      // E) Eye/nail material check
+      else if (EYE_NAIL_MATERIAL_KEYWORDS.some(kw => lowerMatName.includes(kw))) {
+        classification = 'EYE_NAIL';
+        reason = `eye/nail material ('${originalMaterial.name}')`;
+      }
       
-      // Find the original UUID by looking at which group this mesh belongs to
-      let foundOriginalUUID;
-      for (const [uuid, meshNames] of materialSharingMap.entries()) {
-          if (meshNames.includes(mesh.name)) {
-              foundOriginalUUID = uuid;
-              break;
+      classifiedMeshes[classification].push({ name: mesh.name, reason });
+      
+      // 5) For every mesh
+      mesh.material = originalMaterial.clone();
+      mesh.material.map = null;
+      mesh.material.side = THREE.DoubleSide;
+      mesh.material.transparent = false;
+      mesh.material.depthWrite = true;
+      mesh.material.depthTest = true;
+
+      switch (classification) {
+        case 'CLOTH':
+          mesh.material.color.set('#ff0000'); // red
+          break;
+        case 'SKIN':
+          mesh.material.color.set('#00ff00'); // green
+          break;
+        case 'EYE_NAIL':
+          mesh.material.color.set('#0000ff'); // blue
+          if (lowerMatName.includes('nail')) {
+            mesh.material.color.set('#ffff00'); // yellow for nails
           }
+          break;
+        case 'OTHER':
+        default:
+          mesh.material.color.set('#cccccc'); // neutral grey
+          break;
       }
-
-      console.log(`%c[Mesh ${index + 1}/${meshes.length}]`, 'color: white; font-style: italic;');
-      console.log(`  - mesh.name:`, mesh.name);
-      console.log(`  - mesh.uuid:`, mesh.uuid);
-      console.log(`  - geometry.uuid:`, mesh.geometry.uuid);
-      console.log(`  - material.uuid (Cloned):`, mesh.material.uuid);
-      console.log(`  - material.name:`, mesh.material.name);
-      console.log(`  - material.uuid (Original):`, foundOriginalUUID);
-      const color = mesh.material.color;
-      console.log(`  - material.color (RGB):`, { r: color.r, g: color.g, b: color.b });
-      console.log(`  - material.color (HEX):`, `#${color.getHexString()}`);
+      mesh.material.needsUpdate = true;
       
-      const hasUVs = mesh.geometry.attributes.uv ? 'Yes' : 'No';
-      console.log(`  - geometry has UVs:`, hasUVs);
-      
-      const isShared = materialSharingMap.get(foundOriginalUUID).length > 1;
-      console.log(`  - material is shared:`, isShared ? `Yes (with ${materialSharingMap.get(foundOriginalUUID).length - 1} other mesh(es))` : 'No');
+      // 6) Logging
+      console.log(`%c[Mesh] ${mesh.name}`, 'color: cyan; font-weight: bold;');
+      console.log(`  - Classification: ${classification} (Reason: ${reason})`);
+      console.log(`  - IDs: mesh=${mesh.uuid}, geom=${mesh.geometry.uuid}`);
+      console.log(`  - Bounds: size=${JSON.stringify(meshSize)}, center=${JSON.stringify(meshCenter)}`);
+      console.log(`  - Heuristics: normalizedY=${normalizedY.toFixed(3)}, meshAreaScore=${meshAreaScore.toFixed(4)} (threshold=${(0.05 * (modelSize.x * modelSize.z)).toFixed(4)})`);
+      console.log(`  - Material: name='${originalMaterial.name}', uuid=${originalMaterial.uuid}`);
+      console.log(`  - Cloned Mat UUID: ${mesh.material.uuid}`);
+      console.log('---');
     });
-
-    // 2. Final Summary
-    console.log('%c--- FINAL SUMMARY ---', 'color: lime; font-weight: bold;');
-    console.log(`- Total meshes found: ${meshes.length}`);
-    console.log(`- Total unique materials found: ${materialColorMap.size}`);
     
-    console.log('- Material Sharing Details:');
-    for (const [uuid, meshNames] of materialSharingMap.entries()) {
-      if (meshNames.length > 1) {
-        console.log(`  - Material UUID ${uuid} is shared by:`);
-        meshNames.forEach(name => console.log(`    - ${name}`));
-      } else {
-        console.log(`  - Material UUID ${uuid} is used by: ${meshNames[0]}`);
-      }
-    }
+    // 7) Final Summary Log
+    console.log('%c--- CLASSIFICATION SUMMARY ---', 'color: lime; font-weight: bold; font-size: 14px;');
+    console.log('CLOTH:', classifiedMeshes.CLOTH);
+    console.log('SKIN:', classifiedMeshes.SKIN);
+    console.log('EYE_NAIL:', classifiedMeshes.EYE_NAIL);
+    console.log('OTHER:', classifiedMeshes.OTHER);
     console.log('%c------------------------------------', 'color: yellow; font-weight: bold;');
 
-
-    // --- Original setup logic for scaling and positioning ---
+    // 8) Keep scaling/centering logic
     const box = new THREE.Box3().setFromObject(clonedScene);
     const size = box.getSize(new THREE.Vector3());
     const scale = targetHeight / size.y;
