@@ -4,10 +4,15 @@ import HoloPedestal from '../three/HoloPedestal';
 import MannequinModel from '../three/MannequinModel';
 import GlassCube from '../three/GlassCube';
 import WireframeGrid from '../three/WireframeGrid';
+import ComingSoonBadge from './ComingSoonBadge';
 
 const HolographicContainer = ({ children, product }) => {
+  // Assume virtual_tryonAvailable is a property of the product object
+  // If missing or false, show the ComingSoonBadge
+  const showComingSoon = product?.virtual_tryonAvailable === false || product?.virtual_tryonAvailable === undefined;
   return (
     <div className="relative w-full h-full min-h-[500px] overflow-hidden bg-gradient-to-br from-gray-900 to-black rounded-lg shadow-xl">
+      {showComingSoon && <ComingSoonBadge />}
       <ThreeScene>
         <HoloPedestal position={[0, 0, 0]} />
         {/* Use product ID as key to ensure component remounts on product change */}

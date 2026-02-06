@@ -82,19 +82,11 @@ const ProductPage = () => {
 
   return (
     <div className="container mx-auto p-4">
-      {/* ===================== */}
-      {/* 3D HERO SHOWCASE */}
-      {/* ===================== */}
-      <div className="relative w-full h-[500px] mb-12">
-        <HolographicContainer product={product}>
-          
-        </HolographicContainer>
-      </div>
 
       {/* ===================== */}
       {/* PRODUCT DETAILS */}
       {/* ===================== */}
-      <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
+      <div className="flex flex-col md:flex-row items-center md:items-start gap-8 mt-8">
         <img
           src={product.image}
           alt={product.name}
@@ -132,7 +124,7 @@ const ProductPage = () => {
         <div className="mt-16">
           <button
             onClick={handleTryOn}
-            className="mb-6 w-full md:w-auto bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300"
+            className="w-full md:w-auto bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300"
           >
             Virtual Try-On
           </button>
@@ -140,6 +132,17 @@ const ProductPage = () => {
           <VirtualTryOnPlaceholder />
         </div>
       )}
+
+      {/* ===================== */}
+      {/* 3D HERO SHOWCASE */}
+      {/* ===================== */}
+      <div className="relative w-full h-[500px] mb-4">
+        <HolographicContainer product={product}>
+          
+        </HolographicContainer>
+      </div>
+
+    
     </div>
   );
 };
