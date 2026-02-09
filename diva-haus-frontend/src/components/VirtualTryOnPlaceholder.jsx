@@ -1,3 +1,4 @@
+// diva-haus-frontend/src/components/VirtualTryOnPlaceholder.jsx
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -5,12 +6,12 @@ import { Camera, Sparkles, Upload, Zap } from 'lucide-react';
 
 /**
  * VirtualTryOnPlaceholder
- * - This file replaces previous duplicate upload component.
- * - It keeps the aspirational "Coming Soon" marketing and also provides a simple upload skeleton
- *   for users to submit their photo (mocked server will reply with previewUrl).
+ * - Backwards-compatible: accepts either `productId` OR `product` props.
+ * - If parent passes product object, we read product._id automatically.
  *
  * Props:
  * - productId (string) optional: used in the POST body
+ * - product (object) optional: whole product object (we try product._id)
  * - showUploader (boolean) optional: if true, show upload controls by default
  *
  * Important: Do NOT add 3D logic; this is purely UI.
@@ -46,6 +47,7 @@ const VirtualTryOnPlaceholder = ({ productId, showUploader = false }) => {
       setError('Please select an image and ensure product ID is provided.');
       return;
     }
+
     setStatus('uploading');
     setError(null);
     setResponse(null);
@@ -54,14 +56,19 @@ const VirtualTryOnPlaceholder = ({ productId, showUploader = false }) => {
       reader.readAsDataURL(file);
       reader.onloadend = async () => {
         const base64Image = reader.result.split(',')[1];
-        const res = await fetch('/api/virtual-tryon', {
+        const res = await fetch('/api/products/virtual-tryon', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ productId, imageBase64: base64Image }),
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
+        console.log('[VirtualTryOn] server response', data);
         setResponse(data);
+        if (data.previewUrl) {
+          // replace preview with returned preview URL (useful for mock)
+          setPreviewUrl(data.previewUrl);
+        }
         setStatus('done');
       };
     } catch (err) {
@@ -79,7 +86,13 @@ const VirtualTryOnPlaceholder = ({ productId, showUploader = false }) => {
         <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-pink-500/10 rounded-full blur-3xl" />
       </div>
 
-      <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, ease: 'easeOut' }} className="max-w-4xl mx-auto relative">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
+        className="max-w-4xl mx-auto relative"
+      >
         <div className="relative rounded-3xl overflow-hidden bg-black/50">
           <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-cyan-400 via-pink-500 to-cyan-400 p-[1px]" style={{ zIndex: 1 }}>
             <div className="w-full h-full rounded-3xl bg-black" />
@@ -149,13 +162,6 @@ const VirtualTryOnPlaceholder = ({ productId, showUploader = false }) => {
                 {status === 'done' && <p className="mt-3 text-sm text-green-400">Upload complete — preview available.</p>}
                 {status === 'error' && <p className="mt-3 text-sm text-red-400">Error: {error}</p>}
                 {status === 'idle' && <p className="mt-3 text-sm text-gray-400">Status: Ready</p>}
-
-                {response && (
-                  <div className="mt-4 p-3 bg-gray-800 rounded-md border border-white/6">
-                    <p className="text-sm text-gray-300 mb-2">Backend Response:</p>
-                    <pre className="text-xs text-gray-200 overflow-auto whitespace-pre-wrap">{JSON.stringify(response, null, 2)}</pre>
-                  </div>
-                )}
               </div>
             )}
 

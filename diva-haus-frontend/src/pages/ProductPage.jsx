@@ -129,7 +129,8 @@ const ProductPage = () => {
             Virtual Try-On
           </button>
 
-          <VirtualTryOnPlaceholder />
+          <VirtualTryOnPlaceholder productId={product._id} />
+
         </div>
       )}
 
