@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Camera, Sparkles, Upload, Zap } from 'lucide-react';
+import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider';
 
 /**
  * VirtualTryOnPlaceholder
@@ -17,11 +18,59 @@ import { Camera, Sparkles, Upload, Zap } from 'lucide-react';
  * Important: Do NOT add 3D logic; this is purely UI.
  */
 const VirtualTryOnPlaceholder = ({ productId, showUploader = false }) => {
+  // CircularProgressIndicator component
+  const CircularProgressIndicator = ({ progress }) => {
+    const radius = 20;
+    const circumference = 2 * Math.PI * radius;
+    const strokeDashoffset = circumference - (progress / 100) * circumference;
+
+    return (
+      <div className="relative w-12 h-12 flex items-center justify-center">
+        <motion.svg
+          className="w-full h-full"
+          viewBox="0 0 44 44"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            className="text-gray-700"
+            strokeWidth="4"
+            stroke="currentColor"
+            fill="transparent"
+            r={radius}
+            cx="22"
+            cy="22"
+          />
+          <motion.circle
+            className="text-green-500"
+            strokeWidth="4"
+            stroke="currentColor"
+            fill="transparent"
+            r={radius}
+            cx="22"
+            cy="22"
+            strokeDasharray={circumference}
+            strokeDashoffset={strokeDashoffset}
+            strokeLinecap="round"
+            transform="rotate(-90 22 22)"
+            initial={{ strokeDashoffset: circumference }}
+            animate={{ strokeDashoffset: strokeDashoffset }}
+            transition={{ duration: 0.1, ease: "linear" }}
+          />
+        </motion.svg>
+        <span className="absolute text-xs font-semibold text-white">
+          {Math.round(progress)}%
+        </span>
+      </div>
+    );
+  };
+
   // upload state
   const [file, setFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [status, setStatus] = useState('idle'); // idle, uploading, done, error
+  const [uploadProgress, setUploadProgress] = useState(0); // For circular loading indicator
   const [response, setResponse] = useState(null);
+  const [processedImageUrl, setProcessedImageUrl] = useState(null); // For the processed image from the API
   const [error, setError] = useState(null);
   const [uploaderOpen, setUploaderOpen] = useState(showUploader);
 
@@ -58,8 +107,21 @@ const VirtualTryOnPlaceholder = ({ productId, showUploader = false }) => {
     }
 
     setStatus('uploading');
+    setUploadProgress(0); // Reset progress
     setError(null);
     setResponse(null);
+
+    // Mock progress update
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += 10;
+      if (progress <= 90) { // Simulate up to 90% before actual response
+        setUploadProgress(progress);
+      } else {
+        clearInterval(interval);
+      }
+    }, 200);
+
     try {
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -75,14 +137,16 @@ const VirtualTryOnPlaceholder = ({ productId, showUploader = false }) => {
         console.log('[VirtualTryOn] server response', data);
         setResponse(data);
         if (data.previewUrl) {
-          // replace preview with returned preview URL (useful for mock)
-          setPreviewUrl(data.previewUrl);
+          setProcessedImageUrl(data.previewUrl);
         }
+        clearInterval(interval); // Stop mock progress
+        setUploadProgress(100); // Set to 100% on completion
         setStatus('done');
       };
     } catch (err) {
       console.error('[VirtualTryOnPlaceholder] upload err', err);
       setError(err?.message || 'Upload failed');
+      clearInterval(interval); // Stop mock progress on error
       setStatus('error');
     }
   };
@@ -152,26 +216,100 @@ const VirtualTryOnPlaceholder = ({ productId, showUploader = false }) => {
             </motion.div>
 
             {/* Inline uploader panel */}
-            {uploaderOpen && (
+            {uploaderOpen && status !== 'done' && (
               <div className="mt-8 bg-gray-900 p-6 rounded-xl border border-white/6">
-                <label htmlFor="image-upload" className="block text-sm font-medium text-gray-300 mb-2">
-                  Upload (JPG/PNG)
-                </label>
-                <input id="image-upload" type="file" accept="image/*" onChange={handleFileChange} className="block w-full text-sm text-gray-400 mb-4" />
-                {previewUrl && <img src={previewUrl} alt="preview" className="max-w-xs rounded-md border border-gray-700 mb-4" />}
+                <div className="flex items-center justify-center w-full mb-4">
+                  <label htmlFor="image-upload" className="flex flex-col items-center justify-center w-full h-64 bg-gray-900 border border-dashed border-gray-700 rounded-md cursor-pointer hover:bg-gray-800">
+                      <div className="flex flex-col items-center justify-center text-body pt-5 pb-6">
+                          <svg className="w-8 h-8 mb-4 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h3a3 3 0 0 0 0-6h-.025a5.56 5.56 0 0 0 .025-.5A5.5 5.5 0 0 0 7.207 9.021C7.137 9.017 7.071 9 7 9a4 4 0 1 0 0 8h2.167M12 19v-9m0 0-2 2m2-2 2 2"/></svg>
+                          <p className="mb-2 text-sm text-gray-400"><span className="font-semibold">Click to upload</span> or drag and drop</p>
+                          <p className="text-xs text-gray-500">JPG/PNG (Max 10MB)</p>
+                      </div>
+                      <input id="image-upload" type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
+                  </label>
+                </div>
+                {previewUrl && !processedImageUrl && (
+                  <img src={previewUrl} alt="preview" className="max-w-xs rounded-md border border-gray-700 mb-4 mx-auto" />
+                )}
                 <div className="flex gap-3">
-                  <button disabled={!file || status === 'uploading'} onClick={handleSubmit} className={`px-4 py-2 rounded-md text-sm font-medium ${!file ? 'bg-gray-600 text-gray-200' : 'bg-green-600 text-white hover:bg-green-700'}`}>
-                    {status === 'uploading' ? 'Uploading...' : 'Submit for Try-On'}
+                  <button disabled={!file || status === 'uploading'} onClick={handleSubmit} className={`px-4 py-2 rounded-md text-sm font-medium ${!file ? 'bg-gray-600 text-gray-200' : 'bg-green-600 text-white hover:bg-green-700'} flex items-center justify-center gap-2`}>
+                    {status === 'uploading' ? (
+                      <>
+                        <CircularProgressIndicator progress={uploadProgress} />
+                        <span>Uploading {uploadProgress}%</span>
+                      </>
+                    ) : (
+                      'Submit for Try-On'
+                    )}
                   </button>
-                  <button onClick={() => { setFile(null); setPreviewUrl(null); setError(null); setResponse(null); setStatus('idle'); }} className="px-4 py-2 rounded-md bg-gray-700 text-white text-sm">
+                  <button onClick={() => { setFile(null); setPreviewUrl(null); setError(null); setResponse(null); setStatus('idle'); setProcessedImageUrl(null); setUploaderOpen(false); }} className="px-4 py-2 rounded-md bg-gray-700 text-white text-sm">
                     Reset
                   </button>
                 </div>
 
-                {status === 'done' && <p className="mt-3 text-sm text-green-400">Upload complete — preview available.</p>}
+                {status === 'done' && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5 }}
+                    className="mt-3 text-sm text-green-400 flex items-center gap-2"
+                  >
+                    <motion.svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="w-5 h-5"
+                    >
+                      <motion.path
+                        d="M20 6L9 17L4 12"
+                        initial={{ pathLength: 0 }}
+                        animate={{ pathLength: 1 }}
+                        transition={{ duration: 0.5, ease: "easeInOut" }}
+                      />
+                    </motion.svg>
+                    Upload complete — preview available.
+                  </motion.div>
+                )}
                 {status === 'error' && <p className="mt-3 text-sm text-red-400">Error: {error}</p>}
                 {status === 'idle' && <p className="mt-3 text-sm text-gray-400">Status: Ready</p>}
               </div>
+            )}
+
+            {/* Results Display */}
+            {status === 'done' && processedImageUrl && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: 'easeOut' }}
+                className="mt-8 bg-gray-900 p-6 rounded-xl border border-white/6 text-center"
+              >
+                <h3 className="font-semibold text-xl text-white mb-4">Your Virtual Try-On</h3>
+                <div className="mb-6">
+                  <ReactCompareSlider
+                    itemOne={<ReactCompareSliderImage src={previewUrl} alt="before" />}
+                    itemTwo={<ReactCompareSliderImage src={processedImageUrl} alt="after" />}
+                    className="max-w-md rounded-md border border-gray-700 mx-auto"
+                  />
+                </div>
+                <div className="flex justify-center gap-4">
+                  <a
+                    href={processedImageUrl}
+                    download="diva-haus-tryon.png"
+                    className="bg-green-600 text-white font-semibold px-6 py-3 rounded-md shadow-md hover:bg-green-700 transition"
+                  >
+                    Download
+                  </a>
+                  <button className="bg-blue-600 text-white font-semibold px-6 py-3 rounded-md shadow-md hover:bg-blue-700 transition">
+                    Share
+                  </button>
+                </div>
+              </motion.div>
             )}
 
             <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.6, duration: 0.5 }} className="text-center text-gray-500 text-sm mt-6">
