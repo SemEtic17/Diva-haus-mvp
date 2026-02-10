@@ -28,6 +28,15 @@ const VirtualTryOnPlaceholder = ({ productId, showUploader = false }) => {
   const handleFileChange = (event) => {
     const selectedFile = event.target.files?.[0] || null;
     if (selectedFile) {
+      // Validate file size
+      const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+      if (selectedFile.size > MAX_FILE_SIZE) {
+        setError('File size exceeds the 10MB limit.');
+        setFile(null);
+        setPreviewUrl(null);
+        return; // Stop processing
+      }
+
       setFile(selectedFile);
       const reader = new FileReader();
       reader.onloadend = () => {
