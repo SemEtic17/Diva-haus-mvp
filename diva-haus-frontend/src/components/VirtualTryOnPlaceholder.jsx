@@ -1,9 +1,18 @@
 // diva-haus-frontend/src/components/VirtualTryOnPlaceholder.jsx
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react'; // Added useCallback
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Camera, Sparkles, Upload, Zap } from 'lucide-react';
+import { Camera, Sparkles, Upload, Zap, XCircle, CheckCircle, RotateCcw } from 'lucide-react'; // Added XCircle, CheckCircle, RotateCcw
 import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider';
+
+/**
+ * @typedef {object} VirtualTryOnResponseContract
+ * @property {boolean} ok - Indicates if the operation was successful.
+ * @property {string} [previewUrl] - The URL of the processed image, present on success.
+ * @property {string} [error] - A human-readable error message, present on failure.
+ * @property {number} [processingTimeMs] - The time taken for processing in milliseconds.
+ * @property {string} [modelVersion] - The version of the model used for processing.
+ */
 
 /**
  * VirtualTryOnPlaceholder
@@ -64,26 +73,43 @@ const VirtualTryOnPlaceholder = ({ productId, showUploader = false }) => {
     );
   };
 
-  // upload state
+  // --- State Machine ---
   const [file, setFile] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState(null);
-  const [status, setStatus] = useState('idle'); // idle, uploading, done, error
-  const [uploadProgress, setUploadProgress] = useState(0); // For circular loading indicator
-  const [response, setResponse] = useState(null);
-  const [processedImageUrl, setProcessedImageUrl] = useState(null); // For the processed image from the API
-  const [error, setError] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null); // User's uploaded image preview
+  const [processedImageUrl, setProcessedImageUrl] = useState(null); // Result from AI try-on
+  const [currentStatus, setCurrentStatus] = useState('idle'); // idle, uploading, processing, success, error
+  const [uploadProgress, setUploadProgress] = useState(0); // 0-100 for visual feedback
+  const [errorMessage, setErrorMessage] = useState(''); // User-friendly error message
+  const [responseMetadata, setResponseMetadata] = useState(null); // To store processingTimeMs, modelVersion etc.
   const [uploaderOpen, setUploaderOpen] = useState(showUploader);
 
+  // Helper to reset all states
+  const resetState = useCallback(() => {
+    setFile(null);
+    setPreviewUrl(null);
+    setProcessedImageUrl(null);
+    setCurrentStatus('idle');
+    setUploadProgress(0);
+    setErrorMessage('');
+    setResponseMetadata(null);
+    setUploaderOpen(false); // Close uploader on reset
+  }, []);
+
   const handleFileChange = (event) => {
+    // Reset any previous errors or results when a new file is selected
+    setErrorMessage('');
+    setProcessedImageUrl(null);
+    setCurrentStatus('idle');
+
     const selectedFile = event.target.files?.[0] || null;
     if (selectedFile) {
       // Validate file size
       const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
       if (selectedFile.size > MAX_FILE_SIZE) {
-        setError('File size exceeds the 10MB limit.');
+        setErrorMessage('File size exceeds the 10MB limit.');
         setFile(null);
         setPreviewUrl(null);
-        return; // Stop processing
+        return;
       }
 
       setFile(selectedFile);
@@ -92,64 +118,94 @@ const VirtualTryOnPlaceholder = ({ productId, showUploader = false }) => {
         setPreviewUrl(reader.result);
       };
       reader.readAsDataURL(selectedFile);
-      setError(null);
-      setResponse(null);
     } else {
       setFile(null);
       setPreviewUrl(null);
+      setUploaderOpen(false); // Close uploader if no file selected
     }
   };
 
   const handleSubmit = async () => {
     if (!file || !productId) {
-      setError('Please select an image and ensure product ID is provided.');
+      setErrorMessage('Please select an image and ensure product ID is available.');
+      setCurrentStatus('error');
       return;
     }
 
-    setStatus('uploading');
-    setUploadProgress(0); // Reset progress
-    setError(null);
-    setResponse(null);
+    setErrorMessage(''); // Clear previous errors
+    setProcessedImageUrl(null); // Clear previous results
+    setCurrentStatus('uploading');
+    setUploadProgress(0);
 
-    // Mock progress update
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += 10;
-      if (progress <= 90) { // Simulate up to 90% before actual response
-        setUploadProgress(progress);
+    let currentProgress = 0;
+    // Simulate initial upload progress quickly
+    const uploadInterval = setInterval(() => {
+      currentProgress += 5; // Faster initial progress
+      if (currentProgress < 50) {
+        setUploadProgress(currentProgress);
       } else {
-        clearInterval(interval);
+        clearInterval(uploadInterval);
       }
-    }, 200);
+    }, 100);
 
     try {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onloadend = async () => {
+        clearInterval(uploadInterval); // Ensure upload progress simulation stops
+        setUploadProgress(50); // Mark upload as "complete" to transition to processing
+
+        setCurrentStatus('processing');
+        // Simulate processing progress
+        let processingProgress = 50;
+        const processingInterval = setInterval(() => {
+          processingProgress += 2;
+          if (processingProgress < 99) { // Simulate up to 99%
+            setUploadProgress(processingProgress);
+          } else {
+            clearInterval(processingInterval);
+          }
+        }, 300);
+
         const base64Image = reader.result.split(',')[1];
         const res = await fetch('/api/products/virtual-tryon', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ productId, imageBase64: base64Image }),
         });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        console.log('[VirtualTryOn] server response', data);
-        setResponse(data);
-        if (data.previewUrl) {
-          setProcessedImageUrl(data.previewUrl);
+
+        clearInterval(processingInterval); // Stop processing progress simulation
+
+        /** @type {VirtualTryOnResponseContract} */
+        const data = await res.json(); // Always expect JSON now, even on error
+
+        if (!data.ok) {
+          throw new Error(data.error || 'Virtual try-on failed with an unknown error.');
         }
-        clearInterval(interval); // Stop mock progress
-        setUploadProgress(100); // Set to 100% on completion
-        setStatus('done');
+
+        setProcessedImageUrl(data.previewUrl || '');
+        setResponseMetadata({
+          processingTimeMs: data.processingTimeMs,
+          modelVersion: data.modelVersion,
+        });
+        setUploadProgress(100); // Final progress
+        setCurrentStatus('success');
       };
     } catch (err) {
-      console.error('[VirtualTryOnPlaceholder] upload err', err);
-      setError(err?.message || 'Upload failed');
-      clearInterval(interval); // Stop mock progress on error
-      setStatus('error');
+      clearInterval(uploadInterval); // Ensure intervals are cleared
+      setUploadProgress(0); // Reset progress on error
+      console.error('[VirtualTryOnPlaceholder] Try-on error:', err);
+      setErrorMessage(err.message || 'An unexpected error occurred during try-on. Please try again.');
+      setCurrentStatus('error');
     }
   };
+
+  const handleRetry = () => {
+    resetState();
+    setUploaderOpen(true); // Open uploader again for retry
+  };
+
+  const isUploadingOrProcessing = currentStatus === 'uploading' || currentStatus === 'processing';
 
   return (
     <section className="py-16 md:py-24 px-4 relative overflow-hidden">
@@ -209,14 +265,16 @@ const VirtualTryOnPlaceholder = ({ productId, showUploader = false }) => {
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.5, duration: 0.5 }} className="flex justify-center">
-              <button onClick={() => setUploaderOpen((v) => !v)} className="bg-gradient-to-r from-yellow-400 to-yellow-300 text-black font-semibold px-8 py-4 text-base rounded-xl shadow-md hover:shadow-lg transition">
-                <Upload className="w-5 h-5 mr-2 inline" />
-                {uploaderOpen ? 'Close uploader' : 'Upload Your Photo'}
-              </button>
+              {currentStatus !== 'success' && (
+                <button onClick={() => setUploaderOpen((v) => !v)} className="bg-gradient-to-r from-yellow-400 to-yellow-300 text-black font-semibold px-8 py-4 text-base rounded-xl shadow-md hover:shadow-lg transition">
+                  <Upload className="w-5 h-5 mr-2 inline" />
+                  {uploaderOpen ? 'Close uploader' : 'Upload Your Photo'}
+                </button>
+              )}
             </motion.div>
 
             {/* Inline uploader panel */}
-            {uploaderOpen && status !== 'done' && (
+            {uploaderOpen && currentStatus !== 'success' && (
               <div className="mt-8 bg-gray-900 p-6 rounded-xl border border-white/6">
                 <div className="flex items-center justify-center w-full mb-4">
                   <label htmlFor="image-upload" className="flex flex-col items-center justify-center w-full h-64 bg-gray-900 border border-dashed border-gray-700 rounded-md cursor-pointer hover:bg-gray-800">
@@ -228,68 +286,80 @@ const VirtualTryOnPlaceholder = ({ productId, showUploader = false }) => {
                       <input id="image-upload" type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
                   </label>
                 </div>
-                {previewUrl && !processedImageUrl && (
-                  <img src={previewUrl} alt="preview" className="max-w-xs rounded-md border border-gray-700 mb-4 mx-auto" />
+                {previewUrl && (
+                  <img src={previewUrl} alt="uploaded preview" className="max-w-xs rounded-md border border-gray-700 mb-4 mx-auto" />
                 )}
-                <div className="flex gap-3">
-                  <button disabled={!file || status === 'uploading'} onClick={handleSubmit} className={`px-4 py-2 rounded-md text-sm font-medium ${!file ? 'bg-gray-600 text-gray-200' : 'bg-green-600 text-white hover:bg-green-700'} flex items-center justify-center gap-2`}>
-                    {status === 'uploading' ? (
+                <div className="flex gap-3 justify-center">
+                  <button
+                    disabled={!file || isUploadingOrProcessing}
+                    onClick={handleSubmit}
+                    className={`px-4 py-2 rounded-md text-sm font-medium ${!file || isUploadingOrProcessing ? 'bg-gray-600 text-gray-200 cursor-not-allowed' : 'bg-green-600 text-white hover:bg-green-700'} flex items-center justify-center gap-2`}
+                  >
+                    {currentStatus === 'uploading' ? (
                       <>
                         <CircularProgressIndicator progress={uploadProgress} />
-                        <span>Uploading {uploadProgress}%</span>
+                        <span>Uploading {Math.round(uploadProgress)}%</span>
+                      </>
+                    ) : currentStatus === 'processing' ? (
+                      <>
+                        <CircularProgressIndicator progress={uploadProgress} />
+                        <span>Processing {Math.round(uploadProgress)}%</span>
                       </>
                     ) : (
                       'Submit for Try-On'
                     )}
                   </button>
-                  <button onClick={() => { setFile(null); setPreviewUrl(null); setError(null); setResponse(null); setStatus('idle'); setProcessedImageUrl(null); setUploaderOpen(false); }} className="px-4 py-2 rounded-md bg-gray-700 text-white text-sm">
+                  <button
+                    onClick={resetState}
+                    className="px-4 py-2 rounded-md bg-gray-700 text-white text-sm hover:bg-gray-600"
+                    disabled={isUploadingOrProcessing}
+                  >
                     Reset
                   </button>
                 </div>
 
-                {status === 'done' && (
+                {currentStatus === 'error' && (
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ duration: 0.5 }}
-                    className="mt-3 text-sm text-green-400 flex items-center gap-2"
+                    transition={{ duration: 0.3 }}
+                    className="mt-3 text-sm text-red-400 flex items-center gap-2 justify-center"
                   >
-                    <motion.svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="w-5 h-5"
+                    <XCircle className="w-5 h-5" />
+                    <span>Error: {errorMessage}</span>
+                    <button
+                      onClick={handleRetry}
+                      className="ml-2 text-blue-400 hover:text-blue-300 flex items-center gap-1"
                     >
-                      <motion.path
-                        d="M20 6L9 17L4 12"
-                        initial={{ pathLength: 0 }}
-                        animate={{ pathLength: 1 }}
-                        transition={{ duration: 0.5, ease: "easeInOut" }}
-                      />
-                    </motion.svg>
-                    Upload complete — preview available.
+                      <RotateCcw className="w-4 h-4" /> Try again
+                    </button>
                   </motion.div>
                 )}
-                {status === 'error' && <p className="mt-3 text-sm text-red-400">Error: {error}</p>}
-                {status === 'idle' && <p className="mt-3 text-sm text-gray-400">Status: Ready</p>}
+                {currentStatus === 'idle' && errorMessage && ( // Show file size error if any
+                  <p className="mt-3 text-sm text-red-400 text-center">Error: {errorMessage}</p>
+                )}
+                {currentStatus === 'idle' && !errorMessage && (
+                  <p className="mt-3 text-sm text-gray-400 text-center">Status: Ready to upload</p>
+                )}
               </div>
             )}
 
             {/* Results Display */}
-            {status === 'done' && processedImageUrl && (
+            {currentStatus === 'success' && processedImageUrl && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, ease: 'easeOut' }}
                 className="mt-8 bg-gray-900 p-6 rounded-xl border border-white/6 text-center"
               >
-                <h3 className="font-semibold text-xl text-white mb-4">Your Virtual Try-On</h3>
+                <h3 className="font-semibold text-xl text-white mb-4 flex items-center justify-center gap-2">
+                  <CheckCircle className="w-6 h-6 text-green-500" /> Your Virtual Try-On is Ready!
+                </h3>
+                {responseMetadata && (
+                  <p className="text-gray-500 text-xs mb-4">
+                    Processed in {responseMetadata.processingTimeMs}ms by {responseMetadata.modelVersion}
+                  </p>
+                )}
                 <div className="mb-6">
                   <ReactCompareSlider
                     itemOne={<ReactCompareSliderImage src={previewUrl} alt="before" />}
@@ -307,6 +377,12 @@ const VirtualTryOnPlaceholder = ({ productId, showUploader = false }) => {
                   </a>
                   <button className="bg-blue-600 text-white font-semibold px-6 py-3 rounded-md shadow-md hover:bg-blue-700 transition">
                     Share
+                  </button>
+                  <button
+                    onClick={handleRetry}
+                    className="bg-purple-600 text-white font-semibold px-6 py-3 rounded-md shadow-md hover:bg-purple-700 transition flex items-center gap-2"
+                  >
+                    <RotateCcw className="w-4 h-4" /> Try Again
                   </button>
                 </div>
               </motion.div>
