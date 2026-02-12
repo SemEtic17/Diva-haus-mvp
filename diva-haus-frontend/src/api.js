@@ -38,16 +38,16 @@ export const uploadForTryOn = async (imageFile, productId) => {
 
   const response = await fetch(`${API_BASE_URL}/uploads/virtual-tryon`, {
     method: 'POST',
-    body: formData, // FormData automatically sets Content-Type: multipart/form-data
+    body: formData,
     credentials: 'include',
   });
 
   const data = await response.json();
-  
+
   if (!response.ok || !data.ok) {
     throw new Error(data.error || 'Virtual try-on upload failed');
   }
-  
+
   return data;
 };
 

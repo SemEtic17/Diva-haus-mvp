@@ -2,8 +2,8 @@
 import multer from 'multer';
 
 // Constants for file validation
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+export const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+export const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 // File filter for image validation
 const imageFileFilter = (req, file, cb) => {
@@ -31,17 +31,8 @@ export const uploadImage = multer({
   fileFilter: imageFileFilter,
 });
 
-/**
- * Multer instance for virtual try-on image uploads
- * Uses same configuration as general uploads
- */
-export const uploadTryOnImage = multer({
-  storage: memoryStorage,
-  limits: {
-    fileSize: MAX_FILE_SIZE,
-  },
-  fileFilter: imageFileFilter,
-});
+// Reuse same instance for try-on uploads (keeps config consistent)
+export const uploadTryOnImage = uploadImage;
 
 export default {
   uploadImage,
