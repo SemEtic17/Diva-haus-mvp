@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Camera, Sparkles, Upload, Zap, XCircle, CheckCircle, RotateCcw } from 'lucide-react'; // Added XCircle, CheckCircle, RotateCcw
 import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider';
+import { uploadForTryOn } from '../api'; // Day 18: Use multipart upload API
 
 /**
  * @typedef {object} VirtualTryOnResponseContract
@@ -149,48 +150,34 @@ const VirtualTryOnPlaceholder = ({ productId, showUploader = false }) => {
     }, 100);
 
     try {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onloadend = async () => {
-        clearInterval(uploadInterval); // Ensure upload progress simulation stops
-        setUploadProgress(50); // Mark upload as "complete" to transition to processing
+      // Day 18: Use multipart/form-data upload instead of base64
+      clearInterval(uploadInterval);
+      setUploadProgress(50); // Mark upload as "complete" to transition to processing
 
-        setCurrentStatus('processing');
-        // Simulate processing progress
-        let processingProgress = 50;
-        const processingInterval = setInterval(() => {
-          processingProgress += 2;
-          if (processingProgress < 99) { // Simulate up to 99%
-            setUploadProgress(processingProgress);
-          } else {
-            clearInterval(processingInterval);
-          }
-        }, 300);
-
-        const base64Image = reader.result.split(',')[1];
-        const res = await fetch('/api/products/virtual-tryon', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ productId, imageBase64: base64Image }),
-        });
-
-        clearInterval(processingInterval); // Stop processing progress simulation
-
-        /** @type {VirtualTryOnResponseContract} */
-        const data = await res.json(); // Always expect JSON now, even on error
-
-        if (!data.ok) {
-          throw new Error(data.error || 'Virtual try-on failed with an unknown error.');
+      setCurrentStatus('processing');
+      // Simulate processing progress
+      let processingProgress = 50;
+      const processingInterval = setInterval(() => {
+        processingProgress += 2;
+        if (processingProgress < 99) { // Simulate up to 99%
+          setUploadProgress(processingProgress);
+        } else {
+          clearInterval(processingInterval);
         }
+      }, 300);
 
-        setProcessedImageUrl(data.previewUrl || '');
-        setResponseMetadata({
-          processingTimeMs: data.processingTimeMs,
-          modelVersion: data.modelVersion,
-        });
-        setUploadProgress(100); // Final progress
-        setCurrentStatus('success');
-      };
+      // Use the new multipart upload API
+      const data = await uploadForTryOn(file, productId);
+
+      clearInterval(processingInterval); // Stop processing progress simulation
+
+      setProcessedImageUrl(data.previewUrl || '');
+      setResponseMetadata({
+        processingTimeMs: data.processingTimeMs,
+        modelVersion: data.modelVersion,
+      });
+      setUploadProgress(100); // Final progress
+      setCurrentStatus('success');
     } catch (err) {
       clearInterval(uploadInterval); // Ensure intervals are cleared
       setUploadProgress(0); // Reset progress on error

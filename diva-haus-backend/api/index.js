@@ -7,6 +7,7 @@ import productRoutes from './routes/productRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import cartRoutes from './routes/cartRoutes.js';
 import userRoutes from './routes/userRoutes.js'; // NEW: Import userRoutes
+import uploadRoutes from './routes/uploadRoutes.js'; // Day 18: Dedicated upload service
 
 dotenv.config();
 
@@ -42,7 +43,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/users', userRoutes); // NEW: Use userRoutes
-
+app.use('/api/uploads', uploadRoutes); // Day 18: Dedicated upload service
 
 // Health Check
 app.get('/health', (req, res) => {

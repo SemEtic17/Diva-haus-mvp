@@ -23,6 +23,34 @@ const fetchWithAuth = async (url, options = {}) => {
   }
 };
 
+// --- Uploads ---
+
+/**
+ * Upload image for virtual try-on using multipart/form-data
+ * @param {File} imageFile - The image file to upload
+ * @param {string} productId - The product ID to try on
+ * @returns {Promise<{ok: boolean, previewUrl?: string, error?: string, processingTimeMs?: number, modelVersion?: string}>}
+ */
+export const uploadForTryOn = async (imageFile, productId) => {
+  const formData = new FormData();
+  formData.append('image', imageFile);
+  formData.append('productId', productId);
+
+  const response = await fetch(`${API_BASE_URL}/uploads/virtual-tryon`, {
+    method: 'POST',
+    body: formData, // FormData automatically sets Content-Type: multipart/form-data
+    credentials: 'include',
+  });
+
+  const data = await response.json();
+  
+  if (!response.ok || !data.ok) {
+    throw new Error(data.error || 'Virtual try-on upload failed');
+  }
+  
+  return data;
+};
+
 // --- User (Body Image) ---
 export const uploadBodyImage = async (formData) => {
   const response = await fetch(`${API_BASE_URL}/users/upload-body-image`, {
