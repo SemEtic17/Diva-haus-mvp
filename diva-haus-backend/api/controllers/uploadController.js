@@ -1,5 +1,6 @@
 // diva-haus-backend/api/controllers/uploadController.js
 import { runVirtualTryOn } from '../services/virtualTryOn.service.js';
+import storageService from '../services/storage.service.js'; // Day 19: Persist uploaded images
 
 /**
  * @typedef {object} VirtualTryOnResponseContract
@@ -44,11 +45,25 @@ export async function handleTryOnUpload(req, res) {
       });
     }
 
-    // Pass file buffer to the service (instead of base64)
+    // Day 19: Persist the uploaded image to storage
+    const uploadResult = await storageService.uploadTryOnImage(file);
+    
+    if (!uploadResult.success) {
+      return res.status(500).json({
+        ok: false,
+        error: uploadResult.error || 'Failed to save uploaded image',
+        processingTimeMs: 0,
+        modelVersion: 'none',
+      });
+    }
+
+    // Pass file buffer and storage URL to the service
     const result = await runVirtualTryOn({
       imageBuffer: file.buffer,
       imageMimeType: file.mimetype,
       originalName: file.originalname,
+      imageUrl: uploadResult.url, // Day 19: Include stored image URL
+      imagePublicId: uploadResult.publicId,
       productId,
     });
 

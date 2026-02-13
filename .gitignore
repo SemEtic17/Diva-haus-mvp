@@ -4,6 +4,7 @@
 .env.local
 .vscode/
 gemini.md
+Diva Haus roadmap.csv
 
 # Node.js
 node_modules/
@@ -26,3 +27,7 @@ diva-haus-backend/build/
 diva-haus-backend/.env
 diva-haus-backend/npm-debug.log*
 diva-haus-backend/yarn-debug.log*
+
+# Day 19: Uploaded files (keep directory structure)
+diva-haus-backend/uploads/*
+!diva-haus-backend/uploads/.gitkeep

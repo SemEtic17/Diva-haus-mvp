@@ -30,7 +30,11 @@ const userSchema = mongoose.Schema(
         },
       },
     ],
-    bodyImage: { // NEW: Body image URL for AI try-on
+    bodyImage: { // Body image URL for AI try-on
+      type: String,
+      default: null,
+    },
+    bodyImagePublicId: { // Day 19: Storage public ID for deletion
       type: String,
       default: null,
     },

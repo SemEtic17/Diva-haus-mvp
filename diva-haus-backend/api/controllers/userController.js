@@ -1,17 +1,5 @@
 import User from '../models/User.js';
-import path from 'path'; // For mocking file path
-
-// Mock storage for uploaded files (in a real app, use cloud storage like S3)
-const mockCloudStorage = {
-  upload: async (file) => {
-    // Simulate uploading to a cloud service and returning a URL
-    const filename = `body-images/${Date.now()}_${file.originalname}`;
-    console.log(`Mocking upload of ${file.originalname} to ${filename}`);
-    // In a real app, this would be an actual upload and return the secure URL
-    return `https://mock-cloud-storage.com/${filename}`;
-  }
-};
-
+import storageService from '../services/storage.service.js'; // Day 19: Use storage service
 
 // @desc    Upload user body image for try-on
 // @route   POST /api/users/upload-body-image
@@ -25,16 +13,23 @@ export const uploadBodyImage = async (req, res, next) => {
 
     const user = req.user; // req.user is set by the protect middleware
 
-    // In a real application, upload req.file to cloud storage (e.g., S3, Cloudinary)
-    // For this MVP, we'll just mock a URL.
-    const imageUrl = await mockCloudStorage.upload(req.file);
+    // Day 19: Upload to storage service (local or cloud based on config)
+    const uploadResult = await storageService.uploadBodyImage(req.file);
 
-    user.bodyImage = imageUrl;
+    if (!uploadResult.success) {
+      res.status(500);
+      throw new Error(uploadResult.error || 'Failed to upload image');
+    }
+
+    // Store the URL and publicId for potential future deletion
+    user.bodyImage = uploadResult.url;
+    user.bodyImagePublicId = uploadResult.publicId; // Store for deletion capability
     await user.save();
 
     res.status(200).json({
       message: 'Body image uploaded successfully',
       bodyImage: user.bodyImage,
+      provider: storageService.getProviderName(),
     });
   } catch (error) {
     next(error);

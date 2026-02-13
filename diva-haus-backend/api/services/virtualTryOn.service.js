@@ -16,15 +16,17 @@
  * @param {Buffer} [params.imageBuffer]
  * @param {string} [params.imageMimeType]
  * @param {string} [params.originalName]
+ * @param {string} [params.imageUrl] - Day 19: Stored image URL
+ * @param {string} [params.imagePublicId] - Day 19: Storage public ID for deletion
  * @param {string} [params.imageBase64] - legacy
  * @param {string} params.productId
  * @returns {Promise<VirtualTryOnResponse>}
  */
-export async function runVirtualTryOn({ imageBuffer, imageMimeType, originalName, imageBase64, productId }) {
+export async function runVirtualTryOn({ imageBuffer, imageMimeType, originalName, imageUrl, imagePublicId, imageBase64, productId }) {
   // Simulate network delay
   await new Promise((resolve) => setTimeout(resolve, 2000));
 
-  const hasImage = Boolean(imageBuffer || imageBase64);
+  const hasImage = Boolean(imageBuffer || imageBase64 || imageUrl);
 
   if (!hasImage || !productId) {
     return {
@@ -38,6 +40,9 @@ export async function runVirtualTryOn({ imageBuffer, imageMimeType, originalName
   // Log upload info for debugging (in production, send to AI service)
   if (imageBuffer) {
     console.log(`[VirtualTryOn] Processing file: ${originalName}, type: ${imageMimeType}, size: ${imageBuffer.length} bytes`);
+  }
+  if (imageUrl) {
+    console.log(`[VirtualTryOn] Stored image URL: ${imageUrl}`);
   }
 
   const mockProcessingTime = Math.floor(Math.random() * 2000) + 1000; // 1-3s
