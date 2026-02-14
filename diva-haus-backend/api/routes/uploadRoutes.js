@@ -2,6 +2,7 @@
 import express from 'express';
 import { uploadTryOnImage } from '../middleware/upload.js';
 import { handleTryOnUpload } from '../controllers/uploadController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -14,6 +15,7 @@ const router = express.Router();
  * - image: The user's photo file
  * - productId: The product ID to try on (in form fields)
  */
-router.post('/virtual-tryon', uploadTryOnImage.single('image'), handleTryOnUpload);
+// Require authentication for try-on uploads to ensure uploads are tied to a user
+router.post('/virtual-tryon', protect, uploadTryOnImage.single('image'), handleTryOnUpload);
 
 export default router;
