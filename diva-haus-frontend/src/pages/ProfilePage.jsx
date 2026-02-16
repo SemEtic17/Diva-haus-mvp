@@ -52,7 +52,8 @@ const ProfilePage = () => {
   // --- State Merged from BodyImageUploader ---
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [removing, setRemoving] = useState(false);
   
   useEffect(() => {
     if (isAuthenticated && userInfo && userInfo.bodyImage) {
@@ -75,7 +76,7 @@ const ProfilePage = () => {
 
   const handleUpload = async (file) => {
     if (!file) return;
-    setLoading(true);
+    setUploading(true);
     try {
       const formData = new FormData();
       formData.append('bodyImage', file);
@@ -94,14 +95,14 @@ const ProfilePage = () => {
     } catch (error) {
       toast.error(error.message || 'Error uploading image.');
     } finally {
-      setLoading(false);
+      setUploading(false);
     }
   };
   
   const handleRemoveImage = async () => {
     if (!userBodyImage) return;
     
-    setLoading(true);
+    setRemoving(true);
     try {
       await deleteBodyImage();
       setUserBodyImage(null);
@@ -110,7 +111,7 @@ const ProfilePage = () => {
     } catch (error) {
       toast.error(error.message || 'Error deleting image.');
     } finally {
-      setLoading(false);
+      setRemoving(false);
     }
   };
 
@@ -192,11 +193,11 @@ const ProfilePage = () => {
                     onClick={() => fileInputRef.current.click()}
                     whileHover={{ y: -2, scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    disabled={loading}
+                    disabled={uploading}
                     className="w-full sm:w-auto flex items-center justify-center bg-gradient-to-r from-yellow-400 to-yellow-300 text-black font-medium px-6 py-3 rounded-xl shadow-[0_10px_30px_-5px_rgba(234,179,8,0.3)] hover:shadow-[0_15px_40px_-5px_rgba(234,179,8,0.4)] transition-all duration-300 disabled:opacity-50"
                   >
                     <Upload className="w-5 h-5 mr-2" />
-                    {loading ? 'Uploading...' : (userBodyImage ? 'Update Photo' : 'Upload Photo')}
+                    {uploading ? 'Uploading...' : (userBodyImage ? 'Update Photo' : 'Upload Photo')}
                   </motion.button>
 
                   {userBodyImage && (
@@ -204,11 +205,11 @@ const ProfilePage = () => {
                       onClick={handleRemoveImage}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      disabled={loading}
-                      className="w-full sm:w-auto flex items-center justify-center bg-red-500/10 text-red-400 border border-red-500/30 font-medium px-6 py-3 rounded-xl transition-colors hover:bg-red-500/20"
+                      disabled={removing}
+                      className="w-full sm:w-auto flex items-center justify-center bg-red-500/10 text-red-400 border border-red-500/30 font-medium px-6 py-3 rounded-xl transition-colors hover:bg-red-500/20 disabled:opacity-50"
                     >
                       <Trash2 className="w-5 h-5 mr-2" />
-                      Remove
+                      {removing ? 'Removing...' : 'Remove'}
                     </motion.button>
                   )}
                 </div>
