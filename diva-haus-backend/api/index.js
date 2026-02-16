@@ -5,13 +5,23 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser'; // Added
 import path from 'path';
 import { fileURLToPath } from 'url';
+
+// Load environment variables FIRST, before importing any routes that might use them
+dotenv.config();
+
+// Verify Cloudinary config is loaded
+console.log('[Server] Environment check:', {
+  STORAGE_PROVIDER: process.env.STORAGE_PROVIDER || 'NOT SET',
+  CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME ? 'SET' : 'NOT SET',
+  CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY ? 'SET' : 'NOT SET',
+  CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET ? 'SET' : 'NOT SET'
+});
+
 import productRoutes from './routes/productRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import cartRoutes from './routes/cartRoutes.js';
 import userRoutes from './routes/userRoutes.js'; // NEW: Import userRoutes
 import uploadRoutes from './routes/uploadRoutes.js'; // Day 18: Dedicated upload service
-
-dotenv.config();
 
 // ES Module path resolution
 const __filename = fileURLToPath(import.meta.url);

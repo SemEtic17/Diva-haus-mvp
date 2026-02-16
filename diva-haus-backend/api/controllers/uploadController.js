@@ -1,6 +1,7 @@
 // diva-haus-backend/api/controllers/uploadController.js
 import { runVirtualTryOn } from '../services/virtualTryOn.service.js';
 import storageService from '../services/storage.service.js'; // Day 19: Persist uploaded images
+import User from '../models/User.js';
 
 /**
  * @typedef {object} VirtualTryOnResponseContract
@@ -84,6 +85,65 @@ export async function handleTryOnUpload(req, res) {
         modelVersion: 'none',
       });
     }
+
+    return res.status(500).json({
+      ok: false,
+      error: 'Server error during virtual try-on processing.',
+      processingTimeMs: 0,
+      modelVersion: 'none',
+    });
+  }
+}
+
+/**
+ * Handles virtual try-on using the user's saved body image from their profile.
+ * 
+ * @param {object} req - Express request object
+ * @param {object} req.user - Authenticated user (set by protect middleware)
+ * @param {object} req.body - Request body
+ * @param {string} req.body.productId - The product ID to try on
+ * @param {object} res - Express response object
+ * @returns {Promise<VirtualTryOnResponseContract>}
+ */
+export async function handleTryOnWithSavedImage(req, res) {
+  try {
+    const { productId } = req.body || {};
+    const user = req.user; // Set by protect middleware
+
+    // Validate required fields
+    if (!productId) {
+      return res.status(400).json({
+        ok: false,
+        error: 'Missing productId in request.',
+        processingTimeMs: 0,
+        modelVersion: 'none',
+      });
+    }
+
+    // Check if user has a saved body image
+    if (!user.bodyImage) {
+      return res.status(400).json({
+        ok: false,
+        error: 'No body image found in your profile. Please upload a body image first.',
+        processingTimeMs: 0,
+        modelVersion: 'none',
+      });
+    }
+
+    // Use the saved body image URL for virtual try-on
+    const result = await runVirtualTryOn({
+      imageUrl: user.bodyImage,
+      imagePublicId: user.bodyImagePublicId,
+      productId,
+    });
+
+    if (result.ok) {
+      return res.status(200).json(result);
+    } else {
+      return res.status(500).json(result);
+    }
+  } catch (err) {
+    console.error('[handleTryOnWithSavedImage] error:', err?.stack || err?.message || err);
 
     return res.status(500).json({
       ok: false,

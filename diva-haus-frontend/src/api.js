@@ -51,6 +51,30 @@ export const uploadForTryOn = async (imageFile, productId) => {
   return data;
 };
 
+/**
+ * Use saved body image from user profile for virtual try-on
+ * @param {string} productId - The product ID to try on
+ * @returns {Promise<{ok: boolean, previewUrl?: string, error?: string, processingTimeMs?: number, modelVersion?: string}>}
+ */
+export const tryOnWithSavedImage = async (productId) => {
+  const response = await fetch(`${API_BASE_URL}/uploads/virtual-tryon/saved`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ productId }),
+    credentials: 'include',
+  });
+
+  const data = await response.json();
+
+  if (!response.ok || !data.ok) {
+    throw new Error(data.error || 'Virtual try-on with saved image failed');
+  }
+
+  return data;
+};
+
 // --- User (Body Image) ---
 export const uploadBodyImage = async (formData) => {
   const response = await fetch(`${API_BASE_URL}/users/upload-body-image`, {
@@ -62,6 +86,19 @@ export const uploadBodyImage = async (formData) => {
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({ message: response.statusText }));
     throw new Error(errorData.message || 'Error uploading body image');
+  }
+  return response.json();
+};
+
+export const deleteBodyImage = async () => {
+  const response = await fetch(`${API_BASE_URL}/users/body-image`, {
+    method: 'DELETE',
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({ message: response.statusText }));
+    throw new Error(errorData.message || 'Error deleting body image');
   }
   return response.json();
 };

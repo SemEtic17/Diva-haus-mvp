@@ -1,14 +1,17 @@
 // diva-haus-frontend/src/components/VirtualTryOnPlaceholder.jsx
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useContext } from 'react';
 import { motion } from 'framer-motion';
-import { Camera, Sparkles, Upload, Zap, XCircle, CheckCircle, RotateCcw } from 'lucide-react';
+import { Camera, Sparkles, Upload, Zap, XCircle, CheckCircle, RotateCcw, User } from 'lucide-react';
 import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider';
-import { uploadForTryOn } from '../api';
+import { uploadForTryOn, tryOnWithSavedImage } from '../api';
+import { AuthContext } from '../context/AuthContext';
 
 /* (JSDoc types omitted for brevity in this snippet) */
 
 const VirtualTryOnPlaceholder = ({ productId: propProductId, product = null, showUploader = false }) => {
   const productId = propProductId || product?._id;
+  const { userInfo, isAuthenticated } = useContext(AuthContext);
+  const hasSavedBodyImage = isAuthenticated && userInfo?.bodyImage;
 
   // CircularProgressIndicator component (unchanged)
   const CircularProgressIndicator = ({ progress }) => {
@@ -144,6 +147,57 @@ const VirtualTryOnPlaceholder = ({ productId: propProductId, product = null, sho
     }
   };
 
+  const handleUseSavedImage = async () => {
+    if (!productId) {
+      setErrorMessage('Product ID is required.');
+      setCurrentStatus('error');
+      return;
+    }
+
+    if (!hasSavedBodyImage) {
+      setErrorMessage('No saved body image found. Please upload one in your profile first.');
+      setCurrentStatus('error');
+      return;
+    }
+
+    setErrorMessage('');
+    setProcessedImageUrl(null);
+    setCurrentStatus('processing');
+    setUploadProgress(0);
+
+    // Simulate processing progress
+    let processingProgress = 0;
+    const processingInterval = setInterval(() => {
+      processingProgress += 2;
+      if (processingProgress >= 99) {
+        clearInterval(processingInterval);
+      } else {
+        setUploadProgress(processingProgress);
+      }
+    }, 300);
+
+    try {
+      const data = await tryOnWithSavedImage(productId);
+
+      clearInterval(processingInterval);
+      setProcessedImageUrl(data.previewUrl || '');
+      setResponseMetadata({
+        processingTimeMs: data.processingTimeMs,
+        modelVersion: data.modelVersion,
+      });
+      setUploadProgress(100);
+      setCurrentStatus('success');
+      
+      // Set preview URL to the saved body image for comparison
+      setPreviewUrl(userInfo.bodyImage);
+    } catch (err) {
+      setUploadProgress(0);
+      console.error('[VirtualTryOnPlaceholder] Try-on with saved image error:', err);
+      setErrorMessage(err.message || 'An error occurred during try-on.');
+      setCurrentStatus('error');
+    }
+  };
+
   const handleRetry = () => {
     resetState();
     setUploaderOpen(true);
@@ -155,13 +209,28 @@ const VirtualTryOnPlaceholder = ({ productId: propProductId, product = null, sho
     <section className="py-16 md:py-24 px-4 relative overflow-hidden">
       {/* ... header and marketing omitted for brevity (keep your original) ... */}
 
-      {/* Uploader button */}
-      <div className="flex justify-center my-4">
+      {/* Uploader button and Use Saved Image button */}
+      <div className="flex flex-col sm:flex-row justify-center items-center gap-4 my-4">
         {currentStatus !== 'success' && (
-          <button onClick={() => setUploaderOpen((v) => !v)} className="bg-gradient-to-r from-yellow-400 to-yellow-300 text-black font-semibold px-8 py-4 text-base rounded-xl shadow-md hover:shadow-lg transition">
-            <Upload className="w-5 h-5 mr-2 inline" />
-            {uploaderOpen ? 'Close uploader' : 'Upload Your Photo'}
-          </button>
+          <>
+            {hasSavedBodyImage && (
+              <button 
+                onClick={handleUseSavedImage}
+                disabled={isUploadingOrProcessing}
+                className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold px-8 py-4 text-base rounded-xl shadow-md hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                <User className="w-5 h-5" />
+                Use Saved Body Image
+              </button>
+            )}
+            <button 
+              onClick={() => setUploaderOpen((v) => !v)} 
+              className="bg-gradient-to-r from-yellow-400 to-yellow-300 text-black font-semibold px-8 py-4 text-base rounded-xl shadow-md hover:shadow-lg transition"
+            >
+              <Upload className="w-5 h-5 mr-2 inline" />
+              {uploaderOpen ? 'Close uploader' : 'Upload New Photo'}
+            </button>
+          </>
         )}
       </div>
 

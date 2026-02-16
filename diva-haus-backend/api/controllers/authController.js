@@ -92,6 +92,7 @@ export const getAuthStatus = async (req, res, next) => {
         _id: req.user.id,
         name: req.user.name,
         email: req.user.email,
+        bodyImage: req.user.bodyImage || null,
         isAuthenticated: true,
       });
     } else {

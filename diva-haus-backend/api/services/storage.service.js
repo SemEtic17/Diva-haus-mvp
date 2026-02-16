@@ -23,8 +23,8 @@ const __dirname = path.dirname(__filename);
  * @property {number} [size] - File size in bytes
  */
 
-// Get storage provider from environment
-const STORAGE_PROVIDER = process.env.STORAGE_PROVIDER || 'local';
+// Get storage provider from environment (read dynamically to ensure env vars are loaded)
+const getStorageProvider = () => process.env.STORAGE_PROVIDER;
 const UPLOADS_DIR = path.join(__dirname, '../../uploads');
 const BASE_URL = process.env.BASE_URL || `http://localhost:${process.env.PORT || 5000}`;
 
@@ -115,28 +115,42 @@ const cloudinaryProvider = {
   /**
    * Get or initialize Cloudinary client
    */
-  _getClient() {
+  async _getClient() {
     if (!this._client) {
       // Dynamic import would be better, but for simplicity we'll check env vars
       const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
       const apiKey = process.env.CLOUDINARY_API_KEY;
       const apiSecret = process.env.CLOUDINARY_API_SECRET;
 
+      console.log('[Cloudinary] Checking credentials...', {
+        cloudName: cloudName ? `${cloudName.substring(0, 3)}...` : 'NOT SET',
+        apiKey: apiKey ? `${apiKey.substring(0, 3)}...` : 'NOT SET',
+        apiSecret: apiSecret ? 'SET' : 'NOT SET'
+      });
+
       if (!cloudName || !apiKey || !apiSecret) {
-        throw new Error('Cloudinary credentials not configured. Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in .env');
+        const missing = [];
+        if (!cloudName) missing.push('CLOUDINARY_CLOUD_NAME');
+        if (!apiKey) missing.push('CLOUDINARY_API_KEY');
+        if (!apiSecret) missing.push('CLOUDINARY_API_SECRET');
+        throw new Error(`Cloudinary credentials not configured. Missing: ${missing.join(', ')}. Set them in .env`);
       }
 
       // We'll lazy-load cloudinary to avoid errors if not installed
       try {
-        const cloudinary = require('cloudinary').v2;
+        console.log('[Cloudinary] Loading cloudinary module...');
+        const cloudinaryModule = await import('cloudinary');
+        const cloudinary = cloudinaryModule.v2;
         cloudinary.config({
           cloud_name: cloudName,
           api_key: apiKey,
           api_secret: apiSecret,
         });
         this._client = cloudinary;
+        console.log('[Cloudinary] Successfully initialized');
       } catch (err) {
-        throw new Error('Cloudinary package not installed. Run: npm install cloudinary');
+        console.error('[Cloudinary] Failed to load module:', err);
+        throw new Error(`Cloudinary package not installed or error loading: ${err.message}. Run: npm install cloudinary`);
       }
     }
     return this._client;
@@ -150,11 +164,13 @@ const cloudinaryProvider = {
    */
   async upload(file, folder = 'diva-haus') {
     try {
-      const cloudinary = this._getClient();
+      console.log(`[Cloudinary] Starting upload to folder: ${folder}`);
+      const cloudinary = await this._getClient();
       
       // Convert buffer to base64 data URI for Cloudinary
       const base64Data = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
       
+      console.log(`[Cloudinary] Uploading file: ${file.originalname}, size: ${file.buffer.length} bytes`);
       const result = await cloudinary.uploader.upload(base64Data, {
         folder: folder,
         resource_type: 'image',
@@ -165,7 +181,8 @@ const cloudinaryProvider = {
         ],
       });
 
-      console.log(`[Cloudinary] Uploaded: ${result.public_id}`);
+      console.log(`[Cloudinary] Successfully uploaded: ${result.public_id}`);
+      console.log(`[Cloudinary] URL: ${result.secure_url}`);
 
       return {
         success: true,
@@ -174,6 +191,11 @@ const cloudinaryProvider = {
       };
     } catch (error) {
       console.error('[Cloudinary] Upload error:', error);
+      console.error('[Cloudinary] Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
       return {
         success: false,
         error: error.message,
@@ -188,7 +210,7 @@ const cloudinaryProvider = {
    */
   async delete(publicId) {
     try {
-      const cloudinary = this._getClient();
+      const cloudinary = await this._getClient();
       await cloudinary.uploader.destroy(publicId);
       console.log(`[Cloudinary] Deleted: ${publicId}`);
       return true;
@@ -205,18 +227,41 @@ const cloudinaryProvider = {
  */
 class StorageService {
   constructor() {
-    this.provider = this._getProvider();
-    console.log(`[StorageService] Using provider: ${this.provider.name}`);
+    this._provider = null; // Lazy initialization
   }
 
   _getProvider() {
-    switch (STORAGE_PROVIDER) {
+    // If provider already selected, return it
+    if (this._provider) {
+      return this._provider;
+    }
+
+    // Read environment variable at runtime (not module load time)
+    const envValue = process.env.STORAGE_PROVIDER;
+    const provider = envValue || 'local';
+    console.log(`[StorageService] Reading STORAGE_PROVIDER from env: "${envValue}" (using: "${provider}")`);
+    console.log(`[StorageService] All env vars check:`, {
+      STORAGE_PROVIDER: process.env.STORAGE_PROVIDER,
+      CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME ? 'SET' : 'NOT SET',
+      CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY ? 'SET' : 'NOT SET',
+      CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET ? 'SET' : 'NOT SET'
+    });
+    
+    switch (provider) {
       case 'cloudinary':
-        return cloudinaryProvider;
+        console.log('[StorageService] Selected Cloudinary provider');
+        this._provider = cloudinaryProvider;
+        return this._provider;
       case 'local':
       default:
-        return localStorageProvider;
+        console.log('[StorageService] Selected Local storage provider');
+        this._provider = localStorageProvider;
+        return this._provider;
     }
+  }
+
+  get provider() {
+    return this._getProvider();
   }
 
   /**
@@ -261,7 +306,7 @@ class StorageService {
    * @returns {string}
    */
   getProviderName() {
-    return this.provider.name;
+    return this._getProvider().name;
   }
 }
 

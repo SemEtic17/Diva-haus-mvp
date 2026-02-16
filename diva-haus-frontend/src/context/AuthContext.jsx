@@ -15,7 +15,12 @@ const AuthProvider = ({ children }) => {
       if (response.ok) {
         const data = await response.json();
         setIsAuthenticated(true);
-        setUserInfo({ id: data._id, name: data.name, email: data.email });
+        setUserInfo({ 
+          id: data._id, 
+          name: data.name, 
+          email: data.email,
+          bodyImage: data.bodyImage || null
+        });
       } else {
         setIsAuthenticated(false);
         setUserInfo(null);
@@ -59,7 +64,7 @@ const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, userInfo, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, userInfo, isLoading, login, logout, refreshUserInfo: checkAuthStatus }}>
       {children}
     </AuthContext.Provider>
   );

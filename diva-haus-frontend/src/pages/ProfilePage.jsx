@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AuthContext } from '../context/AuthContext';
-import { uploadBodyImage } from '../api';
+import { uploadBodyImage, deleteBodyImage } from '../api';
 import { toast } from '../components/Toaster';
 import { Upload, User, Check, X, Camera, Sparkles, LogOut, Mail, Trash2 } from 'lucide-react';
 
@@ -45,7 +45,7 @@ const ExampleCard = ({ isGood, label, description, imageUrl }) => (
 
 const ProfilePage = () => {
   // --- Original Logic & State ---
-  const { userInfo, isAuthenticated, logout } = useContext(AuthContext);
+  const { userInfo, isAuthenticated, logout, refreshUserInfo } = useContext(AuthContext);
   const [userBodyImage, setUserBodyImage] = useState(null);
   const fileInputRef = useRef(null);
 
@@ -81,8 +81,12 @@ const ProfilePage = () => {
       formData.append('bodyImage', file);
       const response = await uploadBodyImage(formData);
       
-      // Original onUploadSuccess logic
+      // Update local state
       setUserBodyImage(response.bodyImage);
+      
+      // Refresh userInfo in AuthContext to persist across page refreshes
+      await refreshUserInfo();
+      
       toast.success('Body image uploaded successfully!');
 
       setSelectedFile(null);
@@ -94,11 +98,20 @@ const ProfilePage = () => {
     }
   };
   
-  const handleRemoveImage = () => {
-    // This preserves the original "Remove Image" functionality
-    setUserBodyImage(null); 
-    toast.info('Image removed. Upload a new one to continue.');
-    // In a real app, this would also call an API to delete from the backend.
+  const handleRemoveImage = async () => {
+    if (!userBodyImage) return;
+    
+    setLoading(true);
+    try {
+      await deleteBodyImage();
+      setUserBodyImage(null);
+      await refreshUserInfo(); // Refresh to update userInfo
+      toast.success('Image deleted successfully!');
+    } catch (error) {
+      toast.error(error.message || 'Error deleting image.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   // --- Render Logic ---
