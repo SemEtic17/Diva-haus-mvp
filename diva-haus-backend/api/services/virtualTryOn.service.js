@@ -1,4 +1,7 @@
 // diva-haus-backend/api/services/virtualTryOn.service.js
+// Day 21: Refactored to use AI provider abstraction
+
+import { AIProviderFactory } from './ai/AIProviderFactory.js';
 
 /**
  * @typedef {object} VirtualTryOnResponse
@@ -9,50 +12,70 @@
  * @property {string} [modelVersion]
  */
 
+// Cache provider instance to avoid recreating it on every call
+let cachedProvider = null;
+
 /**
- * Simulates a virtual try-on process (mock).
+ * Get or create the AI provider instance
+ * @returns {AIProviderInterface} Provider instance
+ */
+function getProvider() {
+  if (!cachedProvider) {
+    cachedProvider = AIProviderFactory.getProvider();
+    console.log(`[VirtualTryOnService] Initialized provider: ${cachedProvider.getName()}`);
+  }
+  return cachedProvider;
+}
+
+/**
+ * Process a virtual try-on request using the configured AI provider
+ * 
+ * This function maintains backward compatibility with existing code while
+ * delegating to the abstracted AI provider system.
  *
- * @param {object} params
- * @param {Buffer} [params.imageBuffer]
- * @param {string} [params.imageMimeType]
- * @param {string} [params.originalName]
- * @param {string} [params.imageUrl] - Day 19: Stored image URL
- * @param {string} [params.imagePublicId] - Day 19: Storage public ID for deletion
- * @param {string} [params.imageBase64] - legacy
- * @param {string} params.productId
- * @returns {Promise<VirtualTryOnResponse>}
+ * @param {object} params - Input parameters
+ * @param {Buffer} [params.imageBuffer] - Raw image file buffer
+ * @param {string} [params.imageMimeType] - MIME type of the image
+ * @param {string} [params.originalName] - Original filename
+ * @param {string} [params.imageUrl] - URL to stored image (preferred)
+ * @param {string} [params.imagePublicId] - Storage provider's public ID
+ * @param {string} [params.imageBase64] - Base64 encoded image (legacy, deprecated)
+ * @param {string} params.productId - MongoDB ObjectId of the product
+ * @returns {Promise<VirtualTryOnResponse>} Processing result
  */
 export async function runVirtualTryOn({ imageBuffer, imageMimeType, originalName, imageUrl, imagePublicId, imageBase64, productId }) {
-  // Simulate network delay
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+  try {
+    const provider = getProvider();
 
-  const hasImage = Boolean(imageBuffer || imageBase64 || imageUrl);
+    // Validate provider availability
+    if (!provider.isAvailable()) {
+      return {
+        ok: false,
+        error: `AI provider "${provider.getName()}" is not available. Please check configuration.`,
+        processingTimeMs: 0,
+        modelVersion: 'none',
+      };
+    }
 
-  if (!hasImage || !productId) {
+    // Delegate to provider
+    const result = await provider.processTryOn({
+      imageBuffer,
+      imageMimeType,
+      originalName,
+      imageUrl,
+      imagePublicId,
+      imageBase64,
+      productId,
+    });
+
+    return result;
+  } catch (error) {
+    console.error('[VirtualTryOnService] Error processing try-on:', error);
     return {
       ok: false,
-      error: 'Missing image or productId for virtual try-on.',
+      error: error.message || 'An error occurred during virtual try-on processing.',
       processingTimeMs: 0,
-      modelVersion: 'mock-v1',
+      modelVersion: 'none',
     };
   }
-
-  // Log upload info for debugging (in production, send to AI service)
-  if (imageBuffer) {
-    console.log(`[VirtualTryOn] Processing file: ${originalName}, type: ${imageMimeType}, size: ${imageBuffer.length} bytes`);
-  }
-  if (imageUrl) {
-    console.log(`[VirtualTryOn] Stored image URL: ${imageUrl}`);
-  }
-
-  const mockProcessingTime = Math.floor(Math.random() * 2000) + 1000; // 1-3s
-  // const mockPreviewUrl = `https://picsum.photos/seed/virtualtryon/${Math.floor(Math.random() * 1000)}/400/400`;
-  const mockPreviewUrl = `https://picsum.photos/seed/virtualtryon/400/400`;
-
-  return {
-    ok: true,
-    previewUrl: mockPreviewUrl,
-    processingTimeMs: mockProcessingTime,
-    modelVersion: 'mock-v1',
-  };
 }
