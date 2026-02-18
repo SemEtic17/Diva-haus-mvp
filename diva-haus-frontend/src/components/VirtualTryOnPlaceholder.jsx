@@ -132,7 +132,15 @@ const VirtualTryOnPlaceholder = ({ productId: propProductId, product = null, sho
       const data = await uploadForTryOn(file, productId);
 
       clearInterval(processingInterval);
-      setProcessedImageUrl(data.previewUrl || '');
+      // prefer a URL; if unavailable use the base64 string returned by the
+      // backend. this keeps the UI working even if the result upload fails.
+      if (data.previewUrl) {
+        setProcessedImageUrl(data.previewUrl);
+      } else if (data.previewBase64) {
+        setProcessedImageUrl(`data:image/png;base64,${data.previewBase64}`);
+      } else {
+        setProcessedImageUrl('');
+      }
       setResponseMetadata({
         processingTimeMs: data.processingTimeMs,
         modelVersion: data.modelVersion,
@@ -180,7 +188,13 @@ const VirtualTryOnPlaceholder = ({ productId: propProductId, product = null, sho
       const data = await tryOnWithSavedImage(productId);
 
       clearInterval(processingInterval);
-      setProcessedImageUrl(data.previewUrl || '');
+      if (data.previewUrl) {
+        setProcessedImageUrl(data.previewUrl);
+      } else if (data.previewBase64) {
+        setProcessedImageUrl(`data:image/png;base64,${data.previewBase64}`);
+      } else {
+        setProcessedImageUrl('');
+      }
       setResponseMetadata({
         processingTimeMs: data.processingTimeMs,
         modelVersion: data.modelVersion,
