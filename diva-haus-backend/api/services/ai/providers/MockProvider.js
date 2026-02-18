@@ -64,7 +64,7 @@ export class MockProvider extends AIProviderInterface {
     const mockProcessingTime = Math.floor(Math.random() * 2000) + 1000;
 
     // Return placeholder image URL
-    const mockPreviewUrl = `https://picsum.photos/seed/virtualtryon/400/400`;
+    const mockPreviewUrl = `https://assets.myntassets.com/w_412,q_30,dpr_3,fl_progressive,f_webp/assets/images/25813096/2023/11/8/efb3433d-7436-4897-8331-222641f466a01699447608033FloralGownDress1.jpg`;
 
     return {
       ok: true,
