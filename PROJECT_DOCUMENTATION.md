@@ -331,6 +331,32 @@ Important parts:
 
 You can switch providers just by changing `STORAGE_PROVIDER` in `.env`.
 
+#### Python VTON Micro‑service
+
+As part of Day 22 we added a small Python service that wraps the open‑source
+[FASHN VTON v1.5](https://github.com/fashn-AI/fashn-vton-1.5) model. The
+service lives in the top‑level `vton-service` directory and exposes a simple
+`POST /vton` HTTP endpoint. It accepts two image URLs (person + garment),
+downloads them, executes the try‑on pipeline, and returns a base64‑encoded
+preview image.
+
+The Node backend does **not** run the heavy model itself; instead it calls this
+service via the new `FashnProvider` implementation in
+`api/services/ai/providers/FashnProvider.js`. The provider downloads the
+base64 result, saves it using the existing `storageService`, and returns a URL
+to the frontend. Environment variables configure which provider is active:
+
+```
+AI_PROVIDER=mock      # default value for development
+VTON_SERVICE_URL=http://localhost:8000/vton   # Python service address
+```
+
+Running the Python service locally requires a GPU or a cloud instance. For
+quick testing you can use a Colab notebook or Hugging Face Space; the code
+structure is identical.
+
+
+
 #### `services/virtualTryOn.service.js`
 
 Currently a mock:

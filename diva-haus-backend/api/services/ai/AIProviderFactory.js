@@ -2,6 +2,7 @@
 // Day 21: Factory for selecting and initializing AI providers
 
 import { MockProvider } from './providers/MockProvider.js';
+import { FashnProvider } from './providers/FashnProvider.js';
 // Future providers will be imported here:
 // import { ReplicateProvider } from './providers/ReplicateProvider.js';
 // import { CustomAIProvider } from './providers/CustomAIProvider.js';
@@ -25,6 +26,9 @@ export class AIProviderFactory {
       case 'mock':
         return new MockProvider();
 
+      case 'fashn':
+        return new FashnProvider();
+
       // Future providers will be added here:
       // case 'replicate':
       //   return new ReplicateProvider();
@@ -42,7 +46,7 @@ export class AIProviderFactory {
    * @returns {string[]} Array of provider names
    */
   static getAvailableProviders() {
-    return ['mock']; // Add more as providers are implemented
+    return ['mock', 'fashn']; // Add more as providers are implemented
   }
 
   /**

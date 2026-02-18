@@ -29,6 +29,13 @@ ai/
 - **Configuration**: No additional config needed
 - **Status**: ✅ Implemented
 
+### FASHN VTON Provider (`fashn`)
+- **Purpose**: Real virtual try-on using open‑source FASHN VTON v1.5 model
+- **Configuration**: Requires a running Python micro-service; set
+  `VTON_SERVICE_URL` to its `/vton` endpoint and choose
+  `AI_PROVIDER=fashn`.
+- **Status**: ✅ Implemented (Day 22)
+
 ### Future Providers
 
 - **Replicate Provider** (`replicate`): Integration with Replicate API

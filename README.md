@@ -28,6 +28,7 @@ Diva Haus is a Minimum Viable Product (MVP) designed to showcase [brief descript
 - **Shopping Cart:** Add, update, and remove items from the cart (planned).
 - **Order Management:** Place and track orders (planned).
 - **Admin Panel:** Manage products, users, and orders (planned).
+- **Virtual Try‑On:** AI‑powered image-based clothing previews (Day 22+).
 - **Responsive Design:** Optimal viewing experience across various devices.
 
 ## Technologies Used
@@ -86,6 +87,11 @@ Create a `.env` file in the `diva-haus-backend` directory with the following con
 PORT=5000
 MONGO_URI=YOUR_MONGODB_CONNECTION_STRING
 # JWT_SECRET=YOUR_JWT_SECRET (if authentication is added later)
+
+# picks which AI provider to use for virtual try-on ("mock" or "fashn")
+AI_PROVIDER=mock
+# when using the FASHN provider this should point at the Python service
+VTON_SERVICE_URL=http://localhost:8000/vton
 ```
 
 Replace `YOUR_MONGODB_CONNECTION_STRING` with your actual MongoDB connection string (e.g., `mongodb://localhost:27017/divahaus` or your MongoDB Atlas URI).
@@ -111,6 +117,39 @@ node server.js
 # npm install -g nodemon
 # nodemon server.js
 ```
+
+### Running the Python VTON Service (for AI try-on)
+
+The FASHN VTON micro‑service is implemented in the `vton-service` folder. It
+must be running if you configure `AI_PROVIDER=fashn` in your backend. A GPU is
+strongly recommended for acceptable inference times; you can also deploy the
+service to Colab, a Hugging Face Space, or any machine with CUDA support.
+
+```bash
+cd vton-service
+python -m venv .venv            # create virtualenv if needed
+source .venv/bin/activate        # activate (use venv\Scripts\activate on Windows)
+pip install -r requirements.txt  # install dependencies and the library
+python scripts/download_weights.py --weights-dir ./weights
+python server.py
+```
+
+The service listens on port `8000` by default and exposes:
+
+* `POST /vton` – run the try‑on pipeline, returning a JSON response with
+  `previewBase64` image data.
+* `GET /health` – simple liveliness check.
+
+When using the FASHN provider the backend environment should include:
+
+```
+AI_PROVIDER=fashn
+VTON_SERVICE_URL=http://localhost:8000/vton
+```
+
+You can fall back to the built‑in mock provider by setting
+`AI_PROVIDER=mock` or leaving the variable unset.  
+
 The backend API will be running on `http://localhost:5000` (or the port specified in your `.env` file).
 
 ## Folder Structure

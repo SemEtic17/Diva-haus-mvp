@@ -29,7 +29,7 @@ const fetchWithAuth = async (url, options = {}) => {
  * Upload image for virtual try-on using multipart/form-data
  * @param {File} imageFile - The image file to upload
  * @param {string} productId - The product ID to try on
- * @returns {Promise<{ok: boolean, previewUrl?: string, error?: string, processingTimeMs?: number, modelVersion?: string}>}
+ * @returns {Promise<{ok: boolean, previewUrl?: string, previewBase64?: string, error?: string, processingTimeMs?: number, modelVersion?: string}>}
  */
 export const uploadForTryOn = async (imageFile, productId) => {
   const formData = new FormData();
@@ -54,7 +54,7 @@ export const uploadForTryOn = async (imageFile, productId) => {
 /**
  * Use saved body image from user profile for virtual try-on
  * @param {string} productId - The product ID to try on
- * @returns {Promise<{ok: boolean, previewUrl?: string, error?: string, processingTimeMs?: number, modelVersion?: string}>}
+ * @returns {Promise<{ok: boolean, previewUrl?: string, previewBase64?: string, error?: string, processingTimeMs?: number, modelVersion?: string}>}
  */
 export const tryOnWithSavedImage = async (productId) => {
   const response = await fetch(`${API_BASE_URL}/uploads/virtual-tryon/saved`, {
