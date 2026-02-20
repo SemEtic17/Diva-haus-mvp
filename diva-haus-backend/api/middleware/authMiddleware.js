@@ -5,7 +5,7 @@ export const protect = async (req, res, next) => {
   try {
     let token;
 
-    if (req.cookies.token) { // NEW: Check for token in cookies
+    if (req.cookies && req.cookies.token) { // NEW: Check for token in cookies
       token = req.cookies.token;
 
       // Verify token
@@ -21,6 +21,8 @@ export const protect = async (req, res, next) => {
 
       next();
     } else { // NEW: Simplified else block
+      // Log missing token details for debugging multipart/form-data requests
+      console.warn('[authMiddleware] No token found on request. headers.cookie=', req.headers && req.headers.cookie);
       res.status(401);
       throw new Error('Not authorized, no token');
     }

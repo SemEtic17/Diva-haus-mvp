@@ -22,7 +22,6 @@ let cachedProvider = null;
 function getProvider() {
   if (!cachedProvider) {
     cachedProvider = AIProviderFactory.getProvider();
-    console.log(`[VirtualTryOnService] Initialized provider: ${cachedProvider.getName()}`);
   }
   return cachedProvider;
 }

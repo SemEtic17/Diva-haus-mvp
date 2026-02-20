@@ -51,14 +51,7 @@ export class MockProvider extends AIProviderInterface {
       };
     }
 
-    // Log input info for debugging
-    if (imageBuffer) {
-      console.log(`[MockProvider] Processing file: ${originalName}, type: ${imageMimeType}, size: ${imageBuffer.length} bytes`);
-    }
-    if (imageUrl) {
-      console.log(`[MockProvider] Using stored image URL: ${imageUrl}`);
-    }
-    console.log(`[MockProvider] Product ID: ${productId}`);
+    // Debug logs removed for production
 
     // Simulate processing time (1-3 seconds)
     const mockProcessingTime = Math.floor(Math.random() * 2000) + 1000;

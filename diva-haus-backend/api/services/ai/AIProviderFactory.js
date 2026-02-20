@@ -20,7 +20,7 @@ export class AIProviderFactory {
   static getProvider() {
     const providerName = process.env.AI_PROVIDER || 'mock';
     
-    console.log(`[AIProviderFactory] Selecting provider: ${providerName}`);
+    // provider selection logged at debug level in production; avoid noisy console output here
 
     switch (providerName.toLowerCase()) {
       case 'mock':

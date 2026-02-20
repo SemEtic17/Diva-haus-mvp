@@ -34,6 +34,8 @@ export class FashnProvider extends AIProviderInterface {
   async processTryOn(input) {
     const { imageBuffer, imageMimeType, originalName, imageUrl, imagePublicId, productId } = input;
 
+    // debug: request received for productId (removed noisy log for production)
+
     // we need both a person image and a garment image from the product
     if (!productId) {
       return {
@@ -106,6 +108,7 @@ export class FashnProvider extends AIProviderInterface {
     if (typeof input.segmentationFree === 'boolean') payload.segmentation_free = input.segmentationFree;
 
     try {
+      // calling VTON service (debug logs suppressed in production)
       const response = await fetch(this.serviceUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -115,10 +118,12 @@ export class FashnProvider extends AIProviderInterface {
 
       if (!response.ok) {
         const text = await response.text();
+        console.error('[FashnProvider] VTON service error', response.status, text);
         throw new Error(`FASHN service responded ${response.status}: ${text}`);
       }
 
       const json = await response.json();
+      // VTON response received (debug logs suppressed in production)
       if (!json.ok) {
         return {
           ok: false,

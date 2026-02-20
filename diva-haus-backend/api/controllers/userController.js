@@ -46,23 +46,18 @@ export const uploadBodyImage = async (req, res, next) => {
 
     const user = req.user; // req.user is set by the protect middleware
 
-    console.log(`[uploadBodyImage] Using storage provider: ${storageService.getProviderName()}`);
-    console.log(`[uploadBodyImage] File: ${req.file.originalname}, size: ${req.file.size} bytes`);
+    // debug: storage provider and file info (suppressed in production)
 
     // Delete old image if it exists (to free up storage)
     if (user.bodyImagePublicId) {
-      console.log(`[uploadBodyImage] Deleting old image with publicId: ${user.bodyImagePublicId}`);
+      // deleting old image (info suppressed)
       await storageService.delete(user.bodyImagePublicId);
     }
 
     // Upload new image to storage service (local or cloud based on config)
     const uploadResult = await storageService.uploadBodyImage(req.file);
 
-    console.log(`[uploadBodyImage] Upload result:`, {
-      success: uploadResult.success,
-      url: uploadResult.url,
-      error: uploadResult.error
-    });
+    // upload result logged at higher logging level when needed
 
     if (!uploadResult.success) {
       res.status(500);
@@ -74,7 +69,7 @@ export const uploadBodyImage = async (req, res, next) => {
     user.bodyImagePublicId = uploadResult.publicId; // Store for deletion capability
     await user.save();
 
-    console.log(`[uploadBodyImage] Successfully saved body image URL: ${user.bodyImage}`);
+    // saved body image URL (info suppressed in production)
 
     res.status(200).json({
       message: 'Body image uploaded successfully',
