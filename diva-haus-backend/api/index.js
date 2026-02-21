@@ -76,7 +76,7 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static(clientDist));
 
   // Fallback to index.html for client-side routing, but allow API and upload routes
-  app.get('*', (req, res, next) => {
+  app.get('*path', (req, res, next) => {
     if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) return next();
     res.sendFile(path.join(clientDist, 'index.html'));
   });
