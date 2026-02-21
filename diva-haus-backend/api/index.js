@@ -53,11 +53,6 @@ if (MONGO_URI) {
 }
 
 
-// Basic Route
-app.get('/', (req, res) => {
-  res.send('Diva Haus Backend API is running!');
-});
-
 // API Routes
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
