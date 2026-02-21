@@ -3,7 +3,7 @@ services:
     name: diva-haus
     env: node
     plan: starter
-    branch: main
+    branch: fashion-vton-model
     region: oregon
     buildCommand: npm run build
     startCommand: npm start
