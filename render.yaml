@@ -1,13 +1,12 @@
 services:
   - type: web
-    name: diva-haus-web
+    name: diva-haus
     env: node
     plan: starter
     branch: main
     region: oregon
-    root: diva-haus-backend
-    buildCommand: npm ci && npm run build
-    startCommand: PORT=$PORT npm run start:prod
+    buildCommand: npm run build
+    startCommand: npm start
     envVars:
       - key: MONGO_URI
         value: "${MONGO_URI}"
@@ -20,27 +19,8 @@ services:
       - key: CLOUDINARY_API_SECRET
         value: "${CLOUDINARY_API_SECRET}"
       - key: CLIENT_ORIGIN
-        value: "https://your-frontend-domain.example"
-  - type: web
-    name: diva-haus-vton
-    env: python
-    plan: starter
-    branch: main
-    region: oregon
-    root: vton-service
-    buildCommand: python -m venv .venv && .venv/bin/python -m pip install -U pip && .venv/bin/python -m pip install -r requirements.txt
-    startCommand: PORT=$PORT .venv/bin/uvicorn server:app --host 0.0.0.0 --port $PORT
-    envVars:
-      - key: VTON_WEIGHTS_DIR
-        value: "/data/weights"
-      - key: VTON_DEVICE
-        value: "cpu"
+        value: "https://diva-haus.onrender.com"
+      - key: NODE_ENV
+        value: "production"
       - key: STORAGE_PROVIDER
         value: "cloudinary"
-      - key: CLOUDINARY_CLOUD_NAME
-        value: "${CLOUDINARY_CLOUD_NAME}"
-      - key: CLOUDINARY_API_KEY
-        value: "${CLOUDINARY_API_KEY}"
-      - key: CLOUDINARY_API_SECRET
-        value: "${CLOUDINARY_API_SECRET}"
-    mounts: []

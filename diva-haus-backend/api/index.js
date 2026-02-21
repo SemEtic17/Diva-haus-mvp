@@ -72,7 +72,7 @@ app.get('/health', (req, res) => {
 
 // Serve frontend in production
 if (process.env.NODE_ENV === 'production') {
-  const clientDist = path.join(__dirname, '../diva-haus-frontend/dist');
+  const clientDist = path.join(__dirname, '../../diva-haus-frontend/dist');
   app.use(express.static(clientDist));
 
   // Fallback to index.html for client-side routing, but allow API and upload routes
