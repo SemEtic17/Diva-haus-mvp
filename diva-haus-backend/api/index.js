@@ -33,7 +33,7 @@ const MONGO_URI = process.env.MONGO_URI;
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' })); // Body parser for JSON requests with increased limit
@@ -53,11 +53,6 @@ if (MONGO_URI) {
 }
 
 
-// Basic Route
-app.get('/', (req, res) => {
-  res.send('Diva Haus Backend API is running!');
-});
-
 // API Routes
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
@@ -69,6 +64,18 @@ app.use('/api/uploads', uploadRoutes); // Day 18: Dedicated upload service
 app.get('/health', (req, res) => {
   res.send('OK');
 });
+
+// Serve frontend in production
+if (process.env.NODE_ENV === 'production') {
+  const clientDist = path.join(__dirname, '../../diva-haus-frontend/dist');
+  app.use(express.static(clientDist));
+
+  // Fallback to index.html for client-side routing, but allow API and upload routes
+  app.get('*path', (req, res, next) => {
+    if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) return next();
+    res.sendFile(path.join(clientDist, 'index.html'));
+  });
+}
 
 // Global Error Handler
 app.use((err, req, res, next) => {

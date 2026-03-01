@@ -1,0 +1,3 @@
+[submodule "vton-service"]
+	path = vton-service
+	url = https://github.com/SemEtic17/vton-service.git
