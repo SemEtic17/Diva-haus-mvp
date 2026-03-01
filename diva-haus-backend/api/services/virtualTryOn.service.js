@@ -57,7 +57,7 @@ export async function runVirtualTryOn({ imageBuffer, imageMimeType, originalName
     }
 
     // Delegate to provider
-    const result = await provider.processTryOn({
+    let result = await provider.processTryOn({
       imageBuffer,
       imageMimeType,
       originalName,
@@ -66,6 +66,28 @@ export async function runVirtualTryOn({ imageBuffer, imageMimeType, originalName
       imageBase64,
       productId,
     });
+
+    // automatic fallback: if Pixazo runs out of balance we can try the HF
+    // provider (if configured).  This avoids a hard 500 response in the
+    // common development scenario where the free Pixazo quota has been
+    // exhausted.  The error message returned by Pixazo for insufficient
+    // funds contains the word "balance" so we look for that.
+    if (!result.ok && provider.getName() === 'pixazo' &&
+        result.error && /balance/i.test(result.error)) {
+      const hf = AIProviderFactory.getProvider('huggingface');
+      if (hf && hf.isAvailable()) {
+        console.warn('[VirtualTryOnService] Pixazo balance low, falling back to HuggingFace API');
+        result = await hf.processTryOn({
+          imageBuffer,
+          imageMimeType,
+          originalName,
+          imageUrl,
+          imagePublicId,
+          imageBase64,
+          productId,
+        });
+      }
+    }
 
     return result;
   } catch (error) {
