@@ -7,7 +7,7 @@
 import { AIProviderInterface } from '../interfaces.js';
 import storageService from '../../storage.service.js';
 import fetch from 'node-fetch';
-import Product from '../../models/Product.js';
+import Product from '../../../models/Product.js';
 
 export class FashnProvider extends AIProviderInterface {
   constructor() {
