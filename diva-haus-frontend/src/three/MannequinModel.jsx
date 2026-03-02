@@ -11,12 +11,7 @@ function ApplyTexture({ clonedScene, clothNames = [], imageUrl }) {
   useEffect(() => {
     if (!texture || !clonedScene) return;
     // PBR-safe texture settings
-    try {
-      texture.colorSpace = THREE.SRGBColorSpace; // r152+ property; if your Three version uses encoding, switch to THREE.sRGBEncoding
-    } catch (e) {
-      // fallback for older/newer API variance
-      if (texture.encoding !== undefined) texture.encoding = THREE.sRGBEncoding;
-    }
+    texture.colorSpace = THREE.SRGBColorSpace;
     texture.flipY = false;
 
     const appliedMeshNames = [];

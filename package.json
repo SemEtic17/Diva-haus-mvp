@@ -1,0 +1,12 @@
+{
+  "name": "diva-haus-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install --include=dev --prefix diva-haus-backend && npm install --include=dev --prefix diva-haus-frontend",
+    "build:frontend": "VITE_API_BASE_URL=/api npm run build --prefix diva-haus-frontend",
+    "build": "npm run install:all && npm run build:frontend",
+    "start": "npm run start:prod --prefix diva-haus-backend",
+    "start:prod": "npm run start:prod --prefix diva-haus-backend"
+  }
+}

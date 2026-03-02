@@ -68,11 +68,9 @@ export async function handleTryOnUpload(req, res) {
       productId,
     });
 
-    if (result.ok) {
-      return res.status(200).json(result);
-    } else {
-      return res.status(500).json(result);
-    }
+    // provider failures are returned in JSON, so simply send them back
+    // with a 200 status; the client helper will interpret `ok`.
+    return res.status(200).json(result);
   } catch (err) {
     console.error('[handleTryOnUpload] error:', err?.stack || err?.message || err);
     
@@ -137,11 +135,8 @@ export async function handleTryOnWithSavedImage(req, res) {
       productId,
     });
 
-    if (result.ok) {
-      return res.status(200).json(result);
-    } else {
-      return res.status(500).json(result);
-    }
+    // always send 200; error details are returned in payload
+    return res.status(200).json(result);
   } catch (err) {
     console.error('[handleTryOnWithSavedImage] error:', err?.stack || err?.message || err);
 

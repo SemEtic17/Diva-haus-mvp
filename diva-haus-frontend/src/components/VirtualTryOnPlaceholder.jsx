@@ -172,6 +172,7 @@ const VirtualTryOnPlaceholder = ({ productId: propProductId, product = null, sho
     setProcessedImageUrl(null);
     setCurrentStatus('processing');
     setUploadProgress(0);
+    setUploaderOpen(false); // hide uploader UI while processing
 
     // Simulate processing progress
     let processingProgress = 0;
@@ -225,6 +226,14 @@ const VirtualTryOnPlaceholder = ({ productId: propProductId, product = null, sho
 
       {/* Uploader button and Use Saved Image button */}
       <div className="flex flex-col sm:flex-row justify-center items-center gap-4 my-4">
+        {/* show status message while processing or uploading */}
+        {isUploadingOrProcessing && (
+          <p className="w-full text-center text-gray-300 mb-2">
+            {currentStatus === 'uploading'
+              ? `Uploading image (${Math.round(uploadProgress)}%)...`
+              : `Processing try-on (${Math.round(uploadProgress)}%)...`}
+          </p>
+        )}
         {currentStatus !== 'success' && (
           <>
             {hasSavedBodyImage && (
@@ -233,8 +242,22 @@ const VirtualTryOnPlaceholder = ({ productId: propProductId, product = null, sho
                 disabled={isUploadingOrProcessing}
                 className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold px-8 py-4 text-base rounded-xl shadow-md hover:shadow-lg transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
-                <User className="w-5 h-5" />
-                Use Saved Body Image
+                {isUploadingOrProcessing ? (
+                  // show spinner + progress when processing
+                  <>
+                    <CircularProgressIndicator progress={uploadProgress} />
+                    <span>
+                      {currentStatus === 'uploading'
+                        ? `Uploading ${Math.round(uploadProgress)}%`
+                        : `Processing ${Math.round(uploadProgress)}%`}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <User className="w-5 h-5" />
+                    Use Saved Body Image
+                  </>
+                )}
               </button>
             )}
             <button 

@@ -344,11 +344,27 @@ The Node backend does **not** run the heavy model itself; instead it calls this
 service via the new `FashnProvider` implementation in
 `api/services/ai/providers/FashnProvider.js`. The provider downloads the
 base64 result, saves it using the existing `storageService`, and returns a URL
-to the frontend. Environment variables configure which provider is active:
+to the frontend. Environment variables configure which provider is active. three options are now supported:
 
 ```
-AI_PROVIDER=mock      # default value for development
-VTON_SERVICE_URL=http://localhost:8000/vton   # Python service address
+AI_PROVIDER=mock      # default value for development (returns placeholder image)
+AI_PROVIDER=fashn      # call the local Python VTON service defined by VTON_SERVICE_URL
+AI_PROVIDER=pixazo     # free/cheap Pixazo Fashn virtual try-on
+# If the Pixazo key runs out of credits you will see a 403/balance error;
+# the backend automatically falls back to the `huggingface` provider if
+# it is available.  Alternatively switch manually to `huggingface` or
+# `mock`.
+AI_PROVIDER=huggingface  # generic image generation (often requires paid HF plan)
+
+VTON_SERVICE_URL=http://localhost:8000/vton   # only used when AI_PROVIDER=fashn
+PIXAZO_API_KEY=<your-pixazo-key>            # only used when AI_PROVIDER=pixazo
+# PIXAZO_BASE_URL=https://gateway.pixazo.ai/fashn-virtual-try-on/v1  # optional override
+
+HF_API_TOKEN=<your-free-hf-token>             # only used when AI_PROVIDER=huggingface
+# you can obtain this from https://huggingface.co/settings/tokens (no credit card required)
+# note: requests use the router.huggingface.co URL – the older
+# api-inference.huggingface.co address now returns HTTP 410
+HF_API_MODEL=runwayml/stable-diffusion-v1-5   # optional override
 ```
 
 Running the Python service locally requires a GPU or a cloud instance. For

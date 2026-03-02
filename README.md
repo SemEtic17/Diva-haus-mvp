@@ -88,10 +88,28 @@ PORT=5000
 MONGO_URI=YOUR_MONGODB_CONNECTION_STRING
 # JWT_SECRET=YOUR_JWT_SECRET (if authentication is added later)
 
-# picks which AI provider to use for virtual try-on ("mock" or "fashn")
-AI_PROVIDER=mock
+# picks which AI provider to use for virtual try-on ("mock", "fashn" or "huggingface")
+AI_PROVIDER=mock  # or 'fashn' to call the Python VTON service or 'huggingface' for a free HF fallback
 # when using the FASHN provider this should point at the Python service
 VTON_SERVICE_URL=http://localhost:8000/vton
+
+# ---- only needed when AI_PROVIDER=pixazo ----
+# Pixazo offers a nominal free tier for development; sign up at
+# https://api-console.pixazo.ai/api_keys and copy the key below.
+PIXAZO_API_KEY=your_pixazo_subscription_key
+# optional override of gateway URL:
+# PIXAZO_BASE_URL=https://gateway.pixazo.ai/fashn-virtual-try-on/v1
+# -----------------------------------------------
+
+# ---- only needed when AI_PROVIDER=huggingface ----
+# (now generally requires a paid plan)
+# token is free and no credit card is required; create one at
+# https://huggingface.co/settings/tokens (login with GitHub/Gmail etc.)
+# the service now uses the newer router.huggingface.co endpoint – you may
+# see a 410 error if you hit the old URL in your browser.
+HF_API_TOKEN=your_hf_inference_api_token
+HF_API_MODEL=runwayml/stable-diffusion-v1-5  # optional, defaults to the same
+# -----------------------------------------------
 ```
 
 Replace `YOUR_MONGODB_CONNECTION_STRING` with your actual MongoDB connection string (e.g., `mongodb://localhost:27017/divahaus` or your MongoDB Atlas URI).
@@ -121,7 +139,7 @@ node server.js
 ### Running the Python VTON Service (for AI try-on)
 
 The FASHN VTON micro‑service is implemented in the `vton-service` folder. It
-must be running if you configure `AI_PROVIDER=fashn` in your backend. A GPU is
+must be running if you configure `AI_PROVIDER=fashn` in your backend (the new `huggingface` provider works without it). A GPU is
 strongly recommended for acceptable inference times; you can also deploy the
 service to Colab, a Hugging Face Space, or any machine with CUDA support.
 
@@ -143,7 +161,7 @@ The service listens on port `8000` by default and exposes:
 When using the FASHN provider the backend environment should include:
 
 ```
-AI_PROVIDER=fashn
+AI_PROVIDER=fashn    # or AI_PROVIDER=huggingface for free text-to-image fallback
 VTON_SERVICE_URL=http://localhost:8000/vton
 ```
 

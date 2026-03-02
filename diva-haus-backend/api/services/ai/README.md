@@ -2,7 +2,7 @@
 
 ## Overview
 
-This directory contains the abstracted AI provider system for virtual try-on processing. The system allows you to easily swap between different AI providers (mock, Replicate, custom APIs, etc.) without changing the rest of your codebase.
+This directory contains the abstracted AI provider system for virtual try-on processing. The system allows you to easily swap between different AI providers (mock, FASHN, Hugging Face, custom APIs, etc.) without changing the rest of your codebase. The factory also includes simple fallback logic so that if the requested provider is not configured the next available one is chosen automatically.
 
 ## Architecture
 
@@ -35,6 +35,54 @@ ai/
   `VTON_SERVICE_URL` to its `/vton` endpoint and choose
   `AI_PROVIDER=fashn`.
 - **Status**: ✅ Implemented (Day 22)
+
+### Pixazo Fashn Virtual Try-On (`pixazo`)
+- **Purpose**: Free/low-cost hosted virtual try-on API provided by Pixazo.
+  The service accepts separate URLs for person and garment images and
+  returns a combined try-on image. It offers a small complimentary tier
+  suitable for development and light usage. You’ll need to sign up for a
+  subscription key.
+- **Configuration**: Set `AI_PROVIDER=pixazo`. Provide a key via
+  `PIXAZO_API_KEY` and optionally override the base URL with
+  `PIXAZO_BASE_URL` (defaults to
+  `https://gateway.pixazo.ai/fashn-virtual-try-on/v1`).
+
+  ```bash
+  # in `.env`:
+  AI_PROVIDER=pixazo
+  PIXAZO_API_KEY=your_pixazo_subscription_key
+  # optional:
+  # PIXAZO_BASE_URL=https://gateway.pixazo.ai/fashn-virtual-try-on/v1
+  ```
+- **Notes**:
+  - Pixazo keys start with `c` followed by hex digits and may include a
+    small number of free requests. If you see a `403` error containing the
+    word "balance" it means your credit has been exhausted.
+    The provider will automatically fall back to the Hugging Face
+    text-to-image API if that service is also configured.
+  - Balance-related errors are surfaced in the backend response with an
+    explanatory message and a suggestion to either top up or switch
+    providers.
+- **Status**: ✅ Implemented (Day 25)
+
+### Hugging Face Text-to-Image Fallback (`huggingface` / `hf`)
+- **Purpose**: Generic image generation using the Hugging Face
+  Inference API (via the newer `router.huggingface.co` endpoint).
+  This provider constructs a prompt containing the **public URLs** of
+  the person and garment and asks a stable diffusion model to render the
+  try‑on result.
+- **Configuration**: Set `AI_PROVIDER=huggingface` (or `hf`).
+  Provide a token via `HF_API_TOKEN` and optionally an alternative
+  model via `HF_API_MODEL` (defaults to `runwayml/stable-diffusion-v1-5`).
+
+  ⚠️ **Important:** Hugging Face no longer offers unlimited free API
+  usage; the token is free to create but you may need a paid plan once
+  the complimentary quota is exhausted. Some models also require you to
+  accept a license or request access on their Hugging Face page before
+  they can be used via API. If you see a `404 Not Found` error, visit
+  the model URL and click “Accept”/“Request access” (e.g.
+  https://huggingface.co/models/runwayml/stable-diffusion-v1-5).  
+- **Status**: ✅ Implemented as of Day 23
 
 ### Future Providers
 
@@ -137,9 +185,21 @@ Set `AI_PROVIDER` in your `.env` file:
 # Use mock provider (default)
 AI_PROVIDER=mock
 
-# Or use a real provider (when implemented)
-AI_PROVIDER=replicate
+# Use the FASHN VTON micro-service (fast, accurate but requires Python)
+AI_PROVIDER=fashn
+
+# Or use the free Hugging Face fallback (text‑to‑image using URLs)
+AI_PROVIDER=huggingface  # alias: hf
+HF_API_TOKEN=your_hf_token_here
+# optional: change model
+HF_API_MODEL=stabilityai/stable-diffusion-2-1
 ```
+
+> **Note:** the backend endpoints always return HTTP 200 even if an AI
+> provider reports a failure; error details are carried in
+> `response.ok=false` and the front‑end helper functions convert these
+> into thrown errors. This prevents HTTP 500 statuses from cluttering the
+> network log when, for example, Pixazo runs out of credits.
 
 ## Testing
 
