@@ -28,6 +28,25 @@ export class FashnProvider extends AIProviderInterface {
   }
 
   /**
+   * Check that the micro-service is reachable by calling its `/health` path.
+   */
+  async check() {
+    if (!this.serviceUrl) {
+      return { ok: false, message: 'VTON_SERVICE_URL not configured' };
+    }
+    try {
+      const healthUrl = this.serviceUrl.replace(/\/vton$/, '/health');
+      const r = await fetch(healthUrl, { timeout: 5000 });
+      if (!r.ok) {
+        return { ok: false, message: `health returned ${r.status}` };
+      }
+      return { ok: true, message: 'service reachable' };
+    } catch (err) {
+      return { ok: false, message: `error contacting service: ${err.message}` };
+    }
+  }
+
+  /**
    * @param {object} input
    * @returns {Promise<object>} VirtualTryOnResponse
    */

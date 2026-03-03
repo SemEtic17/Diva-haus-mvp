@@ -31,6 +31,32 @@ export class PixazoProvider extends AIProviderInterface {
   }
 
   /**
+   * Lightweight configuration check.  A simple GET against the base URL
+   * – it may return 405/404, but if we see 401/403 we know the key is
+   * invalid or out of balance.
+   */
+  async check() {
+    if (!this.apiKey) {
+      return { ok: false, message: 'no PIXAZO_API_KEY provided' };
+    }
+    try {
+      const resp = await fetch(this.baseUrl, {
+        method: 'GET',
+        headers: { 'Ocp-Apim-Subscription-Key': this.apiKey },
+        timeout: 10000,
+      });
+      if (resp.status === 401 || resp.status === 403) {
+        const txt = await resp.text().catch(() => '');
+        return { ok: false, message: `access denied (${resp.status} ${txt})` };
+      }
+      // other status codes we treat as 'reachable'
+      return { ok: true, message: `reachable (status ${resp.status})` };
+    } catch (err) {
+      return { ok: false, message: `error contacting Pixazo: ${err.message}` };
+    }
+  }
+
+  /**
    * @param {object} input
    * @returns {Promise<object>} VirtualTryOnResponse
    */

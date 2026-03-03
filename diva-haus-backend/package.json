@@ -7,7 +7,8 @@
     "start": "nodemon api/index.js",
     "dev": "nodemon api/index.js",
     "build": "npm ci && npm install --prefix ../diva-haus-frontend && npm run build --prefix ../diva-haus-frontend",
-    "start:prod": "NODE_ENV=production node api/index.js"
+    "start:prod": "NODE_ENV=production node api/index.js",
+    "check:ai": "node scripts/check_providers.js"
   },
   "keywords": [],
   "author": "",

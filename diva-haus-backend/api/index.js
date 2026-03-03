@@ -22,6 +22,7 @@ import authRoutes from './routes/authRoutes.js';
 import cartRoutes from './routes/cartRoutes.js';
 import userRoutes from './routes/userRoutes.js'; // NEW: Import userRoutes
 import uploadRoutes from './routes/uploadRoutes.js'; // Day 18: Dedicated upload service
+import { listProviders, healthCheck } from './controllers/aiController.js';
 
 // ES Module path resolution
 const __filename = fileURLToPath(import.meta.url);
@@ -59,6 +60,10 @@ app.use('/api/auth', authRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/users', userRoutes); // NEW: Use userRoutes
 app.use('/api/uploads', uploadRoutes); // Day 18: Dedicated upload service
+
+// AI diagnostics
+app.get('/api/ai/providers', listProviders);
+app.get('/api/ai/health', healthCheck);
 
 // Health Check
 app.get('/health', (req, res) => {

@@ -29,6 +29,31 @@ export class HuggingFaceProvider extends AIProviderInterface {
   }
 
   /**
+   * Perform a lightweight sanity check on the configured token/model.
+   * Does **not** perform a full try-on (which would use up quota).
+   * @returns {Promise<{ok:boolean,message:string}>}
+   */
+  async check() {
+    if (!this.token) {
+      return { ok: false, message: 'no HF_API_TOKEN provided' };
+    }
+    try {
+      const whoami = await fetch('https://api.huggingface.co/whoami-v2', {
+        headers: { Authorization: `Bearer ${this.token}` },
+        timeout: 10000,
+      });
+      if (!whoami.ok) {
+        const text = await whoami.text();
+        return { ok: false, message: `whoami failed: HTTP ${whoami.status} ${text}` };
+      }
+      const info = await whoami.json();
+      return { ok: true, message: `token valid (${info.model?.length ? 'model-facing' : 'general'})` };
+    } catch (err) {
+      return { ok: false, message: `token check error: ${err.message}` };
+    }
+  }
+
+  /**
    * @param {object} input
    * @returns {Promise<object>} VirtualTryOnResponse
    */

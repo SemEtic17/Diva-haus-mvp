@@ -112,7 +112,15 @@ HF_API_MODEL=runwayml/stable-diffusion-v1-5  # optional, defaults to the same
 # -----------------------------------------------
 ```
 
-Replace `YOUR_MONGODB_CONNECTION_STRING` with your actual MongoDB connection string (e.g., `mongodb://localhost:27017/divahaus` or your MongoDB Atlas URI).
+Replace `YOUR_MONGODB_CONNECTION_STRING` with your actual MongoDB connection string (e.g., `mongodb://localhost:27017/divahaus` or your MongoDB Atlas URI.
+
+> **Diagnostics:**
+> * With the backend running you can hit `/api/ai/health` to see the status
+>   of each provider (token validity, service reachability, etc.).
+> * Alternatively run `npm run check:ai` from `diva-haus-backend` – it prints
+>   the same information without starting the server.  These checks help
+>   determine whether Pixazo is failing due to an exhausted balance or whether
+>   a Hugging Face token lacks inference permissions.
 
 ### Running the Frontend
 

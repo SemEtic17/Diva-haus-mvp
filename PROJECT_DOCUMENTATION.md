@@ -367,6 +367,36 @@ HF_API_TOKEN=<your-free-hf-token>             # only used when AI_PROVIDER=huggi
 HF_API_MODEL=runwayml/stable-diffusion-v1-5   # optional override
 ```
 
+**Pixazo quirk:** the API key you configure above uses a separate credit
+bucket from the “100 credits” shown in Pixazo’s web dashboard.  the
+dashboard balance applies only to the site’s own image generator; calling
+`/fashn-virtual-try-on-request` with your API key will consume a different
+quota.  when that bucket is drained the API responds with HTTP 403 and the
+error message "The balance is insufficient…" (which the backend surfaces in
+full).  creating a new key or purchasing a paid plan is the only way to
+restore API access.  You can either top up that key or switch to another
+provider (`huggingface` or `fashn`) – the system will automatically fall
+back to HF if it’s configured.
+
+To help diagnose why a provider isn’t working you can use the built-in
+tools:
+
+* **HTTP diagnostics** – start the backend and visit `/api/ai/providers` or
+  `/api/ai/health` to see which providers are configured, whether tokens are
+  valid, whether the local FASHN service responds, etc.
+* **CLI script** – from within `diva-haus-backend` run:
+
+```bash
+npm run check:ai
+```
+
+  this will print JSON similar to the output of `/api/ai/health` and is
+  useful in environments where you don’t want to start the server.
+
+These utilities are especially handy when Pixazo returns a 403 (“balance
+insufficient”) or the Hugging Face token appears to give 404/401 errors – the
+status messages explain the root cause without consuming any inference quota.
+
 Running the Python service locally requires a GPU or a cloud instance. For
 quick testing you can use a Colab notebook or Hugging Face Space; the code
 structure is identical.
