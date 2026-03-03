@@ -107,6 +107,9 @@ PIXAZO_API_KEY=your_pixazo_subscription_key
 # https://huggingface.co/settings/tokens (login with GitHub/Gmail etc.)
 # the service now uses the newer router.huggingface.co endpoint – you may
 # see a 410 error if you hit the old URL in your browser.
+# HF models often require you to "accept" the license on the model page.
+# if you do not, the backend will report a 404 model‑not‑found error even
+# though your token is valid.  run `npm run check:ai` to confirm.
 HF_API_TOKEN=your_hf_inference_api_token
 HF_API_MODEL=runwayml/stable-diffusion-v1-5  # optional, defaults to the same
 # -----------------------------------------------

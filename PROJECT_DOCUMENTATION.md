@@ -383,7 +383,9 @@ tools:
 
 * **HTTP diagnostics** – start the backend and visit `/api/ai/providers` or
   `/api/ai/health` to see which providers are configured, whether tokens are
-  valid, whether the local FASHN service responds, etc.
+  valid, whether the local FASHN service responds, etc.  (the Hugging Face
+  check now hits `https://huggingface.co/api/whoami-v2` because
+  `api.huggingface.co` no longer resolves.)
 * **CLI script** – from within `diva-haus-backend` run:
 
 ```bash

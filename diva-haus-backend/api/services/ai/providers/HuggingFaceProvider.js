@@ -38,7 +38,9 @@ export class HuggingFaceProvider extends AIProviderInterface {
       return { ok: false, message: 'no HF_API_TOKEN provided' };
     }
     try {
-      const whoami = await fetch('https://api.huggingface.co/whoami-v2', {
+      // note: the public DNS for `api.huggingface.co` no longer resolves
+      // reliably; use the documented `huggingface.co/api` path instead.
+      const whoami = await fetch('https://huggingface.co/api/whoami-v2', {
         headers: { Authorization: `Bearer ${this.token}` },
         timeout: 10000,
       });
@@ -47,6 +49,19 @@ export class HuggingFaceProvider extends AIProviderInterface {
         return { ok: false, message: `whoami failed: HTTP ${whoami.status} ${text}` };
       }
       const info = await whoami.json();
+      // token itself is valid; now check the model endpoint for permission
+      try {
+        const probe = await fetch(this.endpoint, {
+          method: 'HEAD',
+          headers: { Authorization: `Bearer ${this.token}` },
+          timeout: 10000,
+        });
+        if (probe.status === 404) {
+          return { ok: false, message: `model not accessible (maybe license not accepted?)` };
+        }
+      } catch (e) {
+        // ignore network errors here, we'll still report token validity
+      }
       return { ok: true, message: `token valid (${info.model?.length ? 'model-facing' : 'general'})` };
     } catch (err) {
       return { ok: false, message: `token check error: ${err.message}` };
@@ -115,7 +130,9 @@ export class HuggingFaceProvider extends AIProviderInterface {
           throw new Error(
             `HuggingFace model not found (404). ` +
               `Ensure HF_API_MODEL is correct and that your token has ` +
-              `permission/you've accepted the license on https://huggingface.co/models/${this.model}`
+              `permission/you've accepted the license on the model page ` +
+              `(e.g. https://huggingface.co/${this.model}). ` +
+              `The URL must include the full model ID exactly as shown on HF.`
           );
         }
 

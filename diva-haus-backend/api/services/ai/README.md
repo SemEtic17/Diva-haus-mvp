@@ -80,8 +80,11 @@ ai/
   the complimentary quota is exhausted. Some models also require you to
   accept a license or request access on their Hugging Face page before
   they can be used via API. If you see a `404 Not Found` error, visit
-  the model URL and click “Accept”/“Request access” (e.g.
-  https://huggingface.co/models/runwayml/stable-diffusion-v1-5).  
+  the specific model URL and click “Accept”/“Request access” (for
+  example `https://huggingface.co/runwayml/stable-diffusion-v1-5`).
+  Note that `https://huggingface.co/runwayml/models` is merely the
+  Runway organization page and won’t help; the model path must include
+  the full ID exactly as shown on HF.
 - **Status**: ✅ Implemented as of Day 23
 
 ### Future Providers
