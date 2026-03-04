@@ -30,7 +30,7 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI;
+const MONGO_URI = process.env.MONGO_URI.replace('<PASSWORD>', process.env.MONGO_PASSWORD);
 
 // Middleware
 app.use(cors({
