@@ -87,7 +87,7 @@ const ProductGrid = () => {
           {/* Glass backdrop */}
           <div className="absolute -inset-4 md:-inset-6 lg:-inset-8 rounded-3xl bg-glass-light/30 backdrop-blur-sm border border-glass-border/20 -z-10" />
           
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 p-4 md:p-6 lg:p-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 p-4 md:p-6 lg:p-8">
             {products.map((product) => (
               <motion.div key={product._id} variants={itemVariants} className="relative flex justify-center">
                 <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-neon-cyan/10 via-transparent to-neon-pink/10 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500" />               
