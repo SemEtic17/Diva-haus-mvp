@@ -68,36 +68,52 @@ const Navbar = () => {
         <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20">
             
-            <div className="flex-1 flex items-center justify-start md:hidden">
+            <div className="flex-1 flex items-center justify-start space-x-4">
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-2 text-gray-300/70 hover:text-yellow-400 transition-colors"
+                className="p-2 text-gray-300/70 hover:text-yellow-400 transition-colors md:hidden"
                 aria-label="Toggle menu"
               >
                 {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
               </motion.button>
+              <Link to="/" className="md:hidden">
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  className="flex-shrink-0"
+                >
+                  <div className="text-center">
+                    <h1 className="font-serif text-2xl tracking-wider">
+                      <span className="text-gradient-gold">DIVA</span>
+                      <span className="text-foreground ml-1">HAUS</span>
+                    </h1>
+                    <span className="hidden md:block text-[10px] tracking-[0.4em] text-gold/60 uppercase mt-0.5">
+                      Luxury Boutique
+                    </span>
+                  </div>
+                </motion.div>
+              </Link>
             </div>
 
             <motion.div
-              className="flex-1 flex justify-center"
+              className="hidden md:flex flex-1 justify-center"
             >
               <Link to="/" className="flex-shrink-0">
                 <motion.div
-              whileHover={{ scale: 1.02 }}
-              className="absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0 md:mx-auto"
-            >
-              <div className="text-center">
-                <h1 className="font-serif text-2xl md:text-3xl tracking-wider">
-                  <span className="text-gradient-gold">DIVA</span>
-                  <span className="text-foreground ml-1">HAUS</span>
-                </h1>
-                <span className="hidden md:block text-[10px] tracking-[0.4em] text-gold/60 uppercase mt-0.5">
-                  Luxury Boutique
-                </span>
-              </div>
-            </motion.div>
+                  whileHover={{ scale: 1.02 }}
+                  className="mx-auto"
+                >
+                  <div className="text-center">
+                    <h1 className="font-serif text-2xl md:text-3xl tracking-wider">
+                      <span className="text-gradient-gold">DIVA</span>
+                      <span className="text-foreground ml-1">HAUS</span>
+                    </h1>
+                    <span className="hidden md:block text-[10px] tracking-[0.4em] text-gold/60 uppercase mt-0.5">
+                      Luxury Boutique
+                    </span>
+                  </div>
+                </motion.div>
               </Link>
             </motion.div>
 
