@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingBag, User, Menu, X, Heart, LogOut } from 'lucide-react';
+import { ShoppingBag, User, Menu, X, Heart, LogOut, UserPlus } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 import { CartContext } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -196,11 +196,12 @@ const Navbar = () => {
                   </>
                 ) : (
                   <>
-                    <Link to="/login" className="flex items-center gap-3 py-3 px-4 text-base font-medium text-yellow-400 hover:bg-white/10 rounded-lg transition-all duration-200">
+                    <Link to="/login" className="flex items-center gap-3 py-3 px-4 text-base font-medium text-gray-200/80 hover:text-yellow-400 hover:bg-white/10 rounded-lg transition-all duration-200">
                       <User size={18} />
                       Sign In
                     </Link>
-                    <Link to="/register" className="block py-3 px-4 text-base font-medium text-gray-200/80 hover:text-yellow-400 hover:bg-white/10 rounded-lg transition-all duration-200">
+                    <Link to="/register" className="flex items-center gap-3 py-3 px-4 text-base font-medium text-gray-200/80 hover:text-yellow-400 hover:bg-white/10 rounded-lg transition-all duration-200">
+                      <UserPlus size={18} />
                       Register
                     </Link>
                   </>
