@@ -161,6 +161,7 @@ source .venv/bin/activate        # activate (use venv\Scripts\activate on Window
 pip install -r requirements.txt  # install dependencies and the library
 python scripts/download_weights.py --weights-dir ./weights
 python server.py
+uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
 The service listens on port `8000` by default and exposes:
