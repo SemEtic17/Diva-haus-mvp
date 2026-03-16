@@ -1,0 +1,39 @@
+{
+  "nav": {
+    "home": "ቤት",
+    "profile": "መገለጫ",
+    "cart": "መግዣ ቅርጫት",
+    "wishlist": "የምኞት ዝርዝር",
+    "logout": "ውጣ",
+    "login": "ግባ",
+    "register": "ተመዝገብ",
+    "my_account": "የእኔ መለያ",
+    "sign_in": "በመለያ ግባ",
+    "language": "ቋንቋ"
+  },
+  "home": {
+    "welcome": "ወደ ዲቫ ሃውስ እንኳን ደህና መጡ",
+    "subtitle": "የቅንጦት ቡቲክ"
+  },
+  "products": {
+    "collection": "የተመረጡ ስብስቦች",
+    "featured": "ተለይተው የቀረቡ ምርቶች",
+    "error": "ምርቶችን መጫን አልተቻለም። እባክዎ ቆይተው እንደገና ይሞክሩ።"
+  },
+  "auth": {
+    "login_title": "ግባ",
+    "email": "የኢሜይል አድራሻ",
+    "password": "የይለፍ ቃል",
+    "login_button": "ግባ",
+    "no_account": "መለያ የለዎትም?",
+    "register_link": "ተመዝገብ",
+    "register_title": "ተመዝገብ",
+    "name": "ስም",
+    "confirm_password": "የይለፍ ቃል ያረጋግጡ",
+    "register_button": "ተመዝገብ",
+    "have_account": "ቀድሞውኑ መለያ አለዎት?",
+    "passwords_not_match": "የይለፍ ቃሎች አይዛመዱም",
+    "registration_success": "ምዝገባው ተሳክቷል! እባክዎ ይግቡ።",
+    "registration_failed": "መመዝገብ አልተቻለም"
+  }
+}

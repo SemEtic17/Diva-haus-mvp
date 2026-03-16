@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import ProductCard from './ProductCard';
-import { getProducts } from '../api'; // Assuming getProducts API function exists
+import { getProducts } from '../api'; 
+import { useTranslation } from 'react-i18next';
 
 const ProductGrid = () => {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -15,7 +17,7 @@ const ProductGrid = () => {
         const fetchedProducts = await getProducts();
         setProducts(fetchedProducts);
       } catch (err) {
-        setError('Failed to load products. Please try again later.');
+        setError(t('products.error', 'Failed to load products. Please try again later.'));
         console.error(err);
       } finally {
         setIsLoading(false);
@@ -23,7 +25,7 @@ const ProductGrid = () => {
     };
 
     fetchProducts();
-  }, []);
+  }, [t]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -77,8 +79,8 @@ const ProductGrid = () => {
             transition={{ duration: 0.6 }}
             className="inline-block"
           >
-            <span className="text-gold text-sm font-medium tracking-[0.3em] uppercase mb-3 block">Curated Collection</span>
-            <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-foreground">Featured Pieces</h2>
+            <span className="text-gold text-sm font-medium tracking-[0.3em] uppercase mb-3 block">{t('products.collection', 'Curated Collection')}</span>
+            <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-foreground">{t('products.featured', 'Featured Pieces')}</h2>
             <div className="mt-4 mx-auto w-24 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
           </motion.div>
         </div>

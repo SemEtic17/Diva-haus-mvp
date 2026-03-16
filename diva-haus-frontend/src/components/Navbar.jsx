@@ -1,16 +1,22 @@
 import { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingBag, User, Menu, X, Heart, LogOut, UserPlus } from 'lucide-react';
+import { ShoppingBag, User, Menu, X, Heart, LogOut, UserPlus, Languages } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 import { CartContext } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+import { useTranslation } from 'react-i18next';
 
 const Navbar = () => {
   const { isAuthenticated, logout } = useContext(AuthContext);
   const { cartItems } = useContext(CartContext);
   const { wishlist } = useWishlist();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { t, i18n } = useTranslation();
+
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+  };
 
   const linkHover = {
     y: -2,
@@ -118,6 +124,21 @@ const Navbar = () => {
             </motion.div>
 
             <div className="flex-1 flex items-center justify-end space-x-2 md:space-x-4">
+              <div className="flex items-center space-x-1 mr-2 border-r border-white/10 pr-4">
+                <button
+                  onClick={() => changeLanguage('en')}
+                  className={`text-xs px-2 py-1 rounded transition-colors ${i18n.language === 'en' ? 'bg-yellow-400 text-black' : 'text-gray-400 hover:text-white'}`}
+                >
+                  EN
+                </button>
+                <button
+                  onClick={() => changeLanguage('am')}
+                  className={`text-xs px-2 py-1 rounded transition-colors ${i18n.language === 'am' ? 'bg-yellow-400 text-black' : 'text-gray-400 hover:text-white'}`}
+                >
+                  አማ
+                </button>
+              </div>
+
               <Link to="/wishlist" aria-label="Wishlist">
                 <motion.div
                   whileHover={linkHover}
@@ -183,33 +204,51 @@ const Navbar = () => {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               <div className="bg-black/95 backdrop-blur-xl px-4 py-6 space-y-1">
+                <div className="flex items-center justify-between px-4 py-2 border-b border-white/5 mb-2">
+                  <span className="text-xs text-gray-500 uppercase tracking-widest">{t('nav.language', 'Language')}</span>
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); changeLanguage('en'); }}
+                      className={`text-xs px-3 py-1 rounded transition-colors ${i18n.language === 'en' ? 'bg-yellow-400 text-black' : 'text-gray-400'}`}
+                    >
+                      English
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); changeLanguage('am'); }}
+                      className={`text-xs px-3 py-1 rounded transition-colors ${i18n.language === 'am' ? 'bg-yellow-400 text-black' : 'text-gray-400'}`}
+                    >
+                      አማርኛ
+                    </button>
+                  </div>
+                </div>
+
                 {isAuthenticated ? (
                   <>
                     <Link to="/profile" className="flex items-center gap-3 py-3 px-4 text-base font-medium text-gray-200/80 hover:text-yellow-400 hover:bg-white/10 rounded-lg transition-all duration-200">
                       <User size={18} />
-                      My Account
+                      {t('nav.my_account')}
                     </Link>
                     <button onClick={logout} className="w-full text-left flex items-center gap-3 py-3 px-4 text-base font-medium text-gray-200/80 hover:text-yellow-400 hover:bg-white/10 rounded-lg transition-all duration-200">
                       <LogOut size={18} />
-                      Logout
+                      {t('nav.logout')}
                     </button>
                   </>
                 ) : (
                   <>
                     <Link to="/login" className="flex items-center gap-3 py-3 px-4 text-base font-medium text-gray-200/80 hover:text-yellow-400 hover:bg-white/10 rounded-lg transition-all duration-200">
                       <User size={18} />
-                      Sign In
+                      {t('nav.sign_in')}
                     </Link>
                     <Link to="/register" className="flex items-center gap-3 py-3 px-4 text-base font-medium text-gray-200/80 hover:text-yellow-400 hover:bg-white/10 rounded-lg transition-all duration-200">
                       <UserPlus size={18} />
-                      Register
+                      {t('nav.register')}
                     </Link>
                   </>
                 )}
                 <div className="my-4 h-px bg-gradient-to-r from-transparent via-yellow-400/30 to-transparent" />
                 <Link to="/wishlist" className="flex items-center gap-3 py-3 px-4 text-base font-medium text-gray-200/80 hover:text-yellow-400 hover:bg-white/10 rounded-lg transition-all duration-200">
                   <Heart size={18} />
-                  Wishlist
+                  {t('nav.wishlist')}
                 </Link>
               </div>
             </motion.div>

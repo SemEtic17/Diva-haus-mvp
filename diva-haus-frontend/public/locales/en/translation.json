@@ -1,0 +1,35 @@
+{
+  "nav": {
+    "home": "Home",
+    "profile": "Profile",
+    "cart": "Cart",
+    "wishlist": "Wishlist",
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register",
+    "my_account": "My Account",
+    "sign_in": "Sign In"
+  },
+  "home": {
+    "welcome": "Welcome to Diva Haus",
+    "subtitle": "Luxury Boutique"
+  },
+  "products": {
+    "collection": "Curated Collection",
+    "featured": "Featured Pieces",
+    "error": "Failed to load products. Please try again later."
+  },
+  "auth": {
+    "login_title": "Login",
+    "email": "Email Address",
+    "password": "Password",
+    "login_button": "Login",
+    "no_account": "Don't have an account?",
+    "register_link": "Register",
+    "register_title": "Register",
+    "name": "Name",
+    "confirm_password": "Confirm Password",
+    "register_button": "Register",
+    "have_account": "Already have an account?"
+  }
+}
