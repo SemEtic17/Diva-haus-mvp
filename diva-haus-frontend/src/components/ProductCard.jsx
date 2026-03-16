@@ -5,19 +5,21 @@ import { useNavigate } from 'react-router-dom';
 import { Heart } from 'lucide-react';
 import { CartContext } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
+import { useTranslation } from 'react-i18next';
 
 const ProductCard = ({ product }) => {
   const [isAdding, setIsAdding] = useState(false);
   const { addItemToCart } = useContext(CartContext);
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleNavigate = () => {
     navigate(`/product/${product._id}`);
   };
 
   const handleAddToCart = async (e) => {
-    e.stopPropagation(); // Prevent the card's onClick from firing
+    e.stopPropagation(); 
     if (product.isSoldOut) return;
 
     setIsAdding(true);
@@ -34,10 +36,10 @@ const ProductCard = ({ product }) => {
     e.stopPropagation();
     if (isInWishlist(product._id)) {
       removeFromWishlist(product._id);
-      toast.success('Removed from Wishlist');
+      toast.success(t('products.removed_from_wishlist'));
     } else {
       addToWishlist(product);
-      toast.success('Added to Wishlist');
+      toast.success(t('products.added_to_wishlist'));
     }
   };
 
@@ -107,7 +109,7 @@ const ProductCard = ({ product }) => {
                        shadow-neon-pink"
           >
             <span className="text-xs font-semibold uppercase tracking-widest text-neon-pink">
-              Sold Out
+              {t('products.sold_out')}
             </span>
           </motion.div>
         )}
@@ -118,13 +120,13 @@ const ProductCard = ({ product }) => {
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
           className="absolute top-6 right-4 z-20 p-2 bg-background/50 backdrop-blur-md rounded-full text-white/80 hover:text-white transition-colors group/wishlist"
-          aria-label={isWishlisted ? 'Remove from Wishlist' : 'Add to Wishlist'}
+          aria-label={isWishlisted ? t('products.remove_from_wishlist') : t('products.add_to_wishlist')}
         >
           <Heart
             className={`w-5 h-5 transition-all duration-300 ${isWishlisted ? 'text-gold fill-current' : 'text-white'}`}
           />
           <div className="absolute -top-4 right-[41px] translate-x-1/2 px-2 py-1 bg-black/80 text-white text-xs rounded-md opacity-0 group-hover/wishlist:opacity-100 transition-opacity whitespace-nowrap">
-            {isWishlisted ? 'Remove from Wishlist' : 'Add to Wishlist'}
+            {isWishlisted ? t('products.remove_from_wishlist') : t('products.add_to_wishlist')}
           </div>
         </motion.button>
         
@@ -214,10 +216,10 @@ const ProductCard = ({ product }) => {
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   />
                 </svg>
-                <span className="relative">Adding...</span>
+                <span className="relative">{t('products.adding')}</span>
               </div>
             ) : (
-              <span className="relative">Add to Cart</span>
+              <span className="relative">{t('products.add_to_cart')}</span>
             )}
           </motion.button>
         </div>

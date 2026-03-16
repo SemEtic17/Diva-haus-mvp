@@ -1,34 +1,30 @@
-import { useContext } from 'react'; // Removed useEffect, useState
+import { useContext } from 'react'; 
 import { AuthContext } from '../context/AuthContext';
-// Removed getCart, removeFromCart
-import { CartContext } from '../context/CartContext'; // NEW: Import CartContext
+import { CartContext } from '../context/CartContext'; 
+import { useTranslation } from 'react-i18next';
 
 const CartPage = () => {
-  const { isAuthenticated } = useContext(AuthContext); // Use isAuthenticated
-  const { cartItems, loading, error, removeItemFromCart, fetchUserCart } = useContext(CartContext); // NEW: Get cart state and functions
-
-  // Fetch cart on mount and when isAuthenticated changes
-  // This useEffect replaces the old one, but relies on CartContext's internal useEffect
-  // We can call fetchUserCart directly if needed, but CartContext already handles it on auth change
+  const { isAuthenticated } = useContext(AuthContext); 
+  const { cartItems, loading, error, removeItemFromCart } = useContext(CartContext); 
+  const { t } = useTranslation();
 
   const handleRemove = async (productId) => {
-    await removeItemFromCart(productId); // NEW: Use removeItemFromCart from CartContext
+    await removeItemFromCart(productId); 
   };
 
   if (loading) {
-    return <div className="container mx-auto p-4">Loading...</div>;
+    return <div className="container mx-auto p-4">{t('cart.loading')}</div>;
   }
 
-  // Handle error state
   if (error) {
     return <div className="container mx-auto p-4 text-red-500">Error: {error}</div>;
   }
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Your Cart</h1>
+      <h1 className="text-2xl font-bold mb-4">{t('cart.title')}</h1>
       {cartItems.length === 0 ? (
-        <p>Your cart is empty.</p>
+        <p>{t('cart.empty')}</p>
       ) : (
         <div>
           {cartItems.map((item) => (
@@ -41,18 +37,18 @@ const CartPage = () => {
                 </div>
               </div>
               <div className="flex items-center">
-                 <p className="mr-4">Qty: {item.qty}</p>
+                 <p className="mr-4">{t('cart.qty')}: {item.qty}</p>
                 <button
                   onClick={() => handleRemove(item.product._id)}
                   className="bg-red-500 text-white p-2 rounded"
                 >
-                  Remove
+                  {t('cart.remove')}
                 </button>
               </div>
             </div>
           ))}
           <div className="text-right mt-4 text-xl font-bold">
-            Total: ${cartItems.reduce((acc, item) => acc + item.qty * item.product.price, 0).toFixed(2)}
+            {t('cart.total')}: ${cartItems.reduce((acc, item) => acc + item.qty * item.product.price, 0).toFixed(2)}
           </div>
         </div>
       )}

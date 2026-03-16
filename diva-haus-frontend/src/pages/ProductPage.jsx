@@ -7,10 +7,12 @@ import VirtualTryOnPlaceholder from '../components/VirtualTryOnPlaceholder';
 import HolographicContainer from '../components/HolographicContainer';
 import { toast } from '../components/Toaster';
 import { isTryOnEnabled } from '../config/features';
+import { useTranslation } from 'react-i18next';
 
 const ProductPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -26,24 +28,23 @@ const ProductPage = () => {
         setProduct(data);
       } catch (err) {
         setError(err.message);
-        toast.error('Error fetching product: ' + err.message);
+        toast.error(t('products.error') + ': ' + err.message);
       } finally {
         setLoading(false);
       }
     };
 
     fetchProduct();
-  }, [id]);
+  }, [id, t]);
 
   const handleAddToCart = async () => {
     if (!isAuthenticated) {
-      toast.error('Please login first');
+      toast.error(t('products.login_required_cart'));
       return;
     }
 
     try {
       await addItemToCart(product._id, 1);
-
     } catch (err) {
       toast.error(`Error: ${err.message}`);
     }
@@ -51,21 +52,21 @@ const ProductPage = () => {
 
   const handleTryOn = () => {
     if (!isAuthenticated) {
-      toast.error('Please login to use virtual try-on.');
+      toast.error(t('products.login_required_try_on'));
       return;
     }
 
     if (!userInfo || !userInfo.bodyImage) {
-      toast.info('Please upload your body image in your profile first for virtual try-on.');
+      toast.info(t('products.upload_body_image_first'));
       navigate('/profile');
       return;
     }
 
-    toast.info('Virtual Try-On feature is coming soon!');
+    toast.info(t('products.try_on_coming_soon'));
   };
 
   if (loading) {
-    return <div className="text-center p-4">Loading product...</div>;
+    return <div className="text-center p-4">{t('products.loading')}</div>;
   }
 
   if (error) {
@@ -73,17 +74,12 @@ const ProductPage = () => {
   }
 
   if (!product) {
-    return <div className="text-center p-4">Product not found</div>;
+    return <div className="text-center p-4">{t('products.not_found')}</div>;
   }
-
-  // debugging logs removed for production
 
   return (
     <div className="container mx-auto p-4">
 
-      {/* ===================== */}
-      {/* PRODUCT DETAILS */}
-      {/* ===================== */}
       <div className="flex flex-col md:flex-row items-center md:items-start gap-8 mt-8">
         <img
           src={product.image}
@@ -101,8 +97,7 @@ const ProductPage = () => {
           </p>
 
           <p className="text-gray-600 mt-4">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            {product.description || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'}
           </p>
 
           <button
@@ -110,21 +105,18 @@ const ProductPage = () => {
             disabled={!isAuthenticated}
             className="mt-6 w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg shadow-md disabled:bg-gray-400 transition duration-300"
           >
-            Add to Cart
+            {t('products.add_to_cart')}
           </button>
         </div>
       </div>
 
-      {/* ===================== */}
-      {/* VIRTUAL TRY-ON (FEATURE FLAGGED) */}
-      {/* ===================== */}
       {isTryOnEnabled && (
         <div className="mt-16">
           <button
             onClick={handleTryOn}
             className="w-full md:w-auto bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300"
           >
-            Virtual Try-On
+            {t('products.virtual_try_on')}
           </button>
 
           <VirtualTryOnPlaceholder productId={product._id} />
@@ -132,16 +124,13 @@ const ProductPage = () => {
         </div>
       )}
 
-      {/* ===================== */}
-      {/* 3D HERO SHOWCASE */}
-      {/* ===================== */}
       <div className="relative w-full h-[500px] mb-4">
         <HolographicContainer product={product}>
-          
+
         </HolographicContainer>
       </div>
 
-    
+
     </div>
   );
 };

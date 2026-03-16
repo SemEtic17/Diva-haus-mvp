@@ -4,6 +4,7 @@ import { AuthContext } from '../context/AuthContext';
 import { uploadBodyImage, deleteBodyImage } from '../api';
 import { toast } from '../components/Toaster';
 import { Upload, User, Check, X, Camera, Sparkles, LogOut, Mail, Trash2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 // Animation Variants
 const containerVariants = {
@@ -44,17 +45,16 @@ const ExampleCard = ({ isGood, label, description, imageUrl }) => (
 );
 
 const ProfilePage = () => {
-  // --- Original Logic & State ---
   const { userInfo, isAuthenticated, logout, refreshUserInfo } = useContext(AuthContext);
   const [userBodyImage, setUserBodyImage] = useState(null);
   const fileInputRef = useRef(null);
+  const { t } = useTranslation();
 
-  // --- State Merged from BodyImageUploader ---
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [removing, setRemoving] = useState(false);
-  
+
   useEffect(() => {
     if (isAuthenticated && userInfo && userInfo.bodyImage) {
       setUserBodyImage(userInfo.bodyImage);
@@ -62,15 +62,14 @@ const ProfilePage = () => {
       setUserBodyImage(null);
     }
   }, [isAuthenticated, userInfo]);
-  
-  // --- Logic Merged from BodyImageUploader ---
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
       setSelectedFile(file);
       const tempPreviewUrl = URL.createObjectURL(file);
       setPreviewUrl(tempPreviewUrl);
-      handleUpload(file); // Automatically upload on select
+      handleUpload(file); 
     }
   };
 
@@ -81,14 +80,10 @@ const ProfilePage = () => {
       const formData = new FormData();
       formData.append('bodyImage', file);
       const response = await uploadBodyImage(formData);
-      
-      // Update local state
+
       setUserBodyImage(response.bodyImage);
-      
-      // Refresh userInfo in AuthContext to persist across page refreshes
       await refreshUserInfo();
-      
-      toast.success('Body image uploaded successfully!');
+      toast.success(t('profile.upload_success'));
 
       setSelectedFile(null);
       setPreviewUrl(null);
@@ -98,16 +93,16 @@ const ProfilePage = () => {
       setUploading(false);
     }
   };
-  
+
   const handleRemoveImage = async () => {
     if (!userBodyImage) return;
-    
+
     setRemoving(true);
     try {
       await deleteBodyImage();
       setUserBodyImage(null);
-      await refreshUserInfo(); // Refresh to update userInfo
-      toast.success('Image deleted successfully!');
+      await refreshUserInfo(); 
+      toast.success(t('profile.delete_success'));
     } catch (error) {
       toast.error(error.message || 'Error deleting image.');
     } finally {
@@ -115,12 +110,11 @@ const ProfilePage = () => {
     }
   };
 
-  // --- Render Logic ---
   if (!isAuthenticated) {
     return (
       <div className="container mx-auto p-4 text-center text-white">
-        <h1 className="text-2xl font-bold mb-4">Profile</h1>
-        <p>Please log in to view your profile.</p>
+        <h1 className="text-2xl font-bold mb-4">{t('nav.profile')}</h1>
+        <p>{t('profile.login_required')}</p>
       </div>
     );
   }
@@ -132,33 +126,33 @@ const ProfilePage = () => {
         <motion.div variants={itemVariants} className="text-center space-y-4">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-400/10 border border-yellow-400/20">
             <Sparkles className="w-4 h-4 text-yellow-400" />
-            <span className="text-sm font-medium text-yellow-400">Virtual Try-On Profile</span>
+            <span className="text-sm font-medium text-yellow-400">{t('profile.subtitle')}</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-serif font-bold">Your Body Profile</h1>
-          <p className="text-gray-400 max-w-2xl mx-auto">Upload a body image to unlock our AI-powered virtual try-on experience.</p>
+          <h1 className="text-3xl sm:text-4xl font-serif font-bold">{t('profile.title')}</h1>
+          <p className="text-gray-400 max-w-2xl mx-auto">{t('profile.description')}</p>
         </motion.div>
 
         {/* Main Glass Panel */}
         <motion.div variants={itemVariants} className="relative overflow-hidden rounded-3xl">
           <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-cyan-500/20 via-pink-500/20 to-cyan-500/20 blur-sm" />
           <div className="relative backdrop-blur-xl bg-black/60 border border-white/20 rounded-3xl p-6 sm:p-8">
-            
-            {/* User Info Section (Functionality Preserved) */}
+
+            {/* User Info Section */}
             {userInfo && (
               <div className="mb-8 p-4 rounded-2xl bg-white/5 border border-white/10">
-                <h3 className="text-lg font-medium text-white mb-4">Account Details</h3>
+                <h3 className="text-lg font-medium text-white mb-4">{t('profile.account_details')}</h3>
                 <div className="space-y-2 text-sm">
                   <div className="flex items-center gap-3"><User className="w-4 h-4 text-yellow-400/80"/><span>{userInfo.name}</span></div>
                   <div className="flex items-center gap-3"><Mail className="w-4 h-4 text-yellow-400/80"/><span>{userInfo.email}</span></div>
                   <div className="pt-2">
-                    <button onClick={logout} className="flex items-center gap-3 text-red-400 hover:text-red-300 transition-colors"><LogOut className="w-4 h-4"/><span>Logout</span></button>
+                    <button onClick={logout} className="flex items-center gap-3 text-red-400 hover:text-red-300 transition-colors"><LogOut className="w-4 h-4"/><span>{t('profile.logout')}</span></button>
                   </div>
                 </div>
               </div>
             )}
 
             {/* Current Image & Upload Section */}
-            <h3 className="text-lg font-medium text-white mb-4">Your Current Image</h3>
+            <h3 className="text-lg font-medium text-white mb-4">{t('profile.current_image')}</h3>
             <div className="grid sm:grid-cols-3 gap-6 items-center">
               <div className="sm:col-span-1">
                 <AnimatePresence mode="wait">
@@ -175,17 +169,16 @@ const ProfilePage = () => {
                     ) : (
                       <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-6">
                         <div className="w-20 h-20 rounded-full bg-gray-500/20 flex items-center justify-center"><Camera className="w-10 h-10 text-gray-500/50" /></div>
-                        <p className="text-sm text-gray-400 font-medium">No Image Yet</p>
+                        <p className="text-sm text-gray-400 font-medium">{t('profile.no_image')}</p>
                       </div>
                     )}
                   </motion.div>
                 </AnimatePresence>
               </div>
               <div className="sm:col-span-2 text-center sm:text-left">
-                <h4 className="text-xl font-serif font-semibold text-white mb-3">Why Your Image Matters</h4>
-                <p className="text-gray-400 leading-relaxed mb-6">Our AI uses your photo to create realistic virtual try-ons. A clear, well-lit photo ensures the most accurate, personalized results.</p>
-                
-                {/* Hidden file input */}
+                <h4 className="text-xl font-serif font-semibold text-white mb-3">{t('profile.why_image_matters')}</h4>
+                <p className="text-gray-400 leading-relaxed mb-6">{t('profile.why_image_desc')}</p>
+
                 <input type="file" accept="image/*" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
 
                 <div className="flex flex-col sm:flex-row items-center gap-4">
@@ -197,7 +190,7 @@ const ProfilePage = () => {
                     className="w-full sm:w-auto flex items-center justify-center bg-gradient-to-r from-yellow-400 to-yellow-300 text-black font-medium px-6 py-3 rounded-xl shadow-[0_10px_30px_-5px_rgba(234,179,8,0.3)] hover:shadow-[0_15px_40px_-5px_rgba(234,179,8,0.4)] transition-all duration-300 disabled:opacity-50"
                   >
                     <Upload className="w-5 h-5 mr-2" />
-                    {uploading ? 'Uploading...' : (userBodyImage ? 'Update Photo' : 'Upload Photo')}
+                    {uploading ? t('profile.uploading') : (userBodyImage ? t('profile.update_photo') : t('profile.upload_photo'))}
                   </motion.button>
 
                   {userBodyImage && (
@@ -209,7 +202,7 @@ const ProfilePage = () => {
                       className="w-full sm:w-auto flex items-center justify-center bg-red-500/10 text-red-400 border border-red-500/30 font-medium px-6 py-3 rounded-xl transition-colors hover:bg-red-500/20 disabled:opacity-50"
                     >
                       <Trash2 className="w-5 h-5 mr-2" />
-                      {removing ? 'Removing...' : 'Remove'}
+                      {removing ? t('profile.removing') : t('profile.remove_photo')}
                     </motion.button>
                   )}
                 </div>
@@ -223,20 +216,20 @@ const ProfilePage = () => {
         <motion.div variants={itemVariants} className="relative overflow-hidden rounded-3xl">
           <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-pink-500/10 via-transparent to-cyan-500/10" />
           <div className="relative backdrop-blur-xl bg-black/50 border border-white/10 rounded-3xl p-6 sm:p-8">
-            <h2 className="text-xl font-serif font-semibold mb-2">Photo Guidelines</h2>
-            <p className="text-gray-400 mb-6">Follow these tips for the best virtual try-on results.</p>
+            <h2 className="text-xl font-serif font-semibold mb-2">{t('profile.guidelines_title')}</h2>
+            <p className="text-gray-400 mb-6">{t('profile.guidelines_desc')}</p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
-              <ExampleCard isGood={true} label="Full Body" description="Head to toe visible" imageUrl="/assets/examples/full_body.jpeg" />
-              <ExampleCard isGood={true} label="Good Lighting" description="Even, natural light" imageUrl="/assets/examples/good_lighting.jpeg" />
-              <ExampleCard isGood={false} label="Cropped" description="Body cut off" imageUrl="/assets/examples/cropped.jpeg" />
-              <ExampleCard isGood={false} label="Dark/Blurry" description="Poor visibility" imageUrl="/assets/examples/blurry.jpeg" />
+              <ExampleCard isGood={true} label={t('profile.full_body')} description={t('profile.full_body_desc')} imageUrl="/assets/examples/full_body.jpeg" />
+              <ExampleCard isGood={true} label={t('profile.good_lighting')} description={t('profile.good_lighting_desc')} imageUrl="/assets/examples/good_lighting.jpeg" />
+              <ExampleCard isGood={false} label={t('profile.cropped')} description={t('profile.cropped_desc')} imageUrl="/assets/examples/cropped.jpeg" />
+              <ExampleCard isGood={false} label={t('profile.blurry')} description={t('profile.blurry_desc')} imageUrl="/assets/examples/blurry.jpeg" />
             </div>
           </div>
         </motion.div>
 
         {/* Privacy Note */}
         <motion.p variants={itemVariants} className="text-center text-xs text-gray-500/80 max-w-md mx-auto">
-          Your images are encrypted and stored securely. We never share your personal data with third parties.
+          {t('profile.privacy_note')}
         </motion.p>
       </motion.div>
     </div>
