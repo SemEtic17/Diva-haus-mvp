@@ -1,7 +1,7 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingBag, User, Menu, X, Heart, LogOut, UserPlus, Languages } from 'lucide-react';
+import { ShoppingBag, User, Menu, X, Heart, LogOut, UserPlus, Languages, ChevronDown } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 import { CartContext } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -12,11 +12,25 @@ const Navbar = () => {
   const { cartItems } = useContext(CartContext);
   const { wishlist } = useWishlist();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
+  const langMenuRef = useRef(null);
   const { t, i18n } = useTranslation();
 
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
+    setIsLangMenuOpen(false);
   };
+
+  // Close language menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (langMenuRef.current && !langMenuRef.current.contains(event.target)) {
+        setIsLangMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const linkHover = {
     y: -2,
@@ -124,19 +138,59 @@ const Navbar = () => {
             </motion.div>
 
             <div className="flex-1 flex items-center justify-end space-x-2 md:space-x-4">
-              <div className="flex items-center space-x-1 mr-2 border-r border-white/10 pr-4">
-                <button
-                  onClick={() => changeLanguage('en')}
-                  className={`text-xs px-2 py-1 rounded transition-colors ${i18n.language === 'en' ? 'bg-yellow-400 text-black' : 'text-gray-400 hover:text-white'}`}
+              {/* Language Switcher - Desktop: Buttons, Mobile: Dropdown */}
+              <div className="relative flex items-center" ref={langMenuRef}>
+                {/* Desktop Buttons */}
+                <div className="hidden md:flex items-center space-x-1 mr-2 border-r border-white/10 pr-4">
+                  <button
+                    onClick={() => changeLanguage('en')}
+                    className={`text-xs px-2 py-1 rounded transition-colors ${i18n.language === 'en' ? 'bg-yellow-400 text-black' : 'text-gray-400 hover:text-white'}`}
+                  >
+                    EN
+                  </button>
+                  <button
+                    onClick={() => changeLanguage('am')}
+                    className={`text-xs px-2 py-1 rounded transition-colors ${i18n.language === 'am' ? 'bg-yellow-400 text-black' : 'text-gray-400 hover:text-white'}`}
+                  >
+                    አማ
+                  </button>
+                </div>
+
+                {/* Mobile Dropdown Trigger */}
+                <motion.button
+                  onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="md:hidden flex items-center space-x-1 p-2 text-gray-300/70 hover:text-yellow-400 transition-colors duration-300 border-r border-white/10 pr-4"
                 >
-                  EN
-                </button>
-                <button
-                  onClick={() => changeLanguage('am')}
-                  className={`text-xs px-2 py-1 rounded transition-colors ${i18n.language === 'am' ? 'bg-yellow-400 text-black' : 'text-gray-400 hover:text-white'}`}
-                >
-                  አማ
-                </button>
+                  <Languages size={18} />
+                  <span className="text-xs font-medium uppercase">{i18n.language === 'am' ? 'አማ' : 'EN'}</span>
+                  <ChevronDown size={12} className={`transition-transform duration-300 ${isLangMenuOpen ? 'rotate-180' : ''}`} />
+                </motion.button>
+                
+                <AnimatePresence>
+                  {isLangMenuOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      className="absolute right-0 top-full mt-2 w-32 bg-navy-deep/95 backdrop-blur-xl border border-glass-border/30 rounded-lg shadow-2xl overflow-hidden z-[60]"
+                    >
+                      <button
+                        onClick={() => changeLanguage('en')}
+                        className={`w-full text-left px-4 py-2.5 text-xs transition-colors ${i18n.language === 'en' ? 'bg-yellow-400 text-black' : 'text-gray-400 hover:bg-white/10 hover:text-yellow-400'}`}
+                      >
+                        English
+                      </button>
+                      <button
+                        onClick={() => changeLanguage('am')}
+                        className={`w-full text-left px-4 py-2.5 text-xs transition-colors ${i18n.language === 'am' ? 'bg-yellow-400 text-black' : 'text-gray-400 hover:bg-white/10 hover:text-yellow-400'}`}
+                      >
+                        አማርኛ
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
               <Link to="/wishlist" aria-label="Wishlist">
@@ -204,24 +258,6 @@ const Navbar = () => {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               <div className="bg-black/95 backdrop-blur-xl px-4 py-6 space-y-1">
-                <div className="flex items-center justify-between px-4 py-2 border-b border-white/5 mb-2">
-                  <span className="text-xs text-gray-500 uppercase tracking-widest">{t('nav.language', 'Language')}</span>
-                  <div className="flex items-center space-x-2">
-                    <button
-                      onClick={(e) => { e.stopPropagation(); changeLanguage('en'); }}
-                      className={`text-xs px-3 py-1 rounded transition-colors ${i18n.language === 'en' ? 'bg-yellow-400 text-black' : 'text-gray-400'}`}
-                    >
-                      English
-                    </button>
-                    <button
-                      onClick={(e) => { e.stopPropagation(); changeLanguage('am'); }}
-                      className={`text-xs px-3 py-1 rounded transition-colors ${i18n.language === 'am' ? 'bg-yellow-400 text-black' : 'text-gray-400'}`}
-                    >
-                      አማርኛ
-                    </button>
-                  </div>
-                </div>
-
                 {isAuthenticated ? (
                   <>
                     <Link to="/profile" className="flex items-center gap-3 py-3 px-4 text-base font-medium text-gray-200/80 hover:text-yellow-400 hover:bg-white/10 rounded-lg transition-all duration-200">
