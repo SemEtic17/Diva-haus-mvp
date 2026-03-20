@@ -9,13 +9,10 @@ import { fileURLToPath } from 'url';
 // Load environment variables FIRST, before importing any routes that might use them
 dotenv.config();
 
-// Verify Cloudinary config is loaded
-console.log('[Server] Environment check:', {
-  STORAGE_PROVIDER: process.env.STORAGE_PROVIDER || 'NOT SET',
-  CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME ? 'SET' : 'NOT SET',
-  CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY ? 'SET' : 'NOT SET',
-  CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET ? 'SET' : 'NOT SET'
-});
+// Verify storage configuration (concise)
+if (process.env.NODE_ENV !== 'production') {
+  console.log(`[Server] Storage Provider: ${process.env.STORAGE_PROVIDER || 'local'}`);
+}
 
 import productRoutes from './routes/productRoutes.js';
 import authRoutes from './routes/authRoutes.js';
@@ -30,7 +27,8 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI.replace('<PASSWORD>', process.env.MONGO_PASSWORD);
+// Connect to MongoDB
+const MONGO_URI = process.env.MONGO_URI ? process.env.MONGO_URI.replace('<PASSWORD>', process.env.MONGO_PASSWORD) : null;
 
 // Middleware
 app.use(cors({
@@ -44,7 +42,6 @@ app.use(cookieParser()); // Added
 const uploadsPath = path.join(__dirname, '../uploads');
 app.use('/uploads', express.static(uploadsPath));
 
-// Connect to MongoDB
 if (MONGO_URI) {
   mongoose.connect(MONGO_URI)
     .then(() => console.log('MongoDB connected successfully'))

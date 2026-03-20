@@ -70,7 +70,9 @@ const localStorageProvider = {
       // Return public URL
       const url = `${BASE_URL}/uploads/${folder}/${filename}`;
       
-      console.log(`[LocalStorage] Uploaded: ${filePath}`);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`[LocalStorage] Uploaded: ${folder}/${filename}`);
+      }
       
       return {
         success: true,
@@ -78,7 +80,7 @@ const localStorageProvider = {
         publicId: `${folder}/${filename}`,
       };
     } catch (error) {
-      console.error('[LocalStorage] Upload error:', error);
+      console.error('[LocalStorage] Upload error:', error.message);
       return {
         success: false,
         error: error.message,
@@ -95,10 +97,12 @@ const localStorageProvider = {
     try {
       const filePath = path.join(UPLOADS_DIR, publicId);
       await fs.unlink(filePath);
-      console.log(`[LocalStorage] Deleted: ${filePath}`);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`[LocalStorage] Deleted: ${publicId}`);
+      }
       return true;
     } catch (error) {
-      console.error('[LocalStorage] Delete error:', error);
+      console.error('[LocalStorage] Delete error:', error.message);
       return false;
     }
   },
@@ -117,28 +121,19 @@ const cloudinaryProvider = {
    */
   async _getClient() {
     if (!this._client) {
-      // Dynamic import would be better, but for simplicity we'll check env vars
       const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
       const apiKey = process.env.CLOUDINARY_API_KEY;
       const apiSecret = process.env.CLOUDINARY_API_SECRET;
-
-      console.log('[Cloudinary] Checking credentials...', {
-        cloudName: cloudName ? `${cloudName.substring(0, 3)}...` : 'NOT SET',
-        apiKey: apiKey ? `${apiKey.substring(0, 3)}...` : 'NOT SET',
-        apiSecret: apiSecret ? 'SET' : 'NOT SET'
-      });
 
       if (!cloudName || !apiKey || !apiSecret) {
         const missing = [];
         if (!cloudName) missing.push('CLOUDINARY_CLOUD_NAME');
         if (!apiKey) missing.push('CLOUDINARY_API_KEY');
         if (!apiSecret) missing.push('CLOUDINARY_API_SECRET');
-        throw new Error(`Cloudinary credentials not configured. Missing: ${missing.join(', ')}. Set them in .env`);
+        throw new Error(`Cloudinary credentials not configured. Missing: ${missing.join(', ')}.`);
       }
 
-      // We'll lazy-load cloudinary to avoid errors if not installed
       try {
-        console.log('[Cloudinary] Loading cloudinary module...');
         const cloudinaryModule = await import('cloudinary');
         const cloudinary = cloudinaryModule.v2;
         cloudinary.config({
@@ -147,10 +142,9 @@ const cloudinaryProvider = {
           api_secret: apiSecret,
         });
         this._client = cloudinary;
-        console.log('[Cloudinary] Successfully initialized');
       } catch (err) {
-        console.error('[Cloudinary] Failed to load module:', err);
-        throw new Error(`Cloudinary package not installed or error loading: ${err.message}. Run: npm install cloudinary`);
+        console.error('[Cloudinary] Failed to load module:', err.message);
+        throw new Error(`Cloudinary package error: ${err.message}.`);
       }
     }
     return this._client;
@@ -164,25 +158,23 @@ const cloudinaryProvider = {
    */
   async upload(file, folder = 'diva-haus') {
     try {
-      console.log(`[Cloudinary] Starting upload to folder: ${folder}`);
       const cloudinary = await this._getClient();
       
       // Convert buffer to base64 data URI for Cloudinary
       const base64Data = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
       
-      console.log(`[Cloudinary] Uploading file: ${file.originalname}, size: ${file.buffer.length} bytes`);
       const result = await cloudinary.uploader.upload(base64Data, {
         folder: folder,
         resource_type: 'image',
-        // Optional: add transformations for optimization
         transformation: [
           { quality: 'auto:good' },
           { fetch_format: 'auto' },
         ],
       });
 
-      console.log(`[Cloudinary] Successfully uploaded: ${result.public_id}`);
-      console.log(`[Cloudinary] URL: ${result.secure_url}`);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`[Cloudinary] Uploaded: ${result.public_id}`);
+      }
 
       return {
         success: true,
@@ -190,12 +182,7 @@ const cloudinaryProvider = {
         publicId: result.public_id,
       };
     } catch (error) {
-      console.error('[Cloudinary] Upload error:', error);
-      console.error('[Cloudinary] Error details:', {
-        message: error.message,
-        stack: error.stack,
-        name: error.name
-      });
+      console.error('[Cloudinary] Upload error:', error.message);
       return {
         success: false,
         error: error.message,
@@ -212,10 +199,12 @@ const cloudinaryProvider = {
     try {
       const cloudinary = await this._getClient();
       await cloudinary.uploader.destroy(publicId);
-      console.log(`[Cloudinary] Deleted: ${publicId}`);
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`[Cloudinary] Deleted: ${publicId}`);
+      }
       return true;
     } catch (error) {
-      console.error('[Cloudinary] Delete error:', error);
+      console.error('[Cloudinary] Delete error:', error.message);
       return false;
     }
   },
@@ -236,28 +225,23 @@ class StorageService {
       return this._provider;
     }
 
-    // Read environment variable at runtime (not module load time)
-    const envValue = process.env.STORAGE_PROVIDER;
-    const provider = envValue || 'local';
-    console.log(`[StorageService] Reading STORAGE_PROVIDER from env: "${envValue}" (using: "${provider}")`);
-    console.log(`[StorageService] All env vars check:`, {
-      STORAGE_PROVIDER: process.env.STORAGE_PROVIDER,
-      CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME ? 'SET' : 'NOT SET',
-      CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY ? 'SET' : 'NOT SET',
-      CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET ? 'SET' : 'NOT SET'
-    });
+    // Read environment variable at runtime
+    const provider = process.env.STORAGE_PROVIDER || 'local';
+    
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`[StorageService] Selected provider: ${provider}`);
+    }
     
     switch (provider) {
       case 'cloudinary':
-        console.log('[StorageService] Selected Cloudinary provider');
         this._provider = cloudinaryProvider;
-        return this._provider;
+        break;
       case 'local':
       default:
-        console.log('[StorageService] Selected Local storage provider');
         this._provider = localStorageProvider;
-        return this._provider;
+        break;
     }
+    return this._provider;
   }
 
   get provider() {

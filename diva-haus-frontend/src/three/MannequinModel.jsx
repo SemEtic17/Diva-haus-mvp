@@ -31,9 +31,6 @@ function ApplyTexture({ clonedScene, clothNames = [], imageUrl }) {
       }
     });
 
-    // console.log('%c[ApplyTexture] applied texture to cloth meshes:', 'color: lime; font-weight:bold', appliedMeshNames);
-    // console.log('%c[ApplyTexture] texture.src (if available):', 'color: cyan', texture.image?.src || imageUrl);
-
     // No disposal of `texture` here because useTexture caches the object.
   }, [clonedScene, texture, clothNames, imageUrl]);
 
@@ -47,9 +44,6 @@ export default function MannequinModel({ product, targetHeight = 1.7, ...props }
 
   useEffect(() => {
     if (clonedScene.userData.isSetup) return;
-
-    // console.clear();
-    // console.log('%c--- MannequinModel: initial analysis ---', 'color: yellow; font-weight:bold');
 
     // Build model bounds (used by heuristics)
     const modelBox = new THREE.Box3().setFromObject(clonedScene);
@@ -105,12 +99,6 @@ export default function MannequinModel({ product, targetHeight = 1.7, ...props }
 
     // store cloth names for runtime use
     clothNamesRef.current = Array.from(new Set(classified.CLOTH));
-    // console.log('%c--- Classification result ---', 'color: lime; font-weight:bold');
-    // console.log('CLOTH meshes:', clothNamesRef.current);
-    // console.log('SKIN meshes:', classified.SKIN);
-    // console.log('EYE_NAIL meshes:', classified.EYE_NAIL);
-    // console.log('OTHER meshes:', classified.OTHER);
-    // console.log('%c------------------------------------', 'color: yellow');
 
     // Standard scale/center logic
     const box = new THREE.Box3().setFromObject(clonedScene);
