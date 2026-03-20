@@ -123,7 +123,7 @@ const ProfilePage = () => {
     <div className="min-h-screen bg-black text-white py-8 px-4 sm:px-6 lg:px-8">
       <motion.div variants={containerVariants} initial="hidden" animate="visible" className="max-w-4xl mx-auto space-y-8">
         {/* Header */}
-        <motion.div variants={itemVariants} className="text-center space-y-4">
+        <motion.div variants={itemVariants} className="text-center space-y-4 mt-1">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-400/10 border border-yellow-400/20">
             <Sparkles className="w-4 h-4 text-yellow-400" />
             <span className="text-sm font-medium text-yellow-400">{t('profile.subtitle')}</span>

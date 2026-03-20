@@ -207,29 +207,6 @@ const Navbar = () => {
                 </motion.div>
               </Link>
 
-<Link to={isAuthenticated ? '/profile' : '/login'} aria-label={isAuthenticated ? 'Profile' : 'Login'}>
-                <motion.div
-                  whileHover={linkHover}
-                  className="relative p-2 text-gray-300/70 hover:text-yellow-400 transition-colors duration-300"
-                >
-                  <User size={20} />
-                  {isAuthenticated && (
-                    <span className="absolute top-1 right-1 w-2 h-2 bg-yellow-400 rounded-full" />
-                  )}
-                </motion.div>
-              </Link>
-              
-              {isAuthenticated && (
-                <motion.button
-                  onClick={logout}
-                  whileHover={linkHover}
-                  className="hidden md:flex p-2 text-gray-300/70 hover:text-yellow-400 transition-colors duration-300"
-                  aria-label="Logout"
-                >
-                  <LogOut size={20} />
-                </motion.button>
-              )}
-
               <Link to="/cart" aria-label="Shopping cart">
                  <motion.div
                     whileHover={linkHover}
@@ -243,6 +220,29 @@ const Navbar = () => {
                   )}
                  </motion.div>
               </Link>
+
+<Link to={isAuthenticated ? '/profile' : '/login'} aria-label={isAuthenticated ? 'Profile' : 'Login'}>
+                <motion.div
+                  whileHover={linkHover}
+                  className="relative p-2 text-gray-300/70 hover:text-yellow-400 transition-colors duration-300"
+                >
+                  <User size={20} />
+                  {isAuthenticated && (
+                    <span className="absolute top-1 right-1 w-2 h-2 bg-yellow-400 rounded-full" />
+                  )}
+                </motion.div>
+              </Link>
+
+              {isAuthenticated && (
+                <motion.button
+                  onClick={logout}
+                  whileHover={linkHover}
+                  className="hidden md:flex p-2 text-gray-300/70 hover:text-yellow-400 transition-colors duration-300"
+                  aria-label="Logout"
+                >
+                  <LogOut size={20} />
+                </motion.button>
+              )}
             </div>
           </div>
         </nav>
