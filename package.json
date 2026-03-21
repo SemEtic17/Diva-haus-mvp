@@ -4,6 +4,10 @@
   "private": true,
   "scripts": {
     "install:all": "npm install --include=dev --prefix diva-haus-backend && npm install --include=dev --prefix diva-haus-frontend",
+    "dev:backend": "npm run dev --prefix diva-haus-backend",
+    "dev:frontend": "npm run dev --prefix diva-haus-frontend",
+    "dev:vton": "npm run dev --prefix vton-service",
+    "dev": "npx concurrently \"npm run dev:backend\" \"npm run dev:frontend\" \"npm run dev:vton\"",
     "build:frontend": "VITE_API_BASE_URL=/api npm run build --prefix diva-haus-frontend",
     "build": "npm run install:all && npm run build:frontend",
     "start": "npm run start:prod --prefix diva-haus-backend",

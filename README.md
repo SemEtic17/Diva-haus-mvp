@@ -125,62 +125,50 @@ Replace `YOUR_MONGODB_CONNECTION_STRING` with your actual MongoDB connection str
 >   determine whether Pixazo is failing due to an exhausted balance or whether
 >   a Hugging Face token lacks inference permissions.
 
-### Running the Frontend
+### Running the Development Environment
 
-Navigate to the `diva-haus-frontend` directory and start the development server:
+You can run all three services (Frontend, Backend, and AI VTON Service) simultaneously from the root directory using a single command:
 
 ```bash
-cd diva-haus-frontend
 npm run dev
 ```
-The frontend application will typically be accessible at `http://localhost:5173` (or another port if 5173 is in use).
 
-### Running the Backend
+Alternatively, you can run them individually:
 
-Navigate to the `diva-haus-backend` directory and start the server:
+- **Frontend:** `npm run dev:frontend` (available at `http://localhost:5173`)
+- **Backend:** `npm run dev:backend` (available at `http://localhost:5000`)
+- **AI VTON Service:** `npm run dev:vton` (available at `http://localhost:8000`)
 
-```bash
-cd diva-haus-backend
-node server.js
-# Or using nodemon for automatic restarts during development:
-# npm install -g nodemon
-# nodemon server.js
-```
+---
 
-### Running the Python VTON Service (for AI try-on)
+### Prerequisites for AI Try-On (Python VTON Service)
 
-The FASHN VTON micro‑service is implemented in the `vton-service` folder. It
-must be running if you configure `AI_PROVIDER=fashn` in your backend (the new `huggingface` provider works without it). A GPU is
-strongly recommended for acceptable inference times; you can also deploy the
-service to Colab, a Hugging Face Space, or any machine with CUDA support.
+The virtual try-on feature requires the Python micro-service to be running.
 
-```bash
-cd vton-service
-python -m venv .venv            # create virtualenv if needed
-source .venv/bin/activate        # activate (use venv\Scripts\activate on Windows)
-pip install -r requirements.txt  # install dependencies and the library
-python scripts/download_weights.py --weights-dir ./weights
-python server.py
-uvicorn main:app --host 0.0.0.0 --port 8000
-```
+1.  **Set up the Python Environment:**
+    Navigate to the `vton-service` directory and create a virtual environment:
+    ```bash
+    cd vton-service
+    python3 -m venv .venv
+    source .venv/bin/activate  # On Windows use: .venv\Scripts\activate
+    pip install -r requirements.txt
+    ```
 
-The service listens on port `8000` by default and exposes:
+2.  **Download AI Weights:**
+    Run the script to download the necessary model weights (approx. 5GB):
+    ```bash
+    python3 scripts/download_weights.py --weights-dir ./weights
+    ```
 
-* `POST /vton` – run the try‑on pipeline, returning a JSON response with
-  `previewBase64` image data.
-* `GET /health` – simple liveliness check.
+3.  **Run the Service:**
+    You can now run it from the root directory using `npm run dev:vton`. 
+    By default, it uses the CPU. If you have a GPU with CUDA support, you can modify the `dev` script in `vton-service/package.json` to set `VTON_DEVICE=cuda`.
 
-When using the FASHN provider the backend environment should include:
+---
 
-```
-AI_PROVIDER=fashn    # or AI_PROVIDER=huggingface for free text-to-image fallback
-VTON_SERVICE_URL=http://localhost:8000/vton
-```
+### Environment Variables (Backend)
 
-You can fall back to the built‑in mock provider by setting
-`AI_PROVIDER=mock` or leaving the variable unset.  
-
-The backend API will be running on `http://localhost:5000` (or the port specified in your `.env` file).
+Ensure your `.env` file in `diva-haus-backend` is correctly configured:
 
 ## Folder Structure
 
