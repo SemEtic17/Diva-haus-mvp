@@ -87,7 +87,7 @@ const ProductGrid = () => {
 
         <motion.div variants={containerVariants} initial="hidden" animate="visible" className="relative">
           {/* Glass backdrop */}
-          <div className="absolute -inset-4 md:-inset-6 lg:-inset-8 rounded-3xl bg-glass-light/30 backdrop-blur-sm border border-glass-border/20 -z-10" />
+          <div className="absolute -inset-4 md:-inset-6 lg:-inset-8 rounded-3xl bg-glass-bg/20 backdrop-blur-sm border border-glass-border/20 -z-10" />
           
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 p-4 md:p-6 lg:p-8">
             {products.map((product) => (

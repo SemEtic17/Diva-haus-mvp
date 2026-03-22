@@ -6,66 +6,60 @@
 
 @layer base {
   :root {
-    --background: 222 47% 6%;
-    --foreground: 210 40% 98%;
+    --background: 30 20% 98%; /* Warm Off-White */
+    --foreground: 222 47% 12%; /* Deep Navy */
 
-    --card: 222 47% 8%;
-    --card-foreground: 210 40% 98%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 12%;
 
-    --popover: 222 47% 8%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 12%;
 
-    --primary: 43 74% 53%;
-    --primary-foreground: 222 47% 6%;
+    --primary: 43 74% 45%; /* Slightly deeper gold for light mode contrast */
+    --primary-foreground: 30 20% 98%;
 
-    --secondary: 217 33% 17%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 30 15% 94%;
+    --secondary-foreground: 222 47% 12%;
 
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 30 10% 90%;
+    --muted-foreground: 222 15% 45%;
 
-    --accent: 185 100% 50%;
-    --accent-foreground: 222 47% 6%;
+    --accent: 185 80% 40%;
+    --accent-foreground: 30 20% 98%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217 33% 20%;
-    --input: 217 33% 17%;
-    --ring: 43 74% 53%;
+    --border: 30 10% 85%;
+    --input: 30 10% 90%;
+    --ring: 43 74% 45%;
 
     --radius: 1rem;
 
-    /* Custom luxury palette */
-    --gold: 43 74% 53%;
-    --gold-light: 43 74% 65%;
-    --gold-dark: 43 74% 40%;
+    /* Custom luxury palette - Light Mode */
+    --gold: 43 74% 45%;
+    --gold-light: 43 74% 60%;
+    --gold-dark: 43 74% 35%;
     
-    --neon-cyan: 185 100% 50%;
-    --neon-pink: 330 100% 60%;
-    --neon-purple: 280 100% 60%;
+    --neon-cyan: 185 80% 45%;
+    --neon-pink: 330 80% 55%;
+    --neon-purple: 280 80% 55%;
     
-    --navy-deep: 222 47% 6%;
-    --navy-mid: 222 47% 10%;
-    --navy-light: 222 40% 15%;
+    --navy-deep: 222 47% 12%;
+    --navy-mid: 222 40% 20%;
+    --navy-light: 222 30% 30%;
     
-    --glass-bg: 222 47% 12%;
-    --glass-border: 217 33% 25%;
+    --glass-bg: 0 0% 100% / 0.7;
+    --glass-border: 222 47% 12% / 0.1;
 
-    /* Gradients */
-    --gradient-luxury: linear-gradient(135deg, hsl(222 47% 8%) 0%, hsl(222 47% 4%) 100%);
-    --gradient-neon: linear-gradient(135deg, hsl(185 100% 50% / 0.15) 0%, hsl(330 100% 60% / 0.15) 100%);
-    --gradient-gold: linear-gradient(135deg, hsl(43 74% 53%) 0%, hsl(43 74% 40%) 100%);
-    --gradient-shimmer: linear-gradient(110deg, transparent 25%, hsl(43 74% 53% / 0.1) 50%, transparent 75%);
-
-    --sidebar-background: 222 47% 8%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 43 74% 53%;
-    --sidebar-primary-foreground: 222 47% 6%;
-    --sidebar-accent: 217 33% 17%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217 33% 20%;
-    --sidebar-ring: 43 74% 53%;
+    --sidebar-background: 30 15% 96%;
+    --sidebar-foreground: 222 47% 12%;
+    --sidebar-primary: 43 74% 45%;
+    --sidebar-primary-foreground: 30 20% 98%;
+    --sidebar-accent: 30 10% 90%;
+    --sidebar-accent-foreground: 222 47% 12%;
+    --sidebar-border: 30 10% 85%;
+    --sidebar-ring: 43 74% 45%;
   }
 
   .dark {
@@ -96,6 +90,22 @@
     --border: 217 33% 20%;
     --input: 217 33% 17%;
     --ring: 43 74% 53%;
+
+    /* Custom luxury palette - Dark Mode */
+    --gold: 43 74% 53%;
+    --gold-light: 43 74% 65%;
+    --gold-dark: 43 74% 40%;
+    
+    --neon-cyan: 185 100% 50%;
+    --neon-pink: 330 100% 60%;
+    --neon-purple: 280 100% 60%;
+    
+    --navy-deep: 222 47% 6%;
+    --navy-mid: 222 47% 10%;
+    --navy-light: 222 40% 15%;
+    
+    --glass-bg: 222 47% 12%;
+    --glass-border: 217 33% 25%;
 
     --sidebar-background: 222 47% 8%;
     --sidebar-foreground: 210 40% 98%;

@@ -1,40 +1,38 @@
 import React from 'react';
 import { Toaster as SonnerToaster, toast } from 'sonner';
+import { useTheme } from '../context/ThemeContext';
 
 // Export toast directly for easy use in other components
 export { toast };
 
 const Toaster = () => {
+  const { theme } = useTheme();
+
   return (
     <SonnerToaster
       position="bottom-center"
+      theme={theme}
       toastOptions={{
         // Define default options
         duration: 3000,
+        className: 'rounded-2xl border-glass-border/30 backdrop-blur-xl font-sans',
         style: {
-          background: '#1F2937', // bg-gray-800
-          color: '#F9FAFB', // text-gray-50
+          background: theme === 'dark' ? 'hsl(222 47% 8% / 0.9)' : 'hsl(0 0% 100% / 0.9)',
+          color: theme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(222 47% 12%)',
+          border: '1px solid hsl(var(--glass-border) / 0.1)',
         },
 
         // Default options for specific types
         success: {
-          style: {
-            background: '#047857', // bg-green-700
-            color: 'white',
-          },
           iconTheme: {
-            primary: 'white',
-            secondary: '#047857',
+            primary: 'hsl(var(--gold))',
+            secondary: 'white',
           },
         },
         error: {
-          style: {
-            background: '#BE123C', // bg-rose-700
-            color: 'white',
-          },
           iconTheme: {
-            primary: 'white',
-            secondary: '#BE123C',
+            primary: '#ef4444',
+            secondary: 'white',
           },
         },
       }}

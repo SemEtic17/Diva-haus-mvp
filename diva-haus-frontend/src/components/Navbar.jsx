@@ -1,16 +1,18 @@
 import { useState, useContext, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingBag, User, Menu, X, Heart, LogOut, UserPlus, Languages, ChevronDown } from 'lucide-react';
+import { ShoppingBag, User, Menu, X, Heart, LogOut, UserPlus, Languages, ChevronDown, Sun, Moon } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 import { CartContext } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useTranslation } from 'react-i18next';
+import { useTheme } from '../context/ThemeContext';
 
 const Navbar = () => {
   const { isAuthenticated, logout } = useContext(AuthContext);
   const { cartItems } = useContext(CartContext);
   const { wishlist } = useWishlist();
+  const { theme, toggleTheme } = useTheme();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const langMenuRef = useRef(null);
@@ -80,7 +82,7 @@ const Navbar = () => {
       className="fixed top-0 left-0 right-0 z-50"
     >
       {/* Glassmorphism background with holographic neon border */}
-      <div className="relative bg-navy-deep/80 backdrop-blur-xl border-b border-glass-border/30">
+      <div className="relative bg-background/80 backdrop-blur-xl border-b border-glass-border/30">
         {/* Holographic neon border effect */}
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-neon-cyan/0 via-neon-cyan/50 to-neon-pink/50" />
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-neon-pink/0 via-gold/30 to-neon-cyan/0 blur-sm" />
@@ -93,7 +95,7 @@ const Navbar = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-2 text-gray-300/70 hover:text-yellow-400 transition-colors md:hidden"
+                className="p-2 text-foreground/70 hover:text-gold transition-colors md:hidden"
                 aria-label="Toggle menu"
               >
                 {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -108,9 +110,6 @@ const Navbar = () => {
                       <span className="text-gradient-gold">DIVA</span>
                       <span className="text-foreground ml-1">HAUS</span>
                     </h1>
-                    <span className="hidden md:block text-[10px] tracking-[0.4em] text-gold/60 uppercase mt-0.5">
-                      Luxury Boutique
-                    </span>
                   </div>
                 </motion.div>
               </Link>
@@ -138,19 +137,30 @@ const Navbar = () => {
             </motion.div>
 
             <div className="flex-1 flex items-center justify-end space-x-2 md:space-x-4">
+              {/* Theme Toggle */}
+              <motion.button
+                onClick={toggleTheme}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                className="p-2 text-foreground/70 hover:text-gold transition-colors duration-300"
+                aria-label="Toggle theme"
+              >
+                {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+              </motion.button>
+
               {/* Language Switcher - Desktop: Buttons, Mobile: Dropdown */}
               <div className="relative flex items-center" ref={langMenuRef}>
                 {/* Desktop Buttons */}
-                <div className="hidden md:flex items-center space-x-1 mr-2 border-r border-white/10 pr-4">
+                <div className="hidden md:flex items-center space-x-1 mr-2 border-r border-border pr-4">
                   <button
                     onClick={() => changeLanguage('en')}
-                    className={`text-xs px-2 py-1 rounded transition-colors ${i18n.language === 'en' ? 'bg-yellow-400 text-black' : 'text-gray-400 hover:text-white'}`}
+                    className={`text-xs px-2 py-1 rounded transition-colors ${i18n.language === 'en' ? 'bg-gold text-primary-foreground' : 'text-foreground/60 hover:text-foreground'}`}
                   >
                     EN
                   </button>
                   <button
                     onClick={() => changeLanguage('am')}
-                    className={`text-xs px-2 py-1 rounded transition-colors ${i18n.language === 'am' ? 'bg-yellow-400 text-black' : 'text-gray-400 hover:text-white'}`}
+                    className={`text-xs px-2 py-1 rounded transition-colors ${i18n.language === 'am' ? 'bg-gold text-primary-foreground' : 'text-foreground/60 hover:text-foreground'}`}
                   >
                     አማ
                   </button>
@@ -161,7 +171,7 @@ const Navbar = () => {
                   onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="md:hidden flex items-center space-x-1 p-2 text-gray-300/70 hover:text-yellow-400 transition-colors duration-300 border-r border-white/10 pr-4"
+                  className="md:hidden flex items-center space-x-1 p-2 text-foreground/70 hover:text-gold transition-colors duration-300 border-r border-border pr-4"
                 >
                   <Languages size={18} />
                   <span className="text-xs font-medium uppercase">{i18n.language === 'am' ? 'አማ' : 'EN'}</span>
@@ -174,17 +184,17 @@ const Navbar = () => {
                       initial={{ opacity: 0, y: 10, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      className="absolute right-0 top-full mt-2 w-32 bg-navy-deep/95 backdrop-blur-xl border border-glass-border/30 rounded-lg shadow-2xl overflow-hidden z-[60]"
+                      className="absolute right-0 top-full mt-2 w-32 bg-popover backdrop-blur-xl border border-glass-border/30 rounded-lg shadow-2xl overflow-hidden z-[60]"
                     >
                       <button
                         onClick={() => changeLanguage('en')}
-                        className={`w-full text-left px-4 py-2.5 text-xs transition-colors ${i18n.language === 'en' ? 'bg-yellow-400 text-black' : 'text-gray-400 hover:bg-white/10 hover:text-yellow-400'}`}
+                        className={`w-full text-left px-4 py-2.5 text-xs transition-colors ${i18n.language === 'en' ? 'bg-gold text-primary-foreground' : 'text-foreground/60 hover:bg-muted hover:text-gold'}`}
                       >
                         English
                       </button>
                       <button
                         onClick={() => changeLanguage('am')}
-                        className={`w-full text-left px-4 py-2.5 text-xs transition-colors ${i18n.language === 'am' ? 'bg-yellow-400 text-black' : 'text-gray-400 hover:bg-white/10 hover:text-yellow-400'}`}
+                        className={`w-full text-left px-4 py-2.5 text-xs transition-colors ${i18n.language === 'am' ? 'bg-gold text-primary-foreground' : 'text-foreground/60 hover:bg-muted hover:text-gold'}`}
                       >
                         አማርኛ
                       </button>
@@ -196,11 +206,11 @@ const Navbar = () => {
               <Link to="/wishlist" aria-label="Wishlist">
                 <motion.div
                   whileHover={linkHover}
-                  className="relative p-2 text-gray-300/70 hover:text-yellow-400 transition-colors duration-300"
+                  className="relative p-2 text-foreground/70 hover:text-gold transition-colors duration-300"
                 >
                   <Heart size={20} />
                   {wishlistItemCount > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center text-[10px] font-medium bg-gradient-to-r from-cyan-400 to-pink-500 text-black rounded-full px-1">
+                    <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center text-[10px] font-medium bg-gradient-to-r from-neon-cyan to-neon-pink text-white rounded-full px-1">
                       {wishlistItemCount}
                     </span>
                   )}
@@ -210,11 +220,11 @@ const Navbar = () => {
               <Link to="/cart" aria-label="Shopping cart">
                  <motion.div
                     whileHover={linkHover}
-                    className="relative p-2 text-gray-300/70 hover:text-yellow-400 transition-colors duration-300"
+                    className="relative p-2 text-foreground/70 hover:text-gold transition-colors duration-300"
                   >
                   <ShoppingBag size={20} />
                   {cartItemCount > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center text-[10px] font-medium bg-gradient-to-r from-cyan-400 to-pink-500 text-black rounded-full px-1">
+                    <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center text-[10px] font-medium bg-gradient-to-r from-neon-cyan to-neon-pink text-white rounded-full px-1">
                       {cartItemCount}
                     </span>
                   )}
@@ -224,11 +234,11 @@ const Navbar = () => {
 <Link to={isAuthenticated ? '/profile' : '/login'} aria-label={isAuthenticated ? 'Profile' : 'Login'}>
                 <motion.div
                   whileHover={linkHover}
-                  className="relative p-2 text-gray-300/70 hover:text-yellow-400 transition-colors duration-300"
+                  className="relative p-2 text-foreground/70 hover:text-gold transition-colors duration-300"
                 >
                   <User size={20} />
                   {isAuthenticated && (
-                    <span className="absolute top-1 right-1 w-2 h-2 bg-yellow-400 rounded-full" />
+                    <span className="absolute top-1 right-1 w-2 h-2 bg-gold rounded-full" />
                   )}
                 </motion.div>
               </Link>
@@ -237,7 +247,7 @@ const Navbar = () => {
                 <motion.button
                   onClick={logout}
                   whileHover={linkHover}
-                  className="hidden md:flex p-2 text-gray-300/70 hover:text-yellow-400 transition-colors duration-300"
+                  className="hidden md:flex p-2 text-foreground/70 hover:text-gold transition-colors duration-300"
                   aria-label="Logout"
                 >
                   <LogOut size={20} />
@@ -254,35 +264,35 @@ const Navbar = () => {
               initial="hidden"
               animate="visible"
               exit="exit"
-              className="md:hidden overflow-hidden border-t border-white/10"
+              className="md:hidden overflow-hidden border-t border-border"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              <div className="bg-black/95 backdrop-blur-xl px-4 py-6 space-y-1">
+              <div className="bg-background/95 backdrop-blur-xl px-4 py-6 space-y-1">
                 {isAuthenticated ? (
                   <>
-                    <Link to="/profile" className="flex items-center gap-3 py-3 px-4 text-base font-medium text-gray-200/80 hover:text-yellow-400 hover:bg-white/10 rounded-lg transition-all duration-200">
+                    <Link to="/profile" className="flex items-center gap-3 py-3 px-4 text-base font-medium text-foreground/80 hover:text-gold hover:bg-muted rounded-lg transition-all duration-200">
                       <User size={18} />
                       {t('nav.my_account')}
                     </Link>
-                    <button onClick={logout} className="w-full text-left flex items-center gap-3 py-3 px-4 text-base font-medium text-gray-200/80 hover:text-yellow-400 hover:bg-white/10 rounded-lg transition-all duration-200">
+                    <button onClick={logout} className="w-full text-left flex items-center gap-3 py-3 px-4 text-base font-medium text-foreground/80 hover:text-gold hover:bg-muted rounded-lg transition-all duration-200">
                       <LogOut size={18} />
                       {t('nav.logout')}
                     </button>
                   </>
                 ) : (
                   <>
-                    <Link to="/login" className="flex items-center gap-3 py-3 px-4 text-base font-medium text-gray-200/80 hover:text-yellow-400 hover:bg-white/10 rounded-lg transition-all duration-200">
+                    <Link to="/login" className="flex items-center gap-3 py-3 px-4 text-base font-medium text-foreground/80 hover:text-gold hover:bg-muted rounded-lg transition-all duration-200">
                       <User size={18} />
                       {t('nav.sign_in')}
                     </Link>
-                    <Link to="/register" className="flex items-center gap-3 py-3 px-4 text-base font-medium text-gray-200/80 hover:text-yellow-400 hover:bg-white/10 rounded-lg transition-all duration-200">
+                    <Link to="/register" className="flex items-center gap-3 py-3 px-4 text-base font-medium text-foreground/80 hover:text-gold hover:bg-muted rounded-lg transition-all duration-200">
                       <UserPlus size={18} />
                       {t('nav.register')}
                     </Link>
                   </>
                 )}
-                <div className="my-4 h-px bg-gradient-to-r from-transparent via-yellow-400/30 to-transparent" />
-                <Link to="/wishlist" className="flex items-center gap-3 py-3 px-4 text-base font-medium text-gray-200/80 hover:text-yellow-400 hover:bg-white/10 rounded-lg transition-all duration-200">
+                <div className="my-4 h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
+                <Link to="/wishlist" className="flex items-center gap-3 py-3 px-4 text-base font-medium text-foreground/80 hover:text-gold hover:bg-muted rounded-lg transition-all duration-200">
                   <Heart size={18} />
                   {t('nav.wishlist')}
                 </Link>
