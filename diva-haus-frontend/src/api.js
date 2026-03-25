@@ -119,6 +119,45 @@ export const getProductById = async (id) => {
   return response.json();
 };
 
+// --- Admin Product Management ---
+export const deleteProduct = async (id) => {
+  return fetchWithAuth(`${API_BASE_URL}/products/${id}`, {
+    method: 'DELETE',
+  });
+};
+
+export const createProduct = async () => {
+  return fetchWithAuth(`${API_BASE_URL}/products`, {
+    method: 'POST',
+    body: JSON.stringify({}), // Sending empty body since controller handles sample data creation
+  });
+};
+
+export const updateProduct = async (product) => {
+  return fetchWithAuth(`${API_BASE_URL}/products/${product._id}`, {
+    method: 'PUT',
+    body: JSON.stringify(product),
+  });
+};
+
+// --- Admin User Management ---
+export const getUsers = async () => {
+  return fetchWithAuth(`${API_BASE_URL}/users`);
+};
+
+export const deleteUser = async (id) => {
+  return fetchWithAuth(`${API_BASE_URL}/users/${id}`, {
+    method: 'DELETE',
+  });
+};
+
+export const adminUpdateUser = async (user) => {
+  return fetchWithAuth(`${API_BASE_URL}/users/${user._id}`, {
+    method: 'PUT',
+    body: JSON.stringify(user),
+  });
+};
+
 // --- Auth ---
 export const registerUser = async (userData) => {
   const response = await fetch(`${API_BASE_URL}/auth/register`, {

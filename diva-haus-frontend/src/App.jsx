@@ -5,9 +5,14 @@ import Register from './pages/Register';
 import CartPage from './pages/CartPage';
 import WishlistPage from './pages/WishlistPage';
 import PrivateRoute from './components/PrivateRoute';
+import AdminRoute from './components/AdminRoute'; // NEW: Admin protection
 import Navbar from './components/Navbar'; // Import Navbar
 import ProductGrid from './components/ProductGrid'; // Import ProductGrid
 import ProfilePage from './pages/ProfilePage'; // NEW: Import ProfilePage
+import AdminDashboard from './pages/AdminDashboard'; // NEW: Admin Dashboard
+import AdminProductList from './pages/AdminProductList'; // NEW: Admin Product List
+import AdminProductEdit from './pages/AdminProductEdit'; // NEW: Admin Product Edit
+import AdminUserList from './pages/AdminUserList'; // NEW: Admin User List
 import './App.css';
 
 function App() {
@@ -28,6 +33,14 @@ function App() {
           </Route>
           <Route path="/wishlist" element={<PrivateRoute />}>
             <Route path="" element={<WishlistPage />} />
+          </Route>
+
+          {/* Admin Routes */}
+          <Route path="/admin" element={<AdminRoute />}>
+            <Route path="" element={<AdminDashboard />} />
+            <Route path="products" element={<AdminProductList />} />
+            <Route path="product/:id/edit" element={<AdminProductEdit />} />
+            <Route path="users" element={<AdminUserList />} />
           </Route>
         </Routes>
       </main>

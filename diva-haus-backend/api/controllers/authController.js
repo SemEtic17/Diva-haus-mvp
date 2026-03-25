@@ -38,7 +38,7 @@ export const registerUser = async (req, res, next) => {
         _id: user.id,
         name: user.name,
         email: user.email,
-        // token: token, // Token is now in HttpOnly cookie
+        isAdmin: user.isAdmin,
       });
     } else {
       res.status(400);
@@ -70,6 +70,7 @@ export const loginUser = async (req, res, next) => {
         _id: user.id,
         name: user.name,
         email: user.email,
+        isAdmin: user.isAdmin,
         // token: token, // Token is now in HttpOnly cookie
       });
     } else {
@@ -92,6 +93,7 @@ export const getAuthStatus = async (req, res, next) => {
         _id: req.user.id,
         name: req.user.name,
         email: req.user.email,
+        isAdmin: req.user.isAdmin,
         bodyImage: req.user.bodyImage || null,
         isAuthenticated: true,
       });

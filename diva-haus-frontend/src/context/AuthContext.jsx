@@ -19,6 +19,7 @@ const AuthProvider = ({ children }) => {
           id: data._id, 
           name: data.name, 
           email: data.email,
+          isAdmin: data.isAdmin,
           bodyImage: data.bodyImage || null
         });
       } else {

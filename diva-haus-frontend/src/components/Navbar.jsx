@@ -1,7 +1,7 @@
 import { useState, useContext, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingBag, User, Menu, X, Heart, LogOut, UserPlus, Languages, ChevronDown, Sun, Moon } from 'lucide-react';
+import { ShoppingBag, User, Menu, X, Heart, LogOut, UserPlus, Languages, ChevronDown, Sun, Moon, ShieldCheck } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 import { CartContext } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '../context/ThemeContext';
 
 const Navbar = () => {
-  const { isAuthenticated, logout } = useContext(AuthContext);
+  const { isAuthenticated, userInfo, logout } = useContext(AuthContext);
   const { cartItems } = useContext(CartContext);
   const { wishlist } = useWishlist();
   const { theme, toggleTheme } = useTheme();
@@ -242,6 +242,17 @@ const Navbar = () => {
                   )}
                 </motion.div>
               </Link>
+
+              {isAuthenticated && userInfo?.isAdmin && (
+                <Link to="/admin" aria-label="Admin Dashboard">
+                  <motion.div
+                    whileHover={linkHover}
+                    className="p-2 text-gold hover:text-neon-cyan transition-colors duration-300"
+                  >
+                    <ShieldCheck size={20} />
+                  </motion.div>
+                </Link>
+              )}
 
               {isAuthenticated && (
                 <motion.button
