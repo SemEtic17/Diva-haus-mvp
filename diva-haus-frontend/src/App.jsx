@@ -10,6 +10,7 @@ import Navbar from './components/Navbar'; // Import Navbar
 import ProductGrid from './components/ProductGrid'; // Import ProductGrid
 import ProfilePage from './pages/ProfilePage'; // NEW: Import ProfilePage
 import AdminDashboard from './pages/AdminDashboard'; // NEW: Admin Dashboard
+import AdminOverview from './pages/AdminOverview'; // NEW: Admin Overview
 import AdminProductList from './pages/AdminProductList'; // NEW: Admin Product List
 import AdminProductEdit from './pages/AdminProductEdit'; // NEW: Admin Product Edit
 import AdminUserList from './pages/AdminUserList'; // NEW: Admin User List
@@ -37,10 +38,12 @@ function App() {
 
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminRoute />}>
-            <Route path="" element={<AdminDashboard />} />
-            <Route path="products" element={<AdminProductList />} />
-            <Route path="product/:id/edit" element={<AdminProductEdit />} />
-            <Route path="users" element={<AdminUserList />} />
+            <Route element={<AdminDashboard />}>
+              <Route index element={<AdminOverview />} />
+              <Route path="products" element={<AdminProductList />} />
+              <Route path="product/:id/edit" element={<AdminProductEdit />} />
+              <Route path="users" element={<AdminUserList />} />
+            </Route>
           </Route>
         </Routes>
       </main>
