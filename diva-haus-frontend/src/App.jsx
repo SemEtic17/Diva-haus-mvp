@@ -14,6 +14,7 @@ import AdminOverview from './pages/AdminOverview';
 import AdminProductList from './pages/AdminProductList';
 import AdminProductEdit from './pages/AdminProductEdit';
 import AdminUserList from './pages/AdminUserList';
+import AdminSettings from './pages/AdminSettings';
 import './App.css';
 
 // Public Layout Wrapper
@@ -54,6 +55,7 @@ function App() {
           <Route path="products" element={<AdminProductList />} />
           <Route path="product/:id/edit" element={<AdminProductEdit />} />
           <Route path="users" element={<AdminUserList />} />
+          <Route path="settings" element={<AdminSettings />} />
         </Route>
       </Route>
     </Routes>

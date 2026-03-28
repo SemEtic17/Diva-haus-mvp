@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Plus, Edit, Trash2, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Plus, Edit, Trash2, Search, Package } from 'lucide-react';
 import { getProducts, deleteProduct, createProduct } from '../api';
 import { toast } from '../components/Toaster';
-import HolographicContainer from '../components/HolographicContainer';
+import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/Card';
+import { Button } from '../components/ui/Button';
+import { Badge } from '../components/ui/Badge';
+import { Input } from '../components/ui/Input';
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '../components/ui/Table';
 
 const AdminProductList = () => {
-  const [products, setProducts] = useState([]);
+  const [productList, setProductList] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -14,7 +19,7 @@ const AdminProductList = () => {
     try {
       setLoading(true);
       const data = await getProducts();
-      setProducts(data);
+      setProductList(data || []);
     } catch (error) {
       toast.error(error.message || 'Failed to fetch products');
     } finally {
@@ -26,98 +31,148 @@ const AdminProductList = () => {
     fetchProducts();
   }, []);
 
-  const deleteHandler = async (id) => {
+  const handleDeleteProduct = async (id) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {
         await deleteProduct(id);
+        setProductList((prev) => prev.filter((p) => p._id !== id));
         toast.success('Product deleted successfully');
-        fetchProducts();
       } catch (error) {
         toast.error(error.message || 'Failed to delete product');
       }
     }
   };
 
-  const createProductHandler = async () => {
+  const handleCreateProduct = async () => {
     try {
-      const createdProduct = await createProduct();
+      const created = await createProduct();
       toast.success('Sample product created');
-      navigate(`/admin/product/${createdProduct._id}/edit`);
+      navigate(`/admin/product/${created._id}/edit`);
     } catch (error) {
       toast.error(error.message || 'Failed to create product');
     }
   };
 
+  const filteredProducts = productList.filter(product => {
+    return product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (product.category && product.category.toLowerCase().includes(searchTerm.toLowerCase()));
+  });
+
   return (
-    <div className="max-w-7xl mx-auto py-10 px-4">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <Link to="/admin" className="text-gold flex items-center gap-2 mb-2 hover:underline">
-            <ArrowLeft size={16} /> Back to Dashboard
-          </Link>
-          <h1 className="text-3xl font-serif tracking-tight">Product <span className="text-gradient-gold">Management</span></h1>
+          <h1 className="text-3xl font-serif font-bold tracking-tight">Products Management</h1>
+          <p className="text-muted-foreground italic">Manage your hair products inventory</p>
         </div>
-        <button
-          onClick={createProductHandler}
-          className="flex items-center gap-2 bg-gradient-to-r from-neon-cyan to-neon-pink hover:from-neon-cyan/80 hover:to-neon-pink/80 text-white px-6 py-3 rounded-full font-medium transition-all shadow-lg hover:shadow-neon-cyan/20"
-        >
-          <Plus size={20} /> Add New Product
-        </button>
+        <Button onClick={handleCreateProduct} className="gap-2 bg-gold hover:bg-gold/90 text-black">
+          <Plus className="w-4 h-4" />
+          Add Product
+        </Button>
       </div>
 
-      {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gold"></div>
-        </div>
-      ) : products.length === 0 ? (
-        <HolographicContainer className="p-10 text-center">
-          <p className="text-foreground/60 italic">No products found. Start by adding one!</p>
-        </HolographicContainer>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-glass-border/30">
-                <th className="py-4 px-4 font-medium text-gold/80">ID</th>
-                <th className="py-4 px-4 font-medium text-gold/80">NAME</th>
-                <th className="py-4 px-4 font-medium text-gold/80">PRICE</th>
-                <th className="py-4 px-4 font-medium text-gold/80">CATEGORY</th>
-                <th className="py-4 px-4 font-medium text-gold/80">BRAND</th>
-                <th className="py-4 px-4 font-medium text-gold/80">ACTIONS</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((product) => (
-                <tr key={product._id} className="border-b border-glass-border/10 hover:bg-white/5 transition-colors group">
-                  <td className="py-4 px-4 text-xs font-mono text-foreground/40">{product._id.substring(product._id.length - 6)}</td>
-                  <td className="py-4 px-4 font-medium">{product.name}</td>
-                  <td className="py-4 px-4 font-mono text-neon-cyan">${product.price.toFixed(2)}</td>
-                  <td className="py-4 px-4 text-sm uppercase tracking-wider">{product.category}</td>
-                  <td className="py-4 px-4 text-sm">{product.brand}</td>
-                  <td className="py-4 px-4">
-                    <div className="flex items-center gap-3">
-                      <Link
-                        to={`/admin/product/${product._id}/edit`}
-                        className="p-2 text-foreground/60 hover:text-gold hover:bg-gold/10 rounded-lg transition-all"
-                        title="Edit Product"
-                      >
-                        <Edit size={18} />
-                      </Link>
-                      <button
-                        onClick={() => deleteHandler(product._id)}
-                        className="p-2 text-foreground/60 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
-                        title="Delete Product"
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      <Card>
+        <CardContent className="pt-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+            <Input
+              placeholder="Search products..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Products ({filteredProducts.length})</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold"></div>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Product</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>Price</TableHead>
+                    <TableHead>Stock</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredProducts.map((product) => (
+                    <TableRow key={product._id}>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 bg-white/5 border border-glass-border/20 rounded-lg flex items-center justify-center overflow-hidden">
+                            {product.image ? (
+                                <img src={product.image} alt="" className="w-full h-full object-cover" />
+                            ) : (
+                                <Package className="w-5 h-5 text-gold/50" />
+                            )}
+                          </div>
+                          <div>
+                            <p className="font-medium text-foreground">{product.name}</p>
+                            <p className="text-xs text-muted-foreground line-clamp-1 max-w-[200px]">
+                              {product.brand}
+                            </p>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="capitalize">
+                          {product.category}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <span className="font-medium text-gold">${product.price.toFixed(2)}</span>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={product.countInStock > 0 ? "default" : "destructive"}>
+                          {product.countInStock > 0 ? `${product.countInStock} in stock` : "Out of Stock"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => navigate(`/admin/product/${product._id}/edit`)}
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="hover:text-red-500 hover:bg-red-500/10"
+                            onClick={() => handleDeleteProduct(product._id)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {filteredProducts.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center py-10 text-muted-foreground">
+                        No products found.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 };
