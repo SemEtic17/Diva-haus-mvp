@@ -7,11 +7,11 @@ import { AdminHeader } from '../components/admin/AdminHeader';
 const AdminDashboard = () => {
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-background/50">
+      <div className="h-screen flex w-full bg-background/50 overflow-hidden">
         <AdminSidebar />
-        <div className="flex-1 flex flex-col min-w-0">
+        <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
           <AdminHeader />
-          <main className="flex-1 p-4 md:p-8 overflow-auto">
+          <main className="flex-1 p-4 md:p-8 overflow-y-auto custom-scrollbar">
             <Outlet />
           </main>
         </div>

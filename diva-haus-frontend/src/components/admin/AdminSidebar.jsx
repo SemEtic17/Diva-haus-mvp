@@ -27,7 +27,7 @@ const AdminSidebar = () => {
         {isOpen && <span className="font-serif font-bold text-xl tracking-tight">DIVA HAUS</span>}
       </div>
 
-      <nav className="flex-1 px-4 space-y-2 py-4">
+      <nav className="flex-1 px-4 space-y-2 py-4 overflow-y-auto custom-scrollbar">
         {menuItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
