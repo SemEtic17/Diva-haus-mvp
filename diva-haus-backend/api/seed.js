@@ -8,37 +8,62 @@ const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 import mongoose from 'mongoose';
 import Product from './models/Product.js';
+import User from './models/User.js';
 
 const products = [
   {
     name: 'The Audrey',
     price: 120.0,
     image: 'https://images.unsplash.com/photo-1584273143981-41c073dfe8f8?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    brand: 'Diva Haus',
+    category: 'Dresses',
+    description: 'A classic elegant dress for any occasion.',
+    countInStock: 10,
   },
   {
     name: 'The Blair',
     price: 85.5,
     image: 'https://assets.myntassets.com/w_412,q_30,dpr_3,fl_progressive,f_webp/assets/images/25813096/2023/11/8/efb3433d-7436-4897-8331-222641f466a01699447608033FloralGownDress1.jpg',
+    brand: 'Diva Haus',
+    category: 'Dresses',
+    description: 'Chic and sophisticated floral gown.',
+    countInStock: 5,
   },
   {
     name: 'The Serena',
     price: 95.0,
     image: 'https://assets.myntassets.com/w_412,q_30,dpr_3,fl_progressive,f_webp/assets/images/25813096/2023/11/8/efb3433d-7436-4897-8331-222641f466a01699447608033FloralGownDress1.jpg',
+    brand: 'Diva Haus',
+    category: 'Dresses',
+    description: 'Make a statement with The Serena.',
+    countInStock: 8,
   },
   {
     name: 'The Carrie',
     price: 150.0,
     image: 'https://assets.myntassets.com/w_412,q_30,dpr_3,fl_progressive,f_webp/assets/images/25813096/2023/11/8/efb3433d-7436-4897-8331-222641f466a01699447608033FloralGownDress1.jpg',
+    brand: 'Diva Haus',
+    category: 'Dresses',
+    description: 'Iconic style for the modern woman.',
+    countInStock: 12,
   },
   {
     name: 'The Miranda',
     price: 75.0,
     image: 'https://assets.myntassets.com/w_412,q_30,dpr_3,fl_progressive,f_webp/assets/images/25813096/2023/11/8/efb3433d-7436-4897-8331-222641f466a01699447608033FloralGownDress1.jpg',
+    brand: 'Diva Haus',
+    category: 'Dresses',
+    description: 'Sharp, professional, yet feminine.',
+    countInStock: 7,
   },
   {
     name: 'The Charlotte',
     price: 110.0,
     image: 'https://assets.myntassets.com/w_412,q_30,dpr_3,fl_progressive,f_webp/assets/images/25813096/2023/11/8/efb3433d-7436-4897-8331-222641f466a01699447608033FloralGownDress1.jpg',
+    brand: 'Diva Haus',
+    category: 'Dresses',
+    description: 'Timeless beauty in every stitch.',
+    countInStock: 9,
   },
 ];
 
@@ -51,7 +76,24 @@ const seedDB = async () => {
     await Product.deleteMany({});
     console.log('Products Removed...');
 
-    await Product.insertMany(products);
+    // Find or create an admin user to own the products
+    let adminUser = await User.findOne({ isAdmin: true });
+    
+    if (!adminUser) {
+      console.log('No admin user found. Creating one...');
+      adminUser = await User.create({
+        name: 'Admin User',
+        email: 'admin@example.com',
+        password: 'password123',
+        isAdmin: true
+      });
+    }
+
+    const sampleProducts = products.map((product) => {
+      return { ...product, user: adminUser._id };
+    });
+
+    await Product.insertMany(sampleProducts);
     console.log('Database Seeded...');
 
     mongoose.connection.close();

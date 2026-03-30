@@ -55,7 +55,6 @@ export const createProduct = async (req, res, next) => {
       brand: 'Sample Brand',
       category: 'Sample Category',
       countInStock: 0,
-      numReviews: 0,
       description: 'Sample Description',
     });
 
@@ -91,6 +90,11 @@ export const updateProduct = async (req, res, next) => {
       product.brand = brand || product.brand;
       product.category = category || product.category;
       product.countInStock = countInStock || product.countInStock;
+
+      // Ensure user is set (fixes legacy/seeded data missing user field)
+      if (!product.user) {
+        product.user = req.user._id;
+      }
 
       const updatedProduct = await product.save();
       res.json(updatedProduct);
