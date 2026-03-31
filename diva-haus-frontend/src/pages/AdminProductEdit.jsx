@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Save, Loader2, Package } from 'lucide-react';
-import { getProductById, updateProduct } from '../api';
+import { ArrowLeft, Save, Loader2, Package, Upload, X } from 'lucide-react';
+import { getProductById, updateProduct, uploadProductImage } from '../api';
 import { toast } from '../components/Toaster';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
@@ -23,6 +23,7 @@ const AdminProductEdit = () => {
   });
   const [loading, setLoading] = useState(false);
   const [updating, setUpdating] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -54,6 +55,28 @@ const AdminProductEdit = () => {
       ...prev,
       [name]: name === 'price' || name === 'countInStock' ? Number(value) : value
     }));
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Basic validation
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please upload an image file');
+      return;
+    }
+
+    try {
+      setUploading(true);
+      const data = await uploadProductImage(file);
+      setProductData(prev => ({ ...prev, image: data.url }));
+      toast.success('Image uploaded successfully');
+    } catch (error) {
+      toast.error(error.message || 'Failed to upload image');
+    } finally {
+      setUploading(false);
+    }
   };
 
   const submitHandler = async (e) => {
@@ -200,25 +223,75 @@ const AdminProductEdit = () => {
           <CardContent>
             <div className="space-y-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Image URL</label>
-                <Input
-                  name="image"
-                  value={productData.image}
-                  onChange={handleChange}
-                  placeholder="https://example.com/image.jpg"
-                  required
-                />
-              </div>
-              {productData.image && (
-                <div className="mt-4 relative aspect-[4/3] w-full max-w-sm overflow-hidden rounded-xl border border-glass-border/20 mx-auto">
-                   <img src={productData.image} alt="Preview" className="w-full h-full object-cover" />
+                <label className="text-sm font-medium">Product Image</label>
+                <div className="flex flex-col md:flex-row items-center gap-6">
+                  <div className="relative group">
+                    <div className="w-48 h-48 rounded-xl border-2 border-dashed border-glass-border/30 overflow-hidden flex items-center justify-center bg-white/5 group-hover:border-gold/50 transition-colors">
+                      {productData.image ? (
+                        <img 
+                          src={productData.image} 
+                          alt="Product" 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <Package className="w-12 h-12 text-muted-foreground/20" />
+                      )}
+                      
+                      {uploading && (
+                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center backdrop-blur-sm">
+                          <Loader2 className="w-10 h-10 text-gold animate-spin" />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex-1 space-y-4 text-center md:text-left">
+                    <div>
+                      <h4 className="font-medium">Upload Image</h4>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Recommended: Square aspect ratio, high resolution.<br />
+                        Supports JPG, PNG and WebP (Max 10MB).
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="relative overflow-hidden cursor-pointer bg-white/5"
+                        disabled={uploading}
+                        onClick={() => document.getElementById('image-upload').click()}
+                      >
+                        <Upload className="w-4 h-4 mr-2" />
+                        {productData.image ? 'Change' : 'Upload'}
+                        <input
+                          id="image-upload"
+                          type="file"
+                          className="hidden"
+                          onChange={handleImageUpload}
+                          accept="image/*"
+                        />
+                      </Button>
+                      
+                      {productData.image && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                          onClick={() => setProductData(prev => ({ ...prev, image: '' }))}
+                        >
+                          <X className="w-4 h-4 mr-2" />
+                          Remove
+                        </Button>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              )}
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        <div className="flex justify-end gap-4">
+        <div className="flex justify-end gap-4 pb-8">
           <Button 
             type="button" 
             variant="outline" 
@@ -228,7 +301,7 @@ const AdminProductEdit = () => {
           </Button>
           <Button 
             type="submit" 
-            disabled={updating}
+            disabled={updating || uploading}
             className="min-w-[150px] bg-gold text-black hover:bg-gold/90"
           >
             {updating ? (

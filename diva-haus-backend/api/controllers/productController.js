@@ -1,4 +1,5 @@
 import Product from '../models/Product.js';
+import storageService from '../services/storage.service.js';
 
 export const getProducts = async (req, res, next) => {
   try {
@@ -60,6 +61,32 @@ export const createProduct = async (req, res, next) => {
 
     const createdProduct = await product.save();
     res.status(201).json(createdProduct);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Upload product image
+// @route   POST /api/products/upload
+// @access  Private/Admin
+export const uploadProductImage = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      res.status(400);
+      throw new Error('No image file provided');
+    }
+
+    const result = await storageService.upload(req.file, 'products');
+    
+    if (result.success) {
+      res.status(200).json({
+        url: result.url,
+        publicId: result.publicId
+      });
+    } else {
+      res.status(500);
+      throw new Error(result.error || 'Failed to upload image');
+    }
   } catch (error) {
     next(error);
   }

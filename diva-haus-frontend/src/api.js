@@ -133,6 +133,23 @@ export const createProduct = async () => {
   });
 };
 
+export const uploadProductImage = async (imageFile) => {
+  const formData = new FormData();
+  formData.append('image', imageFile);
+
+  const response = await fetch(`${API_BASE_URL}/products/upload`, {
+    method: 'POST',
+    body: formData,
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({ message: response.statusText }));
+    throw new Error(errorData.message || 'Error uploading product image');
+  }
+  return response.json();
+};
+
 export const updateProduct = async (product) => {
   return fetchWithAuth(`${API_BASE_URL}/products/${product._id}`, {
     method: 'PUT',
