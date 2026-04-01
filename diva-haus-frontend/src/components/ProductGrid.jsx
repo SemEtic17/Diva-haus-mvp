@@ -56,7 +56,7 @@ const ProductGrid = () => {
 
   if (error) {
     return (
-      <div className="text-center text-red-500 py-8">
+      <div className="text-center text-red-500 py-16">
         <p className="text-muted-foreground">{error}</p>
       </div>
     );
