@@ -83,7 +83,7 @@ const Register = () => {
                              bg-background/50 text-foreground placeholder-muted-foreground
                              focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold
                              transition-all duration-300 sm:text-sm"
-                    placeholder="Full Name"
+                    placeholder={t('auth.name_placeholder', 'Full Name')}
                   />
                 </div>
               </div>
@@ -104,7 +104,7 @@ const Register = () => {
                              bg-background/50 text-foreground placeholder-muted-foreground
                              focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold
                              transition-all duration-300 sm:text-sm"
-                    placeholder="you@example.com"
+                    placeholder={t('auth.email_placeholder', 'you@example.com')}
                   />
                 </div>
               </div>
@@ -168,7 +168,7 @@ const Register = () => {
               <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                 <UserPlus className="h-5 w-5 text-primary-foreground/50 group-hover:text-primary-foreground/80 transition-colors" />
               </span>
-              {isLoading ? t('auth.registering', 'Creating account...') : t('auth.register_button')}
+              {isLoading ? t('auth.registering') : t('auth.register_button')}
             </motion.button>
           </form>
 

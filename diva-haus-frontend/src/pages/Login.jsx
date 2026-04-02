@@ -73,7 +73,7 @@ const Login = () => {
                              bg-background/50 text-foreground placeholder-muted-foreground
                              focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold
                              transition-all duration-300 sm:text-sm"
-                    placeholder="you@example.com"
+                    placeholder={t('auth.email_placeholder', 'you@example.com')}
                   />
                 </div>
               </div>
@@ -114,7 +114,7 @@ const Login = () => {
               <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                 <LogIn className="h-5 w-5 text-primary-foreground/50 group-hover:text-primary-foreground/80 transition-colors" />
               </span>
-              {isLoading ? t('auth.signing_in', 'Signing in...') : t('auth.login_button')}
+              {isLoading ? t('auth.signing_in') : t('auth.login_button')}
             </motion.button>
           </form>
 
