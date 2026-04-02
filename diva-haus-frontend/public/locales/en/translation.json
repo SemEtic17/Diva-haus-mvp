@@ -112,6 +112,10 @@
     "have_account": "Already have an account?",
     "passwords_not_match": "Passwords do not match",
     "registration_success": "Registration successful! Please login.",
-    "registration_failed": "Failed to register"
+    "registration_failed": "Failed to register",
+    "signing_in": "Signing in...",
+    "registering": "Creating account...",
+    "name_placeholder": "Full Name",
+    "email_placeholder": "you@example.com"
   }
 }
