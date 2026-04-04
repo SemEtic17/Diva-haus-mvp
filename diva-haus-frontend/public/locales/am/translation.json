@@ -112,6 +112,10 @@
     "have_account": "ቀድሞውኑ መለያ አለዎት?",
     "passwords_not_match": "የይለፍ ቃሎች አይዛመዱም",
     "registration_success": "ምዝገባው ተሳክቷል! እባክዎ ይግቡ።",
-    "registration_failed": "መመዝገብ አልተቻለም"
+    "registration_failed": "መመዝገብ አልተቻለም",
+    "signing_in": "በመግባት ላይ...",
+    "registering": "መለያ በመፍጠር ላይ...",
+    "name_placeholder": "ሙሉ ስም",
+    "email_placeholder": "you@example.com"
   }
 }
