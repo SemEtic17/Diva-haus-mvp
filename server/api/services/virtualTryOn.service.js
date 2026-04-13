@@ -1,4 +1,5 @@
 // diva-haus-backend/api/services/virtualTryOn.service.js
+// Day 21: Refactored to use AI provider abstraction
 
 import { AIProviderFactory } from './ai/AIProviderFactory.js';
 

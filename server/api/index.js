@@ -38,6 +38,7 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' })); // Body parser for JSON requests with increased limit
 app.use(cookieParser()); // Added
 
+// Day 19: Serve uploaded files statically (for local storage provider)
 const uploadsPath = path.join(__dirname, '../uploads');
 app.use('/uploads', express.static(uploadsPath));
 
@@ -54,8 +55,8 @@ if (MONGO_URI) {
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/cart', cartRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/uploads', uploadRoutes);
+app.use('/api/users', userRoutes); // NEW: Use userRoutes
+app.use('/api/uploads', uploadRoutes); // Day 18: Dedicated upload service
 
 // AI diagnostics
 app.get('/api/ai/providers', listProviders);
