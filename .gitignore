@@ -21,13 +21,13 @@ diva-haus-frontend/.eslintcache
 diva-haus-frontend/coverage/
 
 # Node.js (Backend)
-diva-haus-backend/node_modules/
-diva-haus-backend/dist/
-diva-haus-backend/build/
-diva-haus-backend/.env
-diva-haus-backend/npm-debug.log*
-diva-haus-backend/yarn-debug.log*
+server/node_modules/
+server/dist/
+server/build/
+server/.env
+server/npm-debug.log*
+server/yarn-debug.log*
 
 # Day 19: Uploaded files (keep directory structure)
-diva-haus-backend/uploads/*
-!diva-haus-backend/uploads/.gitkeep
+server/uploads/*
+!server/uploads/.gitkeep
