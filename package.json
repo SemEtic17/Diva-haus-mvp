@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "install:all": "npm install --include=dev --prefix server && npm install --include=dev --prefix diva-haus-frontend",
+    "install:all": "npm install --include=dev --prefix server && npm install --include=dev --prefix client",
     "dev:backend": "npm run dev --prefix server",
-    "dev:frontend": "npm run dev --prefix diva-haus-frontend",
+    "dev:frontend": "npm run dev --prefix client",
     "dev:vton": "npm run dev --prefix vton-service",
     "dev": "npx concurrently \"npm run dev:backend\" \"npm run dev:frontend\" \"npm run dev:vton\"",
-    "build:frontend": "VITE_API_BASE_URL=/api npm run build --prefix diva-haus-frontend",
+    "build:frontend": "VITE_API_BASE_URL=/api npm run build --prefix client",
     "build": "npm run install:all && npm run build:frontend",
     "start": "npm run start:prod --prefix server",
     "start:prod": "npm run start:prod --prefix server"

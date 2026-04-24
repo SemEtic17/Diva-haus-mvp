@@ -14,11 +14,11 @@ yarn-error.log*
 *.tgz
 
 # Vite.js (Frontend)
-diva-haus-frontend/dist/
-diva-haus-frontend/build/
-diva-haus-frontend/.vite/
-diva-haus-frontend/.eslintcache
-diva-haus-frontend/coverage/
+client/dist/
+client/build/
+client/.vite/
+client/.eslintcache
+client/coverage/
 
 # Node.js (Backend)
 server/node_modules/
