@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// diva-haus-backend/scripts/check_providers.js
+// server/scripts/check_providers.js
 // simple command‑line tool to verify AI provider configuration and reachability
 
 import dotenv from 'dotenv';

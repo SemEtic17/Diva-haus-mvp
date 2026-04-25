@@ -1,4 +1,4 @@
-// diva-haus-backend/api/services/ai/providers/FashnProvider.js
+// server/api/services/ai/providers/FashnProvider.js
 // Provider that forwards requests to an external Python micro‑service running
 // FASHN VTON v1.5. The service is expected to expose an HTTP API at
 // VTON_SERVICE_URL (e.g. http://localhost:8000/vton) which returns a base64

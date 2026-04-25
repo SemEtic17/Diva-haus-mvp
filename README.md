@@ -33,11 +33,11 @@ Diva Haus is a Minimum Viable Product (MVP) designed to showcase [brief descript
 
 ## Technologies Used
 
-**Frontend (diva-haus-frontend):**
+**Frontend (client):**
 - React (Vite)
 - [Add any UI libraries, e.g., Tailwind CSS, Ant Design]
 
-**Backend (diva-haus-backend):**
+**Backend (server):**
 - Node.js
 - Express.js
 - MongoDB (via Mongoose)
@@ -67,21 +67,21 @@ Before you begin, ensure you have the following installed:
 
 2.  **Install Frontend Dependencies:**
     ```bash
-    cd diva-haus-frontend
+    cd client
     npm install
     cd ..
     ```
 
 3.  **Install Backend Dependencies:**
     ```bash
-    cd diva-haus-backend
+    cd server
     npm install
     cd ..
     ```
 
 ### Environment Variables
 
-Create a `.env` file in the `diva-haus-backend` directory with the following content:
+Create a `.env` file in the `server` directory with the following content:
 
 ```
 PORT=5000
@@ -120,7 +120,7 @@ Replace `YOUR_MONGODB_CONNECTION_STRING` with your actual MongoDB connection str
 > **Diagnostics:**
 > * With the backend running you can hit `/api/ai/health` to see the status
 >   of each provider (token validity, service reachability, etc.).
-> * Alternatively run `npm run check:ai` from `diva-haus-backend` – it prints
+> * Alternatively run `npm run check:ai` from `server` – it prints
 >   the same information without starting the server.  These checks help
 >   determine whether Pixazo is failing due to an exhausted balance or whether
 >   a Hugging Face token lacks inference permissions.
@@ -168,19 +168,19 @@ The virtual try-on feature requires the Python micro-service to be running.
 
 ### Environment Variables (Backend)
 
-Ensure your `.env` file in `diva-haus-backend` is correctly configured:
+Ensure your `.env` file in `server` is correctly configured:
 
 ## Folder Structure
 
 ```
 .
-├── diva-haus-backend/
+├── server/
 │   ├── node_modules/
 │   ├── .env
 │   ├── package.json
 │   ├── server.js
 │   └── ... (other backend files)
-├── diva-haus-frontend/
+├── client/
 │   ├── node_modules/
 │   ├── public/
 │   ├── src/

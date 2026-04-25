@@ -1,4 +1,4 @@
-// diva-haus-backend/api/middleware/upload.js
+// server/api/middleware/upload.js
 import multer from 'multer';
 
 // Constants for file validation

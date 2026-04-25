@@ -1,4 +1,4 @@
-// diva-haus-frontend/src/components/VirtualTryOnPlaceholder.jsx
+// client/src/components/VirtualTryOnPlaceholder.jsx
 import React, { useState, useCallback, useContext } from 'react';
 import { motion } from 'framer-motion';
 import { Camera, Sparkles, Upload, Zap, XCircle, CheckCircle, RotateCcw, User } from 'lucide-react';

@@ -1,4 +1,4 @@
-// diva-haus-backend/api/services/storage.service.js
+// server/api/services/storage.service.js
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';

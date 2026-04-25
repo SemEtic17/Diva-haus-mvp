@@ -1,4 +1,4 @@
-// diva-haus-backend/api/services/ai/providers/HuggingFaceProvider.js
+// server/api/services/ai/providers/HuggingFaceProvider.js
 // Fallback provider that uses the Hugging Face Inference API to perform
 // a text‑to‑image generation. We construct a prompt containing URLs for the
 // person and garment images, then upload the resulting PNG to storage.

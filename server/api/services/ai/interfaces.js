@@ -1,4 +1,4 @@
-// diva-haus-backend/api/services/ai/interfaces.js
+// server/api/services/ai/interfaces.js
 // Day 21: AI Service Interface Definitions
 
 /**

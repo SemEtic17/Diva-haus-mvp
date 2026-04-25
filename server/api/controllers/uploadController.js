@@ -1,4 +1,4 @@
-// diva-haus-backend/api/controllers/uploadController.js
+// server/api/controllers/uploadController.js
 import { runVirtualTryOn } from '../services/virtualTryOn.service.js';
 import storageService from '../services/storage.service.js'; // Day 19: Persist uploaded images
 import User from '../models/User.js';

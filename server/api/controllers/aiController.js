@@ -1,4 +1,4 @@
-// diva-haus-backend/api/controllers/aiController.js
+// server/api/controllers/aiController.js
 // simple endpoints for inspecting AI provider configuration and status
 
 import { AIProviderFactory } from '../services/ai/AIProviderFactory.js';

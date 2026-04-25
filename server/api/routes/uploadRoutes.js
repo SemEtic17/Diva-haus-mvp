@@ -1,4 +1,4 @@
-// diva-haus-backend/api/routes/uploadRoutes.js
+// server/api/routes/uploadRoutes.js
 import express from 'express';
 import { uploadTryOnImage } from '../middleware/upload.js';
 import { handleTryOnUpload, handleTryOnWithSavedImage } from '../controllers/uploadController.js';

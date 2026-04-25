@@ -1,4 +1,4 @@
-// diva-haus-backend/api/services/ai/providers/MockProvider.js
+// server/api/services/ai/providers/MockProvider.js
 // Day 21: Mock AI Provider Implementation
 
 import { AIProviderInterface } from '../interfaces.js';

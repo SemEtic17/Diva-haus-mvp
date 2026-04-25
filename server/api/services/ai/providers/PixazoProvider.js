@@ -1,4 +1,4 @@
-// diva-haus-backend/api/services/ai/providers/PixazoProvider.js
+// server/api/services/ai/providers/PixazoProvider.js
 // Provider implementing the Pixazo Fashn Virtual Try-On API.  Pixazo
 // exposes a simple REST endpoint that queues a request and then allows you to
 // poll for the result.  This class wraps the two‑step process and returns a

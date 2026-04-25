@@ -1,4 +1,4 @@
-// diva-haus-backend/api/services/ai/AIProviderFactory.js
+// server/api/services/ai/AIProviderFactory.js
 // Day 21: Factory for selecting and initializing AI providers
 
 import { MockProvider } from './providers/MockProvider.js';
