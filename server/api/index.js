@@ -73,7 +73,8 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static(clientDist));
 
   // Fallback to index.html for client-side routing
-  app.get('*', (req, res) => {
+  // Note: Express 5 requires a name for wildcards, so we use *path
+  app.get('*path', (req, res) => {
     // Only serve index.html if the request is not for an API or upload
     if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) {
       return res.status(404).json({ message: 'Not Found' });
