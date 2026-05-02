@@ -69,12 +69,15 @@ app.get('/health', (req, res) => {
 
 // Serve frontend in production
 if (process.env.NODE_ENV === 'production') {
-  const clientDist = path.join(__dirname, '../../client/dist');
+  const clientDist = path.resolve(__dirname, '../../client/dist');
   app.use(express.static(clientDist));
 
-  // Fallback to index.html for client-side routing, but allow API and upload routes
-  app.get('*path', (req, res, next) => {
-    if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) return next();
+  // Fallback to index.html for client-side routing
+  app.get('*', (req, res) => {
+    // Only serve index.html if the request is not for an API or upload
+    if (req.path.startsWith('/api') || req.path.startsWith('/uploads')) {
+      return res.status(404).json({ message: 'Not Found' });
+    }
     res.sendFile(path.join(clientDist, 'index.html'));
   });
 }
