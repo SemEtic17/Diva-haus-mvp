@@ -28,7 +28,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 5000;
 // Connect to MongoDB
-const MONGO_URI = process.env.MONGO_URI ? process.env.MONGO_URI.replace('<PASSWORD>', process.env.MONGO_PASSWORD) : null;
+const MONGO_URI = process.env.MONGO_URI;
 
 // Middleware
 app.use(cors({
@@ -43,11 +43,19 @@ const uploadsPath = path.join(__dirname, '../uploads');
 app.use('/uploads', express.static(uploadsPath));
 
 if (MONGO_URI) {
-  mongoose.connect(MONGO_URI)
+  // If URI contains <PASSWORD> placeholder, try to replace it
+  const connectionString = MONGO_URI.includes('<PASSWORD>') && process.env.MONGO_PASSWORD
+    ? MONGO_URI.replace('<PASSWORD>', process.env.MONGO_PASSWORD)
+    : MONGO_URI;
+
+  mongoose.connect(connectionString)
     .then(() => console.log('MongoDB connected successfully'))
-    .catch(err => console.error('MongoDB connection error:', err));
+    .catch(err => {
+      console.error('MongoDB connection error details:');
+      console.error(err.message);
+    });
 } else {
-    console.error('MONGO_URI not found. Please add it to your .env file.');
+    console.error('MONGO_URI not found. Please add it to your environment variables.');
 }
 
 

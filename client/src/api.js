@@ -1,4 +1,4 @@
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || (window.location.origin + '/api');
 
 // Helper for authenticated requests
 const fetchWithAuth = async (url, options = {}) => {
