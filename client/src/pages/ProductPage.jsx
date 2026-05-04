@@ -6,10 +6,11 @@ import { AuthContext } from '../context/AuthContext';
 import { CartContext } from '../context/CartContext';
 import VirtualTryOnPlaceholder from '../components/VirtualTryOnPlaceholder';
 import HolographicContainer from '../components/HolographicContainer';
+import BrandLogo from '../components/BrandLogo';
 import { toast } from '../components/Toaster';
 import { isTryOnEnabled } from '../config/features';
 import { useTranslation } from 'react-i18next';
-import { ShoppingBag, Sparkles, Ruler, ShieldCheck } from 'lucide-react';
+import { ShoppingBag, Sparkles, Ruler, ShieldCheck, Tag } from 'lucide-react';
 
 const ProductPage = () => {
   const { id } = useParams();
@@ -128,13 +129,29 @@ const ProductPage = () => {
             className="flex flex-col space-y-8"
           >
             <header className="space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold/10 border border-gold/20">
-                <Sparkles className="w-3.5 h-3.5 text-gold" />
-                <span className="text-[10px] font-bold text-gold uppercase tracking-[0.2em]">{t('products.premium_selection', 'Premium Selection')}</span>
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold/10 border border-gold/20">
+                  <Sparkles className="w-3.5 h-3.5 text-gold" />
+                  <span className="text-[10px] font-bold text-gold uppercase tracking-[0.2em]">{t('products.premium_selection', 'Premium Selection')}</span>
+                </div>
+                {product.category && (
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-navy-mid/10 border border-navy-mid/20">
+                    <Tag className="w-3.5 h-3.5 text-navy-light" />
+                    <span className="text-[10px] font-bold text-navy-light uppercase tracking-[0.2em]">{product.category}</span>
+                  </div>
+                )}
               </div>
-              <h1 className="text-4xl md:text-5xl font-serif font-bold text-foreground leading-tight tracking-tight">
-                {product.name}
-              </h1>
+
+              <div className="flex flex-col space-y-2">
+                <div className="h-8 mb-2">
+                  <BrandLogo brand={product.brand} />
+                </div>
+                
+                <h1 className="text-4xl md:text-5xl font-serif font-bold text-foreground leading-tight tracking-tight">
+                  {product.name}
+                </h1>
+              </div>
+
               <p className="text-3xl font-serif font-semibold text-gradient-gold">
                 ${product.price.toFixed(2)}
               </p>
