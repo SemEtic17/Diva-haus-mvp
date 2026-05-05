@@ -1,5 +1,5 @@
 import { useState, useContext, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingBag, User, Menu, X, Heart, LogOut, UserPlus, Languages, ChevronDown, Sun, Moon, ShieldCheck } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
@@ -17,6 +17,7 @@ const Navbar = () => {
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const langMenuRef = useRef(null);
   const { t, i18n } = useTranslation();
+  const location = useLocation();
 
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
@@ -33,6 +34,11 @@ const Navbar = () => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location]);
 
   const linkHover = {
     y: -2,
@@ -79,10 +85,10 @@ const Navbar = () => {
       variants={navVariants}
       initial="hidden"
       animate="visible"
-      className="fixed top-0 left-0 right-0 z-50"
+      className="fixed top-0 left-0 right-0 z-50 pointer-events-none"
     >
-      {/* Glassmorphism background with holographic neon border */}
-      <div className="relative bg-background/80 backdrop-blur-xl border-b border-glass-border/30">
+      {/* Main Navbar */}
+      <div className="relative bg-background/80 backdrop-blur-xl border-b border-glass-border/30 pointer-events-auto">
         {/* Holographic neon border effect */}
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-neon-cyan/0 via-neon-cyan/50 to-neon-pink/50" />
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-neon-pink/0 via-gold/30 to-neon-cyan/0 blur-sm" />
@@ -90,6 +96,7 @@ const Navbar = () => {
         <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20">
             
+            {/* Left: Mobile Menu Toggle / Brand */}
             <div className="flex-1 flex items-center justify-start space-x-4">
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -105,38 +112,31 @@ const Navbar = () => {
                   whileHover={{ scale: 1.02 }}
                   className="flex-shrink-0"
                 >
-                  <div className="text-center">
-                    <h1 className="font-serif text-2xl tracking-wider">
-                      <span className="text-gradient-gold">DIVA</span>
-                      <span className="text-foreground ml-1">HAUS</span>
-                    </h1>
-                  </div>
+                  <h1 className="font-serif text-2xl tracking-wider">
+                    <span className="text-gradient-gold">DIVA</span>
+                    <span className="text-foreground ml-1">HAUS</span>
+                  </h1>
                 </motion.div>
               </Link>
             </div>
 
-            <motion.div
-              className="hidden md:flex flex-1 justify-center"
-            >
+            {/* Center: Brand (Desktop) */}
+            <motion.div className="hidden md:flex flex-1 justify-center">
               <Link to="/" className="flex-shrink-0">
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  className="mx-auto"
-                >
-                  <div className="text-center">
-                    <h1 className="font-serif text-2xl md:text-3xl tracking-wider">
-                      <span className="text-gradient-gold">DIVA</span>
-                      <span className="text-foreground ml-1">HAUS</span>
-                    </h1>
-                    <span className="hidden md:block text-[10px] tracking-[0.4em] text-gold/60 uppercase mt-0.5">
-                      Luxury Boutique
-                    </span>
-                  </div>
+                <motion.div whileHover={{ scale: 1.02 }} className="mx-auto text-center">
+                  <h1 className="font-serif text-2xl md:text-3xl tracking-wider">
+                    <span className="text-gradient-gold">DIVA</span>
+                    <span className="text-foreground ml-1">HAUS</span>
+                  </h1>
+                  <span className="text-[10px] tracking-[0.4em] text-gold/60 uppercase mt-0.5 block">
+                    Luxury Boutique
+                  </span>
                 </motion.div>
               </Link>
             </motion.div>
 
-            <div className="flex-1 flex items-center justify-end space-x-2 md:space-x-4">
+            {/* Right: Actions */}
+            <div className="flex-1 flex items-center justify-end space-x-1 md:space-x-4">
               {/* Theme Toggle */}
               <motion.button
                 onClick={toggleTheme}
@@ -148,9 +148,8 @@ const Navbar = () => {
                 {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
               </motion.button>
 
-              {/* Language Switcher - Desktop: Buttons, Mobile: Dropdown */}
+              {/* Language Switcher */}
               <div className="relative flex items-center" ref={langMenuRef}>
-                {/* Desktop Buttons */}
                 <div className="hidden md:flex items-center space-x-1 mr-2 border-r border-border pr-4">
                   <button
                     onClick={() => changeLanguage('en')}
@@ -166,12 +165,11 @@ const Navbar = () => {
                   </button>
                 </div>
 
-                {/* Mobile Dropdown Trigger */}
                 <motion.button
                   onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="md:hidden flex items-center space-x-1 p-2 text-foreground/70 hover:text-gold transition-colors duration-300 border-r border-border pr-4"
+                  className="md:hidden flex items-center space-x-1 p-2 text-foreground/70 hover:text-gold transition-colors duration-300 sm:border-r sm:border-border sm:pr-4"
                 >
                   <Languages size={18} />
                   <span className="text-xs font-medium uppercase">{i18n.language === 'am' ? 'አማ' : 'EN'}</span>
@@ -186,88 +184,63 @@ const Navbar = () => {
                       exit={{ opacity: 0, y: 10, scale: 0.95 }}
                       className="absolute right-0 top-full mt-2 w-32 bg-popover backdrop-blur-xl border border-glass-border/30 rounded-lg shadow-2xl overflow-hidden z-[60]"
                     >
-                      <button
-                        onClick={() => changeLanguage('en')}
-                        className={`w-full text-left px-4 py-2.5 text-xs transition-colors ${i18n.language === 'en' ? 'bg-gold text-primary-foreground' : 'text-foreground/60 hover:bg-muted hover:text-gold'}`}
-                      >
-                        English
-                      </button>
-                      <button
-                        onClick={() => changeLanguage('am')}
-                        className={`w-full text-left px-4 py-2.5 text-xs transition-colors ${i18n.language === 'am' ? 'bg-gold text-primary-foreground' : 'text-foreground/60 hover:bg-muted hover:text-gold'}`}
-                      >
-                        አማርኛ
-                      </button>
+                      <button onClick={() => changeLanguage('en')} className={`w-full text-left px-4 py-2.5 text-xs transition-colors ${i18n.language === 'en' ? 'bg-gold text-primary-foreground' : 'text-foreground/60 hover:bg-muted hover:text-gold'}`}>English</button>
+                      <button onClick={() => changeLanguage('am')} className={`w-full text-left px-4 py-2.5 text-xs transition-colors ${i18n.language === 'am' ? 'bg-gold text-primary-foreground' : 'text-foreground/60 hover:bg-muted hover:text-gold'}`}>አማርኛ</button>
                     </motion.div>
                   )}
                 </AnimatePresence>
               </div>
 
-              <Link to="/wishlist" aria-label="Wishlist">
-                <motion.div
-                  whileHover={linkHover}
-                  className="relative p-2 text-foreground/70 hover:text-gold transition-colors duration-300"
-                >
-                  <Heart size={20} />
-                  {wishlistItemCount > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center text-[10px] font-medium bg-gradient-to-r from-neon-cyan to-neon-pink text-white rounded-full px-1">
-                      {wishlistItemCount}
-                    </span>
-                  )}
-                </motion.div>
-              </Link>
-
-              <Link to="/cart" aria-label="Shopping cart">
-                 <motion.div
-                    whileHover={linkHover}
-                    className="relative p-2 text-foreground/70 hover:text-gold transition-colors duration-300"
-                  >
-                  <ShoppingBag size={20} />
-                  {cartItemCount > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center text-[10px] font-medium bg-gradient-to-r from-neon-cyan to-neon-pink text-white rounded-full px-1">
-                      {cartItemCount}
-                    </span>
-                  )}
-                 </motion.div>
-              </Link>
-
-<Link to={isAuthenticated ? '/profile' : '/login'} aria-label={isAuthenticated ? 'Profile' : 'Login'}>
-                <motion.div
-                  whileHover={linkHover}
-                  className="relative p-2 text-foreground/70 hover:text-gold transition-colors duration-300"
-                >
-                  <User size={20} />
-                  {isAuthenticated && (
-                    <span className="absolute top-1 right-1 w-2 h-2 bg-gold rounded-full" />
-                  )}
-                </motion.div>
-              </Link>
-
-              {isAuthenticated && userInfo?.isAdmin && (
-                <Link to="/admin" aria-label="Admin Dashboard">
-                  <motion.div
-                    whileHover={linkHover}
-                    className="p-2 text-gold hover:text-neon-cyan transition-colors duration-300"
-                  >
-                    <ShieldCheck size={20} />
+              {/* Desktop Icons - Hidden on Mobile */}
+              <div className="hidden md:flex items-center space-x-4">
+                <Link to="/wishlist" aria-label="Wishlist">
+                  <motion.div whileHover={linkHover} className="relative p-2 text-foreground/70 hover:text-gold transition-colors duration-300">
+                    <Heart size={20} />
+                    {wishlistItemCount > 0 && (
+                      <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center text-[10px] font-medium bg-gradient-to-r from-neon-cyan to-neon-pink text-white rounded-full px-1">
+                        {wishlistItemCount}
+                      </span>
+                    )}
                   </motion.div>
                 </Link>
-              )}
 
-              {isAuthenticated && (
-                <motion.button
-                  onClick={logout}
-                  whileHover={linkHover}
-                  className="hidden md:flex p-2 text-foreground/70 hover:text-gold transition-colors duration-300"
-                  aria-label="Logout"
-                >
-                  <LogOut size={20} />
-                </motion.button>
-              )}
+                <Link to="/cart" aria-label="Shopping cart">
+                  <motion.div whileHover={linkHover} className="relative p-2 text-foreground/70 hover:text-gold transition-colors duration-300">
+                    <ShoppingBag size={20} />
+                    {cartItemCount > 0 && (
+                      <span className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center text-[10px] font-medium bg-gradient-to-r from-neon-cyan to-neon-pink text-white rounded-full px-1">
+                        {cartItemCount}
+                      </span>
+                    )}
+                  </motion.div>
+                </Link>
+
+                <Link to={isAuthenticated ? '/profile' : '/login'} aria-label={isAuthenticated ? 'Profile' : 'Login'}>
+                  <motion.div whileHover={linkHover} className="relative p-2 text-foreground/70 hover:text-gold transition-colors duration-300">
+                    <User size={20} />
+                    {isAuthenticated && <span className="absolute top-1 right-1 w-2 h-2 bg-gold rounded-full" />}
+                  </motion.div>
+                </Link>
+
+                {isAuthenticated && userInfo?.isAdmin && (
+                  <Link to="/admin" aria-label="Admin Dashboard">
+                    <motion.div whileHover={linkHover} className="p-2 text-gold hover:text-neon-cyan transition-colors duration-300">
+                      <ShieldCheck size={20} />
+                    </motion.div>
+                  </Link>
+                )}
+                
+                {isAuthenticated && (
+                  <motion.button onClick={logout} whileHover={linkHover} className="p-2 text-foreground/70 hover:text-gold transition-colors duration-300" aria-label="Logout">
+                    <LogOut size={20} />
+                  </motion.button>
+                )}
+              </div>
             </div>
           </div>
         </nav>
 
+        {/* Mobile Menu Dropdown */}
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.div
@@ -278,7 +251,7 @@ const Navbar = () => {
               className="md:hidden overflow-hidden border-t border-border"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              <div className="bg-background/95 backdrop-blur-xl px-4 py-6 space-y-1">
+              <div className="bg-background/95 backdrop-blur-xl px-4 py-6 space-y-1 pointer-events-auto">
                 {isAuthenticated ? (
                   <>
                     <Link to="/profile" className="flex items-center gap-3 py-3 px-4 text-base font-medium text-foreground/80 hover:text-gold hover:bg-muted rounded-lg transition-all duration-200">
@@ -311,6 +284,48 @@ const Navbar = () => {
             </motion.div>
           )}
         </AnimatePresence>
+      </div>
+
+      {/* Liquid Floating Dock for Mobile */}
+      <div className="md:hidden relative flex justify-end px-4 pointer-events-none">
+        {/* The "Liquid" Connection Line */}
+        <div className="absolute top-0 right-14 w-8 h-8 flex justify-center">
+          <div className="w-[2px] h-full bg-gradient-to-b from-gold/40 to-transparent" />
+        </div>
+
+        <motion.div 
+          initial={{ opacity: 0, y: -10, scale: 0.9 }}
+          animate={{ opacity: 1, y: 4, scale: 1 }}
+          className="bg-background/60 backdrop-blur-md border border-glass-border/30 rounded-full px-2 py-1 flex items-center gap-1 shadow-luxury pointer-events-auto"
+        >
+          <Link to="/wishlist" className="relative p-2 text-foreground/70 active:text-gold transition-colors">
+            <Heart size={18} />
+            {wishlistItemCount > 0 && (
+              <span className="absolute top-1 right-1 min-w-[14px] h-[14px] flex items-center justify-center text-[8px] font-bold bg-gradient-to-r from-neon-cyan to-neon-pink text-white rounded-full">
+                {wishlistItemCount}
+              </span>
+            )}
+          </Link>
+          
+          <Link to="/cart" className="relative p-2 text-foreground/70 active:text-gold transition-colors">
+            <ShoppingBag size={18} />
+            {cartItemCount > 0 && (
+              <span className="absolute top-1 right-1 min-w-[14px] h-[14px] flex items-center justify-center text-[8px] font-bold bg-gradient-to-r from-neon-cyan to-neon-pink text-white rounded-full">
+                {cartItemCount}
+              </span>
+            )}
+          </Link>
+
+          <Link to={isAuthenticated ? '/profile' : '/login'} className="p-2 text-foreground/70 active:text-gold transition-colors">
+            <User size={18} />
+          </Link>
+
+          {isAuthenticated && userInfo?.isAdmin && (
+            <Link to="/admin" className="p-2 text-gold active:text-neon-cyan transition-colors">
+              <ShieldCheck size={18} />
+            </Link>
+          )}
+        </motion.div>
       </div>
     </motion.header>
   );
