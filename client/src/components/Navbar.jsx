@@ -88,7 +88,7 @@ const Navbar = () => {
       className="fixed top-0 left-0 right-0 z-50 pointer-events-none"
     >
       {/* Main Navbar */}
-      <div className="relative bg-background/80 backdrop-blur-xl border-b border-glass-border/30 pointer-events-auto">
+      <div className="relative z-30 bg-background/80 backdrop-blur-xl border-b border-glass-border/30 pointer-events-auto">
         {/* Holographic neon border effect */}
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-neon-cyan/0 via-neon-cyan/50 to-neon-pink/50" />
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-neon-pink/0 via-gold/30 to-neon-cyan/0 blur-sm" />
@@ -287,7 +287,7 @@ const Navbar = () => {
       </div>
 
       {/* Liquid Floating Dock for Mobile */}
-      <div className="md:hidden relative flex justify-end px-4 pointer-events-none">
+      <div className="md:hidden relative z-10 flex justify-end px-4 pointer-events-none">
         {/* The "Liquid" Connection Line */}
         <div className="absolute top-0 right-14 w-8 h-8 flex justify-center">
           <div className="w-[2px] h-full bg-gradient-to-b from-gold/40 to-transparent" />
