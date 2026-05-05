@@ -84,14 +84,17 @@ const ProductCard = ({ product }) => {
       </div>
 
       {/* Image Container */}
-      <div className="relative aspect-[3/4] overflow-hidden rounded-t-2xl">
+      <div className="relative aspect-[3/4] overflow-hidden rounded-t-2xl bg-secondary/10 dark:bg-[#0f172a] p-6 flex items-center justify-center group-hover:bg-secondary/20 dark:group-hover:bg-[#161f33] transition-colors duration-500">
           {/* Gradient overlay on image */}
-        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent z-10 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/20 via-transparent to-transparent z-10 pointer-events-none" />
         
+        {/* Holographic shimmer effect overlay */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-neon-cyan/5 via-transparent to-neon-pink/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+
         <motion.img
           src={product.image || 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=533&fit=crop'}
           alt={product.name}
-          className="h-full w-full object-cover object-center"
+          className="h-full w-full object-contain mix-blend-multiply dark:mix-blend-normal transform-gpu"
           whileHover={imageHover}
           transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
         />
