@@ -26,7 +26,7 @@ const WishlistPage = () => {
         <header className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-neon-pink/10 border border-neon-pink/20 mb-4">
             <Heart className="w-4 h-4 text-neon-pink" />
-            <span className="text-sm font-medium text-neon-pink uppercase tracking-widest">{t('wishlist.subtitle', 'Your Favorites')}</span>
+            <span className="text-sm font-medium text-neon-pink uppercase tracking-widest">{t('wishlist.subtitle')}</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-serif font-bold text-foreground">{t('wishlist.title')}</h1>
           <div className="mt-4 mx-auto w-24 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
@@ -53,9 +53,9 @@ const WishlistPage = () => {
               <Heart className="w-10 h-10 text-muted-foreground/40" />
             </div>
             <h2 className="text-2xl font-serif font-medium text-foreground mb-4">{t('wishlist.empty')}</h2>
-            <p className="text-muted-foreground mb-8">{t('wishlist.empty_desc', 'Start saving your favorite pieces to find them easily later.')}</p>
+            <p className="text-muted-foreground mb-8">{t('wishlist.empty_desc')}</p>
             <Link to="/" className="inline-flex items-center text-gold font-medium hover:text-gold-light transition-colors group">
-              {t('wishlist.browse', 'Browse Collection')}
+              {t('wishlist.browse')}
               <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </motion.div>

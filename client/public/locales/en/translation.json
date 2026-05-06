@@ -58,11 +58,28 @@
     "qty": "Qty",
     "remove": "Remove",
     "total": "Total",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "your_bag": "Your Selection",
+    "continue_shopping": "Explore our collections",
+    "summary": "Order Summary",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "complimentary": "Complimentary",
+    "checkout": "Secure Checkout",
+    "secure_payment": "Secure Payment Guaranteed",
+    "item_added": "Item added to cart!",
+    "item_removed": "Item removed from cart!",
+    "login_required": "Please log in to add items to your cart.",
+    "fetch_error": "Error fetching cart",
+    "add_error": "Error adding to cart",
+    "remove_error": "Error removing from cart"
   },
   "wishlist": {
     "title": "My Wishlist",
-    "empty": "Your wishlist is empty."
+    "subtitle": "Your Favorites",
+    "empty": "Your wishlist is empty.",
+    "empty_desc": "Start saving your favorite pieces to find them easily later.",
+    "browse": "Browse Collection"
   },
   "profile": {
     "title": "Your Body Profile",
@@ -116,6 +133,10 @@
     "signing_in": "Signing in...",
     "registering": "Creating account...",
     "name_placeholder": "Full Name",
-    "email_placeholder": "you@example.com"
+    "email_placeholder": "you@example.com",
+    "login_success": "Logged in successfully!",
+    "logout_success": "Logged out.",
+    "login_failed": "Login failed.",
+    "auth_status_error": "Error checking authentication status."
   }
 }

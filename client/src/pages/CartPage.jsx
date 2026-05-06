@@ -57,7 +57,7 @@ const CartPage = () => {
         <header className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gold/10 border border-gold/20 mb-4">
             <ShoppingBag className="w-4 h-4 text-gold" />
-            <span className="text-sm font-medium text-gold uppercase tracking-widest">{t('cart.your_bag', 'Your Selection')}</span>
+            <span className="text-sm font-medium text-gold uppercase tracking-widest">{t('cart.your_bag')}</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-serif font-bold text-foreground">{t('cart.title')}</h1>
           <div className="mt-4 mx-auto w-24 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
@@ -74,7 +74,7 @@ const CartPage = () => {
             </div>
             <h2 className="text-2xl font-serif font-medium text-foreground mb-4">{t('cart.empty')}</h2>
             <Link to="/" className="inline-flex items-center text-gold font-medium hover:text-gold-light transition-colors group">
-              {t('cart.continue_shopping', 'Explore our collections')}
+              {t('cart.continue_shopping')}
               <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </motion.div>
@@ -121,16 +121,16 @@ const CartPage = () => {
 
             <div className="lg:col-span-1">
               <div className="sticky top-24 p-6 backdrop-blur-xl bg-card/60 border border-glass-border/30 rounded-3xl shadow-luxury space-y-6">
-                <h3 className="text-xl font-serif font-bold text-foreground border-b border-border pb-4">{t('cart.summary', 'Order Summary')}</h3>
+                <h3 className="text-xl font-serif font-bold text-foreground border-b border-border pb-4">{t('cart.summary')}</h3>
                 
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">{t('cart.subtotal', 'Subtotal')}</span>
+                    <span className="text-muted-foreground">{t('cart.subtotal')}</span>
                     <span className="text-foreground font-medium">${total.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">{t('cart.shipping', 'Shipping')}</span>
-                    <span className="text-gold font-medium uppercase tracking-tighter">{t('cart.complimentary', 'Complimentary')}</span>
+                    <span className="text-muted-foreground">{t('cart.shipping')}</span>
+                    <span className="text-gold font-medium uppercase tracking-tighter">{t('cart.complimentary')}</span>
                   </div>
                 </div>
 
@@ -143,11 +143,11 @@ const CartPage = () => {
                   className="w-full py-4 rounded-xl bg-gradient-to-r from-gold to-gold-dark text-primary-foreground font-semibold uppercase tracking-widest shadow-neon-gold hover:shadow-[0_0_30px_hsl(var(--gold)/0.4)] transition-all duration-300 flex items-center justify-center group"
                 >
                   <Sparkles className="w-4 h-4 mr-2" />
-                  {t('cart.checkout', 'Secure Checkout')}
+                  {t('cart.checkout')}
                 </button>
                 
                 <p className="text-[10px] text-center text-muted-foreground/60 uppercase tracking-widest pt-2">
-                  {t('cart.secure_payment', 'Secure Payment Guaranteed')}
+                  {t('cart.secure_payment')}
                 </p>
               </div>
             </div>

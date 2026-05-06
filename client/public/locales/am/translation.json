@@ -58,11 +58,28 @@
     "qty": "ብዛት",
     "remove": "አስወግድ",
     "total": "ጠቅላላ",
-    "loading": "በመጫን ላይ..."
+    "loading": "በመጫን ላይ...",
+    "your_bag": "የእርስዎ ምርጫ",
+    "continue_shopping": "ስብስቦቻችንን ያስሱ",
+    "summary": "የትዕዛዝ ማጠቃለያ",
+    "subtotal": "ንዑስ ድምር",
+    "shipping": "ማጓጓዣ",
+    "complimentary": "በነጻ",
+    "checkout": "ደህንነቱ የተጠበቀ ክፍያ",
+    "secure_payment": "ደህንነቱ የተጠበቀ ክፍያ የተረጋገጠ",
+    "item_added": "ምርቱ ወደ ቅርጫት ተጨምሯል!",
+    "item_removed": "ምርቱ ከቅርጫት ተወግዷል!",
+    "login_required": "እባክዎ ምርቶችን ወደ ቅርጫት ለመጨመር ይግቡ።",
+    "fetch_error": "ቅርጫቱን በመጫን ላይ ስህተት ተከስቷል",
+    "add_error": "ወደ ቅርጫት በመጨመር ላይ ስህተት ተከስቷል",
+    "remove_error": "ከቅርጫት በማስወገድ ላይ ስህተት ተከስቷል"
   },
   "wishlist": {
     "title": "የእኔ የምኞት ዝርዝር",
-    "empty": "የምኞት ዝርዝርዎ ባዶ ነው።"
+    "subtitle": "የእርስዎ ተወዳጆች",
+    "empty": "የምኞት ዝርዝርዎ ባዶ ነው።",
+    "empty_desc": "ተወዳጅ ዕቃዎችዎን በኋላ በቀላሉ ለማግኘት አሁኑኑ ማስቀመጥ ይጀምሩ።",
+    "browse": "ምርቶችን ይመልከቱ"
   },
   "profile": {
     "title": "የእርስዎ የሰውነት መገለጫ",
@@ -116,6 +133,10 @@
     "signing_in": "በመግባት ላይ...",
     "registering": "መለያ በመፍጠር ላይ...",
     "name_placeholder": "ሙሉ ስም",
-    "email_placeholder": "you@example.com"
+    "email_placeholder": "you@example.com",
+    "login_success": "በተሳካ ሁኔታ ገብተዋል!",
+    "logout_success": "ወጥተዋል።",
+    "login_failed": "መግባት አልተቻለም።",
+    "auth_status_error": "የመግቢያ ሁኔታን በማረጋገጥ ላይ ስህተት ተከስቷል።"
   }
 }

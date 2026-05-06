@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect } from 'react';
 import { loginUser, API_BASE_URL } from '../api'; // NEW: Import API_BASE_URL
 import { toast } from '../components/Toaster';
+import { useTranslation } from 'react-i18next';
 
 const AuthContext = createContext();
 
@@ -8,6 +9,7 @@ const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { t } = useTranslation();
 
   const checkAuthStatus = async () => {
     try {
@@ -27,7 +29,7 @@ const AuthProvider = ({ children }) => {
         setUserInfo(null);
       }
     } catch (error) {
-      toast.error('Error checking authentication status.');
+      toast.error(t('auth.auth_status_error'));
       setIsAuthenticated(false);
       setUserInfo(null);
     } finally {
@@ -43,9 +45,9 @@ const AuthProvider = ({ children }) => {
     try {
       await loginUser({ email, password });
       await checkAuthStatus();
-      toast.success('Logged in successfully!');
+      toast.success(t('auth.login_success'));
     } catch (error) {
-      toast.error(error.message || 'Login failed.');
+      toast.error(error.message || t('auth.login_failed'));
       setIsAuthenticated(false);
       setUserInfo(null);
       throw error;
@@ -57,7 +59,7 @@ const AuthProvider = ({ children }) => {
       await fetch(`${API_BASE_URL}/auth/logout`, { method: 'POST', credentials: 'include' }); // Add credentials: 'include'
       setIsAuthenticated(false);
       setUserInfo(null);
-      toast.info('Logged out.');
+      toast.info(t('auth.logout_success'));
     } catch (error) {
       toast.error(error.message || 'Logout failed.');
       throw error;
