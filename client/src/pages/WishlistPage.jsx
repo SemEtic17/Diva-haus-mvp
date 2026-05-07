@@ -21,7 +21,7 @@ const WishlistPage = () => {
   };
 
   return (
-    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 bg-background text-foreground transition-colors duration-300">
+    <div className="min-h-screen pt-20 md:pt-28 pb-12 px-4 sm:px-6 lg:px-8 bg-background text-foreground transition-colors duration-300">
       <div className="max-w-7xl mx-auto">
         <header className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-neon-pink/10 border border-neon-pink/20 mb-4">

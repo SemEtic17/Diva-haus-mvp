@@ -120,7 +120,7 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8 bg-background text-foreground transition-colors duration-300">
+    <div className="min-h-screen pt-20 md:pt-28 pb-12 px-4 sm:px-6 lg:px-8 bg-background text-foreground transition-colors duration-300">
       <motion.div variants={containerVariants} initial="hidden" animate="visible" className="max-w-4xl mx-auto space-y-8">
         {/* Header */}
         <motion.div variants={itemVariants} className="text-center space-y-4 mt-1">
