@@ -96,7 +96,7 @@ const Navbar = () => {
         <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20">
             
-            {/* Left: Mobile Menu Toggle / Brand */}
+            {/* Left: Brand & Mobile Menu Toggle */}
             <div className="flex-1 flex items-center justify-start space-x-4">
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -107,33 +107,21 @@ const Navbar = () => {
               >
                 {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
               </motion.button>
-              <Link to="/" className="md:hidden">
+              <Link to="/" className="flex-shrink-0">
                 <motion.div
                   whileHover={{ scale: 1.02 }}
-                  className="flex-shrink-0"
+                  className="flex flex-col items-start"
                 >
-                  <h1 className="font-serif text-2xl tracking-wider">
+                  <h1 className="font-serif text-2xl md:text-3xl tracking-wider leading-none">
                     <span className="text-gradient-gold">DIVA</span>
                     <span className="text-foreground ml-1">HAUS</span>
                   </h1>
-                </motion.div>
-              </Link>
-            </div>
-
-            {/* Center: Brand (Desktop) */}
-            <motion.div className="hidden md:flex flex-1 justify-center">
-              <Link to="/" className="flex-shrink-0">
-                <motion.div whileHover={{ scale: 1.02 }} className="mx-auto text-center">
-                  <h1 className="font-serif text-2xl md:text-3xl tracking-wider">
-                    <span className="text-gradient-gold">DIVA</span>
-                    <span className="text-foreground ml-1">HAUS</span>
-                  </h1>
-                  <span className="text-[10px] tracking-[0.4em] text-gold/60 uppercase mt-0.5 block">
+                  <span className="hidden md:block text-[10px] tracking-[0.4em] text-gold/60 uppercase mt-1">
                     Luxury Boutique
                   </span>
                 </motion.div>
               </Link>
-            </motion.div>
+            </div>
 
             {/* Right: Actions */}
             <div className="flex-1 flex items-center justify-end space-x-1 md:space-x-4">
