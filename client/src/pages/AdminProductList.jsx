@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Edit, Trash2, Search, Package } from 'lucide-react';
-import { getProducts, deleteProduct, createProduct } from '../api';
+import { getProducts, deleteProduct } from '../api';
 import { toast } from '../components/Toaster';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
@@ -43,14 +43,8 @@ const AdminProductList = () => {
     }
   };
 
-  const handleCreateProduct = async () => {
-    try {
-      const created = await createProduct();
-      toast.success('Sample product created');
-      navigate(`/admin/product/${created._id}/edit`);
-    } catch (error) {
-      toast.error(error.message || 'Failed to create product');
-    }
+  const handleCreateProduct = () => {
+    navigate('/admin/products/add');
   };
 
   const filteredProducts = productList.filter(product => {

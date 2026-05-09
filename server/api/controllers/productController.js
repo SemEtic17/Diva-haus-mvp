@@ -48,15 +48,25 @@ export const deleteProduct = async (req, res, next) => {
 // @access  Private/Admin
 export const createProduct = async (req, res, next) => {
   try {
+    const {
+      name,
+      price,
+      description,
+      image,
+      brand,
+      category,
+      countInStock,
+    } = req.body;
+
     const product = new Product({
-      name: 'Sample Name',
-      price: 0,
+      name: name || 'Sample Name',
+      price: price || 0,
       user: req.user._id,
-      image: '/images/sample.jpg',
-      brand: 'Sample Brand',
-      category: 'Sample Category',
-      countInStock: 0,
-      description: 'Sample Description',
+      image: image || '/images/sample.jpg',
+      brand: brand || 'Sample Brand',
+      category: category || 'Sample Category',
+      countInStock: countInStock || 0,
+      description: description || 'Sample Description',
     });
 
     const createdProduct = await product.save();

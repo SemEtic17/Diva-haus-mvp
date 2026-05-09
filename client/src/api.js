@@ -126,10 +126,10 @@ export const deleteProduct = async (id) => {
   });
 };
 
-export const createProduct = async () => {
+export const createProduct = async (product) => {
   return fetchWithAuth(`${API_BASE_URL}/products`, {
     method: 'POST',
-    body: JSON.stringify({}), // Sending empty body since controller handles sample data creation
+    body: JSON.stringify(product),
   });
 };
 

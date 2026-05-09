@@ -1,19 +1,20 @@
 import React from 'react';
 import chanelLogo from '../assets/brands/chanel.svg';
+import lvLogo from '../assets/brands/louisVuitton.svg';
 
 /**
  * BrandLogo Component
  * Renders high-quality official SVG logos for luxury fashion houses.
  */
 const BrandLogo = ({ brand, className = "" }) => {
-  // Map brand names to imported SVG assets
+  // Map brand names (lowercase keys) to imported SVG assets
   const logos = {
-    'Chanel': chanelLogo,
-    // Add more brands here as you download their SVGs:
-    // 'Gucci': gucciLogo,
+    'chanel': chanelLogo,
+    'louis vuitton': lvLogo,
+    'lv': lvLogo,
   };
 
-  const logoSrc = logos[brand];
+  const logoSrc = brand ? logos[brand.toLowerCase().trim()] : null;
 
   // Fallback if logo file isn't available
   if (!logoSrc) {

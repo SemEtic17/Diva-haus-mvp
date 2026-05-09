@@ -12,6 +12,7 @@ import ProfilePage from './pages/ProfilePage';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminOverview from './pages/AdminOverview';
 import AdminProductList from './pages/AdminProductList';
+import AdminProductAdd from './pages/AdminProductAdd';
 import AdminProductEdit from './pages/AdminProductEdit';
 import AdminUserList from './pages/AdminUserList';
 import AdminSettings from './pages/AdminSettings';
@@ -53,6 +54,7 @@ function App() {
         <Route element={<AdminDashboard />}>
           <Route index element={<AdminOverview />} />
           <Route path="products" element={<AdminProductList />} />
+          <Route path="products/add" element={<AdminProductAdd />} />
           <Route path="product/:id/edit" element={<AdminProductEdit />} />
           <Route path="users" element={<AdminUserList />} />
           <Route path="settings" element={<AdminSettings />} />
