@@ -53,6 +53,7 @@ export const createProduct = async (req, res, next) => {
       price,
       description,
       image,
+      variants,
       brand,
       category,
       countInStock,
@@ -63,6 +64,7 @@ export const createProduct = async (req, res, next) => {
       price: price || 0,
       user: req.user._id,
       image: image || '/images/sample.jpg',
+      variants: variants || [],
       brand: brand || 'Sample Brand',
       category: category || 'Sample Category',
       countInStock: countInStock || 0,
@@ -112,6 +114,7 @@ export const updateProduct = async (req, res, next) => {
       price,
       description,
       image,
+      variants,
       brand,
       category,
       countInStock,
@@ -124,6 +127,7 @@ export const updateProduct = async (req, res, next) => {
       product.price = price || product.price;
       product.description = description || product.description;
       product.image = image || product.image;
+      product.variants = variants || product.variants;
       product.brand = brand || product.brand;
       product.category = category || product.category;
       product.countInStock = countInStock || product.countInStock;

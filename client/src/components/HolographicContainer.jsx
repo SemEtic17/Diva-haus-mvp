@@ -7,7 +7,7 @@ import WireframeGrid from '../three/WireframeGrid';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 
-const HolographicContainer = ({ children, product, comingSoon = true }) => {
+const HolographicContainer = ({ children, product, imageUrl, comingSoon = true }) => {
   const { t } = useTranslation();
   
   return (
@@ -33,7 +33,7 @@ const HolographicContainer = ({ children, product, comingSoon = true }) => {
 
       <ThreeScene>
         <HoloPedestal position={[0, 0, 0]} />
-        <MannequinModel key={product?._id} product={product} position={[0, 0.05, 0]} />
+        <MannequinModel key={`${product?._id}-${imageUrl}`} product={product} imageUrl={imageUrl || product?.image} position={[0, 0.05, 0]} />
         <GlassCube size={2.8} />
         <WireframeGrid position={[0, 0, 0]} />
       </ThreeScene>

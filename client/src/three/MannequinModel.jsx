@@ -37,10 +37,12 @@ function ApplyTexture({ clonedScene, clothNames = [], imageUrl }) {
   return null;
 }
 
-export default function MannequinModel({ product, targetHeight = 1.7, ...props }) {
+export default function MannequinModel({ product, imageUrl, targetHeight = 1.7, ...props }) {
   const { scene } = useGLTF('/models/mannequin_cloth_ready.glb');
   const clonedScene = useMemo(() => scene.clone(), [scene]);
   const clothNamesRef = useRef([]);
+
+  const finalImageUrl = imageUrl || product?.image;
 
   useEffect(() => {
     if (clonedScene.userData.isSetup) return;
@@ -125,9 +127,9 @@ export default function MannequinModel({ product, targetHeight = 1.7, ...props }
 
   return (
     <primitive object={clonedScene} {...props}>
-      {/* Only render the ApplyTexture helper when product.image exists */}
-      {product?.image && (
-        <ApplyTexture clonedScene={clonedScene} clothNames={clothNamesRef.current} imageUrl={product.image} />
+      {/* Only render the ApplyTexture helper when finalImageUrl exists */}
+      {finalImageUrl && (
+        <ApplyTexture clonedScene={clonedScene} clothNames={clothNamesRef.current} imageUrl={finalImageUrl} />
       )}
     </primitive>
   );

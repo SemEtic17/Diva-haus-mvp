@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Save, Loader2, Package, Upload, X } from 'lucide-react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ArrowLeft, Save, Loader2, Package, Upload, X, Plus, Trash2 } from 'lucide-react';
 import { getProductById, updateProduct, uploadProductImage } from '../api';
 import { toast } from '../components/Toaster';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/Card';
@@ -16,6 +16,7 @@ const AdminProductEdit = () => {
     name: '',
     price: 0,
     image: '',
+    variants: [],
     brand: '',
     category: '',
     countInStock: 0,
@@ -24,6 +25,7 @@ const AdminProductEdit = () => {
   const [loading, setLoading] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [variantUploading, setVariantUploading] = useState(null);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -34,6 +36,7 @@ const AdminProductEdit = () => {
           name: data.name || '',
           price: data.price || 0,
           image: data.image || '',
+          variants: data.variants || [],
           brand: data.brand || '',
           category: data.category || '',
           countInStock: data.countInStock || 0,
@@ -61,7 +64,6 @@ const AdminProductEdit = () => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Basic validation
     if (!file.type.startsWith('image/')) {
       toast.error('Please upload an image file');
       return;
@@ -71,7 +73,7 @@ const AdminProductEdit = () => {
       setUploading(true);
       const data = await uploadProductImage(file);
       setProductData(prev => ({ ...prev, image: data.url }));
-      toast.success('Image uploaded successfully');
+      toast.success('Main image uploaded');
     } catch (error) {
       toast.error(error.message || 'Failed to upload image');
     } finally {
@@ -79,8 +81,59 @@ const AdminProductEdit = () => {
     }
   };
 
+  const handleVariantImageUpload = async (e, index) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      setVariantUploading(index);
+      const data = await uploadProductImage(file);
+      const newVariants = [...productData.variants];
+      newVariants[index].image = data.url;
+      setProductData(prev => ({ ...prev, variants: newVariants }));
+      toast.success(`Variant ${index + 1} image uploaded`);
+    } catch (error) {
+      toast.error(error.message || 'Failed to upload variant image');
+    } finally {
+      setVariantUploading(null);
+    }
+  };
+
+  const addVariant = () => {
+    setProductData(prev => ({
+      ...prev,
+      variants: [...prev.variants, { color: '', colorCode: '#000000', image: '' }]
+    }));
+  };
+
+  const removeVariant = (index) => {
+    setProductData(prev => ({
+      ...prev,
+      variants: prev.variants.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleVariantChange = (index, field, value) => {
+    const newVariants = [...productData.variants];
+    newVariants[index][field] = value;
+    setProductData(prev => ({ ...prev, variants: newVariants }));
+  };
+
   const submitHandler = async (e) => {
     e.preventDefault();
+    if (!productData.image) {
+      toast.error('Please upload a main product image');
+      return;
+    }
+
+    // Validate variants
+    for (const variant of productData.variants) {
+      if (!variant.color || !variant.colorCode || !variant.image) {
+        toast.error('Please complete all variant fields (color, code, and image)');
+        return;
+      }
+    }
+
     try {
       setUpdating(true);
       await updateProduct({
@@ -123,7 +176,6 @@ const AdminProductEdit = () => {
 
       <form onSubmit={submitHandler} className="space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main Info */}
           <Card className="lg:col-span-2">
             <CardHeader>
               <CardTitle>General Information</CardTitle>
@@ -153,7 +205,6 @@ const AdminProductEdit = () => {
             </CardContent>
           </Card>
 
-          {/* Side Info */}
           <div className="space-y-6">
             <Card>
               <CardHeader>
@@ -218,76 +269,175 @@ const AdminProductEdit = () => {
         {/* Media */}
         <Card>
           <CardHeader>
-            <CardTitle>Product Media</CardTitle>
+            <CardTitle>Main Product Image</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Product Image</label>
-                <div className="flex flex-col md:flex-row items-center gap-6">
-                  <div className="relative group">
-                    <div className="w-48 h-48 rounded-xl border-2 border-dashed border-glass-border/30 overflow-hidden flex items-center justify-center bg-white/5 group-hover:border-gold/50 transition-colors">
-                      {productData.image ? (
-                        <img 
-                          src={productData.image} 
-                          alt="Product" 
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <Package className="w-12 h-12 text-muted-foreground/20" />
-                      )}
-                      
-                      {uploading && (
-                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center backdrop-blur-sm">
-                          <Loader2 className="w-10 h-10 text-gold animate-spin" />
-                        </div>
-                      )}
-                    </div>
+              <div className="flex flex-col md:flex-row items-center gap-6">
+                <div className="relative group">
+                  <div className="w-48 h-48 rounded-xl border-2 border-dashed border-glass-border/30 overflow-hidden flex items-center justify-center bg-white/5 group-hover:border-gold/50 transition-colors">
+                    {productData.image ? (
+                      <img 
+                        src={productData.image} 
+                        alt="Product" 
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <Package className="w-12 h-12 text-muted-foreground/20" />
+                    )}
+                    
+                    {uploading && (
+                      <div className="absolute inset-0 bg-black/60 flex items-center justify-center backdrop-blur-sm">
+                        <Loader2 className="w-10 h-10 text-gold animate-spin" />
+                      </div>
+                    )}
                   </div>
+                </div>
 
-                  <div className="flex-1 space-y-4 text-center md:text-left">
-                    <div>
-                      <h4 className="font-medium">Upload Image</h4>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Recommended: Square aspect ratio, high resolution.<br />
-                        Supports JPG, PNG and WebP (Max 10MB).
-                      </p>
-                    </div>
-                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
+                <div className="flex-1 space-y-4 text-center md:text-left">
+                  <div>
+                    <h4 className="font-medium">Upload Main Image</h4>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Recommended: Square aspect ratio, high resolution.
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="relative overflow-hidden cursor-pointer bg-white/5"
+                      disabled={uploading}
+                      onClick={() => document.getElementById('image-upload').click()}
+                    >
+                      <Upload className="w-4 h-4 mr-2" />
+                      {productData.image ? 'Change' : 'Upload'}
+                      <input
+                        id="image-upload"
+                        type="file"
+                        className="hidden"
+                        onChange={handleImageUpload}
+                        accept="image/*"
+                      />
+                    </Button>
+                    
+                    {productData.image && (
                       <Button
                         type="button"
-                        variant="outline"
-                        className="relative overflow-hidden cursor-pointer bg-white/5"
-                        disabled={uploading}
-                        onClick={() => document.getElementById('image-upload').click()}
+                        variant="ghost"
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        onClick={() => setProductData(prev => ({ ...prev, image: '' }))}
                       >
-                        <Upload className="w-4 h-4 mr-2" />
-                        {productData.image ? 'Change' : 'Upload'}
-                        <input
-                          id="image-upload"
-                          type="file"
-                          className="hidden"
-                          onChange={handleImageUpload}
-                          accept="image/*"
-                        />
+                        <X className="w-4 h-4 mr-2" />
+                        Remove
                       </Button>
-                      
-                      {productData.image && (
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                          onClick={() => setProductData(prev => ({ ...prev, image: '' }))}
-                        >
-                          <X className="w-4 h-4 mr-2" />
-                          Remove
-                        </Button>
-                      )}
-                    </div>
+                    )}
                   </div>
                 </div>
               </div>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Color Variants */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>Color Variants</CardTitle>
+            <Button 
+              type="button" 
+              variant="outline" 
+              size="sm" 
+              onClick={addVariant}
+              className="bg-gold/10 text-gold border-gold/20 hover:bg-gold/20"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Color
+            </Button>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {productData.variants.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground border-2 border-dashed border-glass-border/30 rounded-xl italic">
+                No color variants added yet.
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {productData.variants.map((variant, index) => (
+                  <div key={index} className="flex flex-col md:flex-row gap-6 p-4 rounded-xl bg-white/5 border border-glass-border/30">
+                    <div className="w-full md:w-32 h-32 relative group rounded-lg overflow-hidden border border-glass-border/30 bg-black/20 flex items-center justify-center">
+                      {variant.image ? (
+                        <img src={variant.image} alt={`Variant ${index}`} className="w-full h-full object-cover" />
+                      ) : (
+                        <Package className="w-8 h-8 text-muted-foreground/20" />
+                      )}
+                      
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 rounded-full"
+                          onClick={() => document.getElementById(`variant-upload-${index}`).click()}
+                        >
+                          <Upload className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      
+                      {variantUploading === index && (
+                        <div className="absolute inset-0 bg-black/60 flex items-center justify-center backdrop-blur-sm">
+                          <Loader2 className="w-6 h-6 text-gold animate-spin" />
+                        </div>
+                      )}
+                      
+                      <input
+                        id={`variant-upload-${index}`}
+                        type="file"
+                        className="hidden"
+                        onChange={(e) => handleVariantImageUpload(e, index)}
+                        accept="image/*"
+                      />
+                    </div>
+
+                    <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-xs font-medium text-muted-foreground">Color Name</label>
+                        <Input
+                          value={variant.color}
+                          onChange={(e) => handleVariantChange(index, 'color', e.target.value)}
+                          placeholder="e.g. Emerald Green"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-xs font-medium text-muted-foreground">Color Hex Code</label>
+                        <div className="flex gap-2">
+                          <Input
+                            type="color"
+                            value={variant.colorCode}
+                            onChange={(e) => handleVariantChange(index, 'colorCode', e.target.value)}
+                            className="w-12 h-10 p-1 bg-transparent border-glass-border/30 cursor-pointer"
+                          />
+                          <Input
+                            value={variant.colorCode}
+                            onChange={(e) => handleVariantChange(index, 'colorCode', e.target.value)}
+                            placeholder="#000000"
+                            className="flex-1"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-end">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        onClick={() => removeVariant(index)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -301,13 +451,13 @@ const AdminProductEdit = () => {
           </Button>
           <Button 
             type="submit" 
-            disabled={updating || uploading}
+            disabled={updating || uploading || variantUploading !== null}
             className="min-w-[150px] bg-gold text-black hover:bg-gold/90"
           >
             {updating ? (
               <div className="flex items-center gap-2">
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Updating...
+                Saving Changes...
               </div>
             ) : (
               <div className="flex items-center gap-2">

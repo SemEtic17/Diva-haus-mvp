@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { getProductById } from '../api';
 import { AuthContext } from '../context/AuthContext';
 import { CartContext } from '../context/CartContext';
@@ -10,7 +10,7 @@ import BrandLogo from '../components/BrandLogo';
 import { toast } from '../components/Toaster';
 import { isTryOnEnabled } from '../config/features';
 import { useTranslation } from 'react-i18next';
-import { ShoppingBag, Sparkles, Ruler, ShieldCheck, Tag } from 'lucide-react';
+import { ShoppingBag, Sparkles, Ruler, ShieldCheck, Tag, Check } from 'lucide-react';
 
 const ProductPage = () => {
   const { id } = useParams();
@@ -20,6 +20,8 @@ const ProductPage = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedImage, setSelectedImage] = useState('');
+  const [selectedColor, setSelectedColor] = useState(null);
 
   const { isAuthenticated, userInfo } = useContext(AuthContext);
   const { addItemToCart } = useContext(CartContext);
@@ -29,6 +31,7 @@ const ProductPage = () => {
       try {
         const data = await getProductById(id);
         setProduct(data);
+        setSelectedImage(data.image);
       } catch (err) {
         setError(err.message);
         toast.error(t('products.error') + ': ' + err.message);
@@ -66,6 +69,16 @@ const ProductPage = () => {
     }
 
     toast.info(t('products.try_on_coming_soon'));
+  };
+
+  const handleColorSelect = (variant) => {
+    setSelectedColor(variant.color);
+    setSelectedImage(variant.image);
+  };
+
+  const resetImage = () => {
+    setSelectedColor(null);
+    setSelectedImage(product.image);
   };
 
   if (loading) {
@@ -106,18 +119,25 @@ const ProductPage = () => {
             transition={{ duration: 0.6 }}
             className="space-y-6"
           >
-            <div className="relative aspect-[3/4] overflow-hidden rounded-3xl border border-glass-border/30 shadow-luxury group">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-              />
+            <div className="relative aspect-[3/4] overflow-hidden rounded-3xl border border-glass-border/30 shadow-luxury group bg-muted/10">
+              <AnimatePresence mode="wait">
+                <motion.img
+                  key={selectedImage}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.4 }}
+                  src={selectedImage}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                />
+              </AnimatePresence>
               <div className="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent pointer-events-none" />
             </div>
             
             {/* Holographic Container / 3D Viewer Placeholder */}
             <div className="relative w-full h-[400px] rounded-3xl overflow-hidden border border-glass-border/20 shadow-inner bg-muted/20">
-              <HolographicContainer product={product} />
+              <HolographicContainer product={product} imageUrl={selectedImage} />
             </div>
           </motion.div>
 
@@ -156,6 +176,54 @@ const ProductPage = () => {
                 ${product.price.toFixed(2)}
               </p>
             </header>
+
+            {/* Color Variants Selection */}
+            {product.variants && product.variants.length > 0 && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-bold uppercase tracking-widest text-foreground/80">
+                    {t('products.available_colors', 'Available Colors')}: <span className="text-gold ml-1 font-serif italic normal-case tracking-normal">{selectedColor || t('products.default', 'Default')}</span>
+                  </h3>
+                </div>
+                <div className="flex flex-wrap gap-4">
+                  {/* Default/Main Color */}
+                  <button
+                    onClick={resetImage}
+                    className={`group relative w-12 h-12 rounded-full border-2 transition-all duration-300 ${!selectedColor ? 'border-gold scale-110 shadow-neon-gold' : 'border-transparent hover:border-gold/30 hover:scale-105'}`}
+                    title="Default"
+                  >
+                    <div className="absolute inset-1 rounded-full overflow-hidden border border-glass-border/30">
+                      <img src={product.image} alt="Default" className="w-full h-full object-cover" />
+                    </div>
+                    {!selectedColor && (
+                      <div className="absolute -top-1 -right-1 bg-gold text-black rounded-full p-0.5 border border-background">
+                        <Check className="w-2.5 h-2.5" />
+                      </div>
+                    )}
+                  </button>
+
+                  {/* Variants */}
+                  {product.variants.map((variant, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleColorSelect(variant)}
+                      className={`group relative w-12 h-12 rounded-full border-2 transition-all duration-300 ${selectedColor === variant.color ? 'border-gold scale-110 shadow-neon-gold' : 'border-transparent hover:border-gold/30 hover:scale-105'}`}
+                      title={variant.color}
+                    >
+                      <div 
+                        className="absolute inset-1 rounded-full border border-glass-border/30 shadow-inner"
+                        style={{ backgroundColor: variant.colorCode }}
+                      />
+                      {selectedColor === variant.color && (
+                        <div className="absolute -top-1 -right-1 bg-gold text-black rounded-full p-0.5 border border-background">
+                          <Check className="w-2.5 h-2.5" />
+                        </div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="prose prose-sm text-muted-foreground leading-relaxed max-w-none">
               <p>
