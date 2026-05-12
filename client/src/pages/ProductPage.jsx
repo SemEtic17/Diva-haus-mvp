@@ -163,8 +163,8 @@ const ProductPage = () => {
               </div>
 
               <div className="flex flex-col space-y-2">
-                <div className="h-8 mb-2">
-                  <BrandLogo brand={product.brand} />
+                <div className="flex items-center h-8 mb-1">
+                  <BrandLogo brand={product.brand} className="h-6" />
                 </div>
                 
                 <h1 className="text-4xl md:text-5xl font-serif font-bold text-foreground leading-tight tracking-tight">
