@@ -304,14 +304,11 @@
   }
 }
 
-@keyframes circular-glow {
-  0% { filter: drop-shadow(2px 0 2px hsl(var(--gold) / 0.8)); }
-  25% { filter: drop-shadow(0 2px 2px hsl(var(--gold) / 0.8)); }
-  50% { filter: drop-shadow(-2px 0 2px hsl(var(--gold) / 0.8)); }
-  75% { filter: drop-shadow(0 -2px 2px hsl(var(--gold) / 0.8)); }
-  100% { filter: drop-shadow(2px 0 2px hsl(var(--gold) / 0.8)); }
+@keyframes soft-pulse {
+  0%, 100% { filter: drop-shadow(0 0 2px hsl(var(--gold) / 0.4)); opacity: 0.8; }
+  50% { filter: drop-shadow(0 0 8px hsl(var(--gold) / 0.6)); opacity: 1; }
 }
 
 .logo-glow-animate {
-  animation: circular-glow 4s linear infinite;
+  animation: soft-pulse 4s ease-in-out infinite;
 }

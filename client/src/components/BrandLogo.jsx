@@ -32,7 +32,7 @@ const BrandLogo = ({ brand, className = "h-8" }) => {
       <img 
         src={logoSrc} 
         alt={`${brand} logo`} 
-        className="h-full w-auto max-w-[120px] object-contain filter brightness-0 dark:invert opacity-90 transition-all duration-500 group-hover:opacity-100 logo-glow-animate"
+        className="h-full w-auto max-w-[120px] object-contain filter brightness-0 dark:invert opacity-90 transition-all duration-500 group-hover:opacity-100 group-hover:logo-glow-animate"
       />
       
       {/* Subtle outer glow on hover */}

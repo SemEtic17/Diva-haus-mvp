@@ -142,41 +142,42 @@ const ProductPage = () => {
           </motion.div>
 
           {/* Product Details */}
-          <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="flex flex-col space-y-8"
+          <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="flex flex-col space-y-8"
           >
-            <header className="space-y-4">
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold/10 border border-gold/20">
-                  <Sparkles className="w-3.5 h-3.5 text-gold" />
-                  <span className="text-[10px] font-bold text-gold uppercase tracking-[0.2em]">{t('products.premium_selection', 'Premium Selection')}</span>
-                </div>
-                {product.category && (
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-navy-mid/10 border border-navy-mid/20">
-                    <Tag className="w-3.5 h-3.5 text-navy-light" />
-                    <span className="text-[10px] font-bold text-navy-light uppercase tracking-[0.2em]">{product.category}</span>
-                  </div>
-                )}
+          <header className="space-y-6">
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gold/10 border border-gold/20 shadow-sm">
+                <Sparkles className="w-3.5 h-3.5 text-gold" />
+                <span className="text-[10px] font-bold text-gold uppercase tracking-[0.2em]">{t('products.premium_selection', 'Premium Selection')}</span>
               </div>
 
-              <div className="flex flex-col space-y-2">
-                <div className="flex items-center h-8 mb-1">
-                  <BrandLogo brand={product.brand} className="h-6" />
+              {product.brand && (
+                <div className="flex items-center px-3 py-1 border-l border-glass-border/30 pl-4 h-6">
+                  <BrandLogo brand={product.brand} className="h-5" />
                 </div>
-                
-                <h1 className="text-4xl md:text-5xl font-serif font-bold text-foreground leading-tight tracking-tight">
-                  {product.name}
-                </h1>
-              </div>
+              )}
 
+              {product.category && (
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-navy-mid/10 border border-navy-mid/20">
+                  <Tag className="w-3.5 h-3.5 text-navy-light" />
+                  <span className="text-[10px] font-bold text-navy-light uppercase tracking-[0.2em]">{product.category}</span>
+                </div>
+              )}
+            </div>
+
+            <div className="flex flex-col space-y-3">
+              <h1 className="text-4xl md:text-5xl font-serif font-bold text-foreground leading-tight tracking-tight">
+                {product.name}
+              </h1>
               <p className="text-3xl font-serif font-semibold text-gradient-gold">
                 ${product.price.toFixed(2)}
               </p>
-            </header>
-
+            </div>
+          </header>
             {/* Color Variants Selection */}
             {product.variants && product.variants.length > 0 && (
               <div className="space-y-4">
