@@ -14,8 +14,8 @@ const ProductGrid = () => {
     const fetchProducts = async () => {
       try {
         setIsLoading(true);
-        const fetchedProducts = await getProducts();
-        setProducts(fetchedProducts);
+        const data = await getProducts();
+        setProducts(data.products || []);
       } catch (err) {
         setError(t('products.error', 'Failed to load products. Please try again later.'));
         console.error(err);

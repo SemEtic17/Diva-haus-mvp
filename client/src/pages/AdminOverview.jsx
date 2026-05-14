@@ -13,12 +13,12 @@ export default function AdminOverview() {
     const loadData = async () => {
       try {
         const [productsData, usersData] = await Promise.all([
-          getProducts(),
-          getUsers()
+          getProducts({ pageSize: 100 }), // Get more for overview
+          getUsers({ pageSize: 100 })
         ]);
         
-        setProducts(productsData || []);
-        setUsersCount(usersData?.length || 0);
+        setProducts(productsData.products || []);
+        setUsersCount(usersData.count || usersData.users?.length || 0);
       } catch (error) {
         console.error('Failed to load dashboard data:', error);
       } finally {

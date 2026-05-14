@@ -87,8 +87,26 @@ export const uploadBodyImage = async (req, res, next) => {
 // @access  Private/Admin
 export const getUsers = async (req, res, next) => {
   try {
-    const users = await User.find({});
-    res.json(users);
+    const pageSize = Number(req.query.pageSize) || 20;
+    const page = Number(req.query.pageNumber) || 1;
+
+    const keyword = req.query.keyword
+      ? {
+          $or: [
+            { name: { $regex: req.query.keyword, $options: 'i' } },
+            { email: { $regex: req.query.keyword, $options: 'i' } },
+          ],
+        }
+      : {};
+
+    const count = await User.countDocuments({ ...keyword });
+    const users = await User.find({ ...keyword })
+      .select('-password')
+      .limit(pageSize)
+      .skip(pageSize * (page - 1))
+      .sort({ createdAt: -1 });
+
+    res.json({ users, page, pages: Math.ceil(count / pageSize), count });
   } catch (error) {
     next(error);
   }

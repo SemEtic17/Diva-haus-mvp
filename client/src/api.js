@@ -103,8 +103,9 @@ export const deleteBodyImage = async () => {
   return response.json();
 };
 
-export const getProducts = async () => {
-  const response = await fetch(`${API_BASE_URL}/products`);
+export const getProducts = async (params = {}) => {
+  const query = new URLSearchParams(params).toString();
+  const response = await fetch(`${API_BASE_URL}/products?${query}`);
   if (!response.ok) {
     throw new Error('Failed to fetch products');
   }
@@ -158,8 +159,9 @@ export const updateProduct = async (product) => {
 };
 
 // --- Admin User Management ---
-export const getUsers = async () => {
-  return fetchWithAuth(`${API_BASE_URL}/users`);
+export const getUsers = async (params = {}) => {
+  const query = new URLSearchParams(params).toString();
+  return fetchWithAuth(`${API_BASE_URL}/users?${query}`);
 };
 
 export const deleteUser = async (id) => {
