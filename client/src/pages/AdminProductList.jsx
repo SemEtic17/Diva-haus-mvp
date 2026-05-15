@@ -20,7 +20,7 @@ const AdminProductList = () => {
   const navigate = useNavigate();
 
   // Categories list - in a real app this might come from an API
-  const categories = ['Wigs', 'Bundles', 'Extensions', 'Accessories', 'Care'];
+  const categories = ['Bag', 'Accessory', 'Jewelry', 'Clothe',];
 
   const fetchProducts = useCallback(async (keyword = "", cat = "", pageNum = 1) => {
     try {
