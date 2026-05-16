@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import ProductCard from './ProductCard';
+import ProductSkeleton from './ProductSkeleton';
 import { getProducts } from '../api'; 
 import { useTranslation } from 'react-i18next';
 
@@ -43,17 +44,6 @@ const ProductGrid = () => {
     visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] } },
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex h-96 items-center justify-center">
-        <svg className="h-10 w-10 animate-spin text-gold" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
-      </div>
-    );
-  }
-
   if (error) {
     return (
       <div className="text-center text-red-500 py-16">
@@ -90,12 +80,20 @@ const ProductGrid = () => {
           <div className="absolute -inset-4 md:-inset-6 lg:-inset-8 rounded-3xl bg-glass-bg/20 backdrop-blur-sm border border-glass-border/20 -z-10" />
           
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 p-4 md:p-6 lg:p-8">
-            {products.map((product) => (
-              <motion.div key={product._id} variants={itemVariants} className="relative flex justify-center">
-                <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-neon-cyan/10 via-transparent to-neon-pink/10 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500" />               
-                <ProductCard product={product} />
-              </motion.div>
-            ))}
+            {isLoading ? (
+              [...Array(8)].map((_, i) => (
+                <div key={i} className="relative flex justify-center">
+                  <ProductSkeleton />
+                </div>
+              ))
+            ) : (
+              products.map((product) => (
+                <motion.div key={product._id} variants={itemVariants} className="relative flex justify-center">
+                  <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-neon-cyan/10 via-transparent to-neon-pink/10 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500" />               
+                  <ProductCard product={product} />
+                </motion.div>
+              ))
+            )}
           </div>
         </motion.div>
 

@@ -7,6 +7,7 @@ import { CartContext } from '../context/CartContext';
 import VirtualTryOnPlaceholder from '../components/VirtualTryOnPlaceholder';
 import HolographicContainer from '../components/HolographicContainer';
 import BrandLogo from '../components/BrandLogo';
+import ProductDetailSkeleton from '../components/ProductDetailSkeleton';
 import { toast } from '../components/Toaster';
 import { isTryOnEnabled } from '../config/features';
 import { useTranslation } from 'react-i18next';
@@ -82,12 +83,7 @@ const ProductPage = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center">
-        <div className="w-12 h-12 border-4 border-gold/20 border-t-gold rounded-full animate-spin mb-4" />
-        <p className="text-muted-foreground animate-pulse">{t('products.loading')}</p>
-      </div>
-    );
+    return <ProductDetailSkeleton />;
   }
 
   if (error) {

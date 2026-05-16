@@ -3,6 +3,7 @@ import { Package, ShoppingCart, Users, TrendingUp } from 'lucide-react';
 import { getProducts, getUsers } from '../api';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
+import DashboardSkeleton from '../components/DashboardSkeleton';
 
 export default function AdminOverview() {
   const [products, setProducts] = useState([]);
@@ -70,11 +71,7 @@ export default function AdminOverview() {
     .slice(0, 5);
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold"></div>
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   return (

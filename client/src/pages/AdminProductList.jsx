@@ -8,6 +8,7 @@ import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { Input } from '../components/ui/Input';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '../components/ui/Table';
+import TableSkeleton from '../components/TableSkeleton';
 
 const AdminProductList = () => {
   const [products, setProducts] = useState([]);
@@ -123,7 +124,6 @@ const AdminProductList = () => {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Products ({totalCount})</CardTitle>
-          {loading && <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gold"></div>}
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
@@ -138,65 +138,71 @@ const AdminProductList = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {products.map((product) => (
-                  <TableRow key={product._id}>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-white/5 border border-glass-border/20 rounded-lg flex items-center justify-center overflow-hidden">
-                          {product.image ? (
-                              <img src={product.image} alt="" className="w-full h-full object-cover" />
-                          ) : (
-                              <Package className="w-5 h-5 text-gold/50" />
-                          )}
-                        </div>
-                        <div>
-                          <p className="font-medium text-foreground">{product.name}</p>
-                          <p className="text-xs text-muted-foreground line-clamp-1 max-w-[200px]">
-                            {product.brand}
-                          </p>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className="capitalize">
-                        {product.category}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <span className="font-medium text-gold">${product.price.toFixed(2)}</span>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={product.countInStock > 0 ? "default" : "destructive"}>
-                        {product.countInStock > 0 ? `${product.countInStock} in stock` : "Out of Stock"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => navigate(`/admin/product/${product._id}/edit`)}
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="hover:text-red-500 hover:bg-red-500/10"
-                          onClick={() => handleDeleteProduct(product._id)}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {!loading && products.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={5} className="text-center py-10 text-muted-foreground">
-                      No products found. Try adjusting your search or filters.
-                    </TableCell>
-                  </TableRow>
+                {loading ? (
+                  <TableSkeleton columns={5} />
+                ) : (
+                  <>
+                    {products.map((product) => (
+                      <TableRow key={product._id}>
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 bg-white/5 border border-glass-border/20 rounded-lg flex items-center justify-center overflow-hidden">
+                              {product.image ? (
+                                  <img src={product.image} alt="" className="w-full h-full object-cover" />
+                              ) : (
+                                  <Package className="w-5 h-5 text-gold/50" />
+                              )}
+                            </div>
+                            <div>
+                              <p className="font-medium text-foreground">{product.name}</p>
+                              <p className="text-xs text-muted-foreground line-clamp-1 max-w-[200px]">
+                                {product.brand}
+                              </p>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="capitalize">
+                            {product.category}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <span className="font-medium text-gold">${product.price.toFixed(2)}</span>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={product.countInStock > 0 ? "default" : "destructive"}>
+                            {product.countInStock > 0 ? `${product.countInStock} in stock` : "Out of Stock"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => navigate(`/admin/product/${product._id}/edit`)}
+                            >
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="hover:text-red-500 hover:bg-red-500/10"
+                              onClick={() => handleDeleteProduct(product._id)}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    {products.length === 0 && (
+                      <TableRow>
+                        <TableCell colSpan={5} className="text-center py-10 text-muted-foreground">
+                          No products found. Try adjusting your search or filters.
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </>
                 )}
               </TableBody>
             </Table>
