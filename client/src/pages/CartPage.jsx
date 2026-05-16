@@ -5,6 +5,7 @@ import { CartContext } from '../context/CartContext';
 import { useTranslation } from 'react-i18next';
 import { Trash2, ShoppingBag, ArrowRight, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import CartSkeleton from '../components/CartSkeleton';
 
 const CartPage = () => {
   const { isAuthenticated } = useContext(AuthContext); 
@@ -29,12 +30,7 @@ const CartPage = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center">
-        <div className="w-12 h-12 border-4 border-gold/20 border-t-gold rounded-full animate-spin mb-4" />
-        <p className="text-muted-foreground animate-pulse">{t('cart.loading')}</p>
-      </div>
-    );
+    return <CartSkeleton />;
   }
 
   if (error) {
