@@ -64,8 +64,8 @@ const ProductCard = ({ product }) => {
     <motion.div
       onClick={handleNavigate}
       variants={cardVariants}
-      initial="hidden"
-      animate="visible"
+      
+      
       whileHover={cardHover}
       whileTap={tapAnimation}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}

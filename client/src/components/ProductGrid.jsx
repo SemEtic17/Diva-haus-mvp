@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import ProductCard from './ProductCard';
 import ProductSkeleton from './ProductSkeleton';
 import { getProducts } from '../api'; 
@@ -33,15 +33,14 @@ const ProductGrid = () => {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.12,
-        delayChildren: 0.08,
+        staggerChildren: 0.1,
       },
     },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 28 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] } },
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
   };
 
   if (error) {
@@ -75,27 +74,48 @@ const ProductGrid = () => {
           </motion.div>
         </div>
 
-        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="relative">
+        <div className="relative">
           {/* Glass backdrop */}
           <div className="absolute -inset-4 md:-inset-6 lg:-inset-8 rounded-3xl bg-glass-bg/20 backdrop-blur-sm border border-glass-border/20 -z-10" />
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 p-4 md:p-6 lg:p-8">
+          <AnimatePresence mode="wait">
             {isLoading ? (
-              [...Array(8)].map((_, i) => (
-                <div key={i} className="relative flex justify-center">
-                  <ProductSkeleton />
-                </div>
-              ))
+              <motion.div
+                key="loading"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
+                className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 p-4 md:p-6 lg:p-8"
+              >
+                {[...Array(8)].map((_, i) => (
+                  <motion.div key={i} variants={itemVariants} className="relative flex justify-center">
+                    <ProductSkeleton />
+                  </motion.div>
+                ))}
+              </motion.div>
             ) : (
-              products.map((product) => (
-                <motion.div key={product._id} variants={itemVariants} className="relative flex justify-center">
-                  <div className="absolute -inset-1 rounded-2xl bg-gradient-to-br from-neon-cyan/10 via-transparent to-neon-pink/10 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500" />               
-                  <ProductCard product={product} />
-                </motion.div>
-              ))
+              <motion.div
+                key="loaded"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
+                className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 p-4 md:p-6 lg:p-8"
+              >
+                {products.map((product) => (
+                  <motion.div 
+                    key={product._id} 
+                    variants={itemVariants} 
+                    className="relative flex justify-center"
+                  >
+                    <ProductCard product={product} />
+                  </motion.div>
+                ))}
+              </motion.div>
             )}
-          </div>
-        </motion.div>
+          </AnimatePresence>
+        </div>
 
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8, duration: 0.6 }} className="mt-12 flex justify-center">
           <div className="flex items-center gap-3">
