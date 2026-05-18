@@ -177,6 +177,18 @@ export const adminUpdateUser = async (user) => {
   });
 };
 
+// --- Admin Settings Management ---
+export const getSettings = async () => {
+  return fetchWithAuth(`${API_BASE_URL}/settings`);
+};
+
+export const updateSettings = async (settings) => {
+  return fetchWithAuth(`${API_BASE_URL}/settings`, {
+    method: 'PUT',
+    body: JSON.stringify(settings),
+  });
+};
+
 // --- Auth ---
 export const registerUser = async (userData) => {
   const response = await fetch(`${API_BASE_URL}/auth/register`, {
