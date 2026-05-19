@@ -6,8 +6,10 @@ import { Input } from '../components/ui/Input';
 import { Textarea } from '../components/ui/Textarea';
 import { toast } from '../components/Toaster';
 import { getSettings, updateSettings } from '../api';
+import { useConfig } from '../context/ConfigContext';
 
 const AdminSettings = () => {
+  const { refreshSettings } = useConfig();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [settings, setSettings] = useState({
@@ -58,6 +60,7 @@ const AdminSettings = () => {
     setSaving(true);
     try {
       await updateSettings(settings);
+      await refreshSettings();
       toast.success('Settings updated successfully');
     } catch (error) {
       toast.error(error.message || 'Failed to update settings');

@@ -1,4 +1,4 @@
-import { useState, useContext, useRef, useEffect } from 'react';
+import React, { useState, useContext, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingBag, User, Menu, X, Heart, LogOut, UserPlus, Languages, ChevronDown, Sun, Moon, ShieldCheck } from 'lucide-react';
@@ -7,17 +7,34 @@ import { CartContext } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../context/ThemeContext';
+import { useConfig } from '../context/ConfigContext';
 
 const Navbar = () => {
   const { isAuthenticated, userInfo, logout } = useContext(AuthContext);
   const { cartItems } = useContext(CartContext);
   const { wishlist } = useWishlist();
   const { theme, toggleTheme } = useTheme();
+  const { settings } = useConfig();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const langMenuRef = useRef(null);
   const { t, i18n } = useTranslation();
   const location = useLocation();
+
+  // Helper to split brand name
+  const getBrandName = () => {
+    const name = settings.siteName || 'DIVA HAUS';
+    const parts = name.split(' ');
+    if (parts.length >= 2) {
+      return { 
+        first: parts[0], 
+        second: parts.slice(1).join(' ') 
+      };
+    }
+    return { first: name, second: '' };
+  };
+
+  const brand = getBrandName();
 
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
@@ -113,8 +130,8 @@ const Navbar = () => {
                   className="flex flex-col items-start"
                 >
                   <h1 className="font-serif text-2xl md:text-3xl tracking-wider leading-none">
-                    <span className="text-gradient-gold">DIVA</span>
-                    <span className="text-foreground ml-1">HAUS</span>
+                    <span className="text-gradient-gold uppercase">{brand.first}</span>
+                    {brand.second && <span className="text-foreground ml-1 uppercase">{brand.second}</span>}
                   </h1>
                   <span className="hidden md:block text-[10px] tracking-[0.4em] text-gold/60 uppercase mt-1">
                     Luxury Boutique

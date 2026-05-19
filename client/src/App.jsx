@@ -1,4 +1,5 @@
-import { Routes, Route, Outlet } from 'react-router-dom';
+import { Routes, Route, Outlet, useLocation } from 'react-router-dom';
+import React, { useContext } from 'react';
 import ProductPage from './pages/ProductPage';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -16,17 +17,36 @@ import AdminProductAdd from './pages/AdminProductAdd';
 import AdminProductEdit from './pages/AdminProductEdit';
 import AdminUserList from './pages/AdminUserList';
 import AdminSettings from './pages/AdminSettings';
+import MaintenanceMode from './components/MaintenanceMode';
+import { useConfig } from './context/ConfigContext';
+import { AuthContext } from './context/AuthContext';
 import './App.css';
 
 // Public Layout Wrapper
-const PublicLayout = () => (
-  <div className="App min-h-screen bg-background text-foreground transition-colors duration-300">
-    <Navbar />
-    <main className="container mx-auto p-4 sm:p-6 lg:p-8 pt-20 md:pt-24">
-      <Outlet />
-    </main>
-  </div>
-);
+const PublicLayout = () => {
+  const { settings, loading } = useConfig();
+  const { userInfo } = useContext(AuthContext);
+  const location = useLocation();
+
+  // If maintenance mode is on, we show the maintenance screen
+  // UNLESS it's the login page (so admins can still log in)
+  // OR the user is an admin (so they can see the site they are working on)
+  const isLoginPage = location.pathname === '/login';
+  const isAdmin = userInfo?.isAdmin;
+
+  if (!loading && settings.maintenanceMode && !isLoginPage && !isAdmin) {
+    return <MaintenanceMode settings={settings} />;
+  }
+
+  return (
+    <div className="App min-h-screen bg-background text-foreground transition-colors duration-300">
+      <Navbar />
+      <main className="container mx-auto p-4 sm:p-6 lg:p-8 pt-20 md:pt-24">
+        <Outlet />
+      </main>
+    </div>
+  );
+};
 
 function App() {
   return (

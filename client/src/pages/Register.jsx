@@ -5,9 +5,11 @@ import { AuthContext } from '../context/AuthContext';
 import { registerUser } from '../api';
 import { toast } from '../components/Toaster'; 
 import { useTranslation } from 'react-i18next';
-import { User, Mail, Lock, UserPlus, Sparkles } from 'lucide-react';
+import { User, Mail, Lock, UserPlus, Sparkles, AlertCircle } from 'lucide-react';
+import { useConfig } from '../context/ConfigContext';
 
 const Register = () => {
+  const { settings, loading: configLoading } = useConfig();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -27,6 +29,12 @@ const Register = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+
+    if (!settings.enableRegistration) {
+      toast.error(t('auth.registration_disabled', 'Registration is currently disabled.'));
+      return;
+    }
+
     if (password !== password2) {
       toast.error(t('auth.passwords_not_match', 'Passwords do not match')); 
       return;
@@ -43,6 +51,38 @@ const Register = () => {
       setIsLoading(false);
     }
   };
+
+  if (!configLoading && !settings.enableRegistration) {
+    return (
+      <div className="min-h-[90vh] flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="max-w-md w-full backdrop-blur-xl bg-card/60 border border-glass-border/30 p-12 rounded-3xl shadow-luxury text-center space-y-6"
+        >
+          <div className="inline-flex items-center justify-center p-4 rounded-full bg-red-500/10 border border-red-500/20">
+            <AlertCircle className="w-8 h-8 text-red-500" />
+          </div>
+          <h2 className="font-serif text-3xl font-bold text-foreground">Registration Closed</h2>
+          <p className="text-muted-foreground italic">
+            New account creation is currently disabled by the administrator. 
+            Please contact support if you believe this is an error.
+          </p>
+          <div className="pt-6">
+            <Link to="/login">
+               <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full py-3 px-4 rounded-xl text-primary-foreground font-semibold bg-gold shadow-neon-gold hover:bg-gold/90 transition-all duration-300"
+              >
+                Return to Login
+              </motion.button>
+            </Link>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-[90vh] flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
