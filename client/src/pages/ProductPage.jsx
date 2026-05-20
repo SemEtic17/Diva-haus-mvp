@@ -115,20 +115,20 @@ const ProductPage = () => {
             transition={{ duration: 0.6 }}
             className="space-y-6"
           >
-            <div className="relative aspect-[3/4] overflow-hidden rounded-3xl border border-glass-border/30 shadow-luxury group bg-muted/10">
+            <div className="relative aspect-[3/4] overflow-hidden rounded-3xl border border-glass-border/30 shadow-luxury group bg-muted/5 p-8 md:p-12 flex items-center justify-center">
               <AnimatePresence mode="wait">
                 <motion.img
                   key={selectedImage}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.4 }}
                   src={selectedImage}
                   alt={product.name}
-                  className="w-full h-full object-cover"
+                  className="max-w-full max-h-full object-contain mix-blend-multiply dark:mix-blend-normal transform-gpu"
                 />
               </AnimatePresence>
-              <div className="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/10 via-transparent to-transparent pointer-events-none" />
             </div>
             
             {/* Holographic Container / 3D Viewer Placeholder */}
