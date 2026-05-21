@@ -149,7 +149,7 @@ const AdminProductAdd = () => {
                   name="name"
                   value={productData.name}
                   onChange={handleChange}
-                  placeholder="e.g. Brazilian Deep Wave Wig"
+                  placeholder="e.g. Luxury Silk Evening Dress"
                   required
                 />
               </div>
@@ -159,7 +159,7 @@ const AdminProductAdd = () => {
                   name="description"
                   value={productData.description}
                   onChange={handleChange}
-                  placeholder="Describe the product details, texture, etc."
+                  placeholder="Describe the design, fabric quality, and fit details."
                   rows={6}
                   required
                 />
@@ -209,7 +209,7 @@ const AdminProductAdd = () => {
                     name="category"
                     value={productData.category}
                     onChange={handleChange}
-                    placeholder="e.g. Wigs"
+                    placeholder="e.g. Dresses"
                     required
                   />
                 </div>
