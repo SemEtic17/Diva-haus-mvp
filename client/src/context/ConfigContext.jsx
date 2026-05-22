@@ -30,6 +30,13 @@ export const ConfigProvider = ({ children }) => {
     refreshSettings();
   }, []);
 
+  // Sync browser tab title with site name
+  useEffect(() => {
+    if (settings.siteName) {
+      document.title = settings.siteName;
+    }
+  }, [settings.siteName]);
+
   return (
     <ConfigContext.Provider value={{ settings, loading, refreshSettings }}>
       {children}
