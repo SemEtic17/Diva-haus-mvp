@@ -2,9 +2,11 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Package, Users, Settings, LogOut, ShoppingBag } from 'lucide-react';
 import { useSidebar } from './SidebarProvider';
+import { useConfig } from '../../context/ConfigContext';
 
 const AdminSidebar = () => {
   const { isOpen } = useSidebar();
+  const { settings } = useConfig();
   const location = useLocation();
 
   const menuItems = [
@@ -24,7 +26,7 @@ const AdminSidebar = () => {
         <div className="w-8 h-8 bg-gold rounded-lg flex items-center justify-center">
           <ShoppingBag className="w-5 h-5 text-black" />
         </div>
-        {isOpen && <span className="font-serif font-bold text-xl tracking-tight">DIVA HAUS</span>}
+        {isOpen && <span className="font-serif font-bold text-xl tracking-tight uppercase truncate">{settings.siteName || 'DIVA HAUS'}</span>}
       </div>
 
       <nav className="flex-1 px-4 space-y-2 py-4 overflow-y-auto custom-scrollbar">
