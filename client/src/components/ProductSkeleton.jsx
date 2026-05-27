@@ -9,7 +9,7 @@ const ProductSkeleton = () => {
                  shadow-luxury
                  w-full">
       {/* Image Skeleton */}
-      <div className="relative aspect-[3/4] overflow-hidden rounded-t-2xl bg-secondary/10 p-6 flex items-center justify-center">
+      <div className="relative aspect-[3/4] overflow-hidden rounded-t-2xl bg-muted/20 dark:bg-secondary/10 p-6 flex items-center justify-center">
         <Skeleton className="h-full w-full rounded-xl" />
       </div>
 
