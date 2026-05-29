@@ -122,13 +122,13 @@ const ProductCard = ({ product }) => {
           onClick={handleWishlistToggle}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-          className="absolute top-6 right-4 z-20 p-2 bg-background/50 backdrop-blur-md rounded-full text-white/80 hover:text-white transition-colors group/wishlist"
+          className="absolute top-6 right-4 z-20 p-2 bg-background/90 backdrop-blur-md rounded-full text-foreground/70 hover:text-neon-pink transition-all duration-300 shadow-sm hover:shadow-md border border-border/50 group/wishlist"
           aria-label={isWishlisted ? t('products.remove_from_wishlist') : t('products.add_to_wishlist')}
         >
           <Heart
-            className={`w-5 h-5 transition-all duration-300 ${isWishlisted ? 'text-gold fill-current' : 'text-white'}`}
+            className={`w-5 h-5 transition-all duration-300 ${isWishlisted ? 'text-neon-pink fill-neon-pink' : 'text-foreground/40 group-hover/wishlist:scale-110'}`}
           />
-          <div className="absolute -top-4 right-[41px] translate-x-1/2 px-2 py-1 bg-black/80 text-white text-xs rounded-md opacity-0 group-hover/wishlist:opacity-100 transition-opacity whitespace-nowrap">
+          <div className="absolute -top-10 right-0 px-2 py-1 bg-black/80 text-white text-[10px] rounded-md opacity-0 group-hover/wishlist:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
             {isWishlisted ? t('products.remove_from_wishlist') : t('products.add_to_wishlist')}
           </div>
         </motion.button>
