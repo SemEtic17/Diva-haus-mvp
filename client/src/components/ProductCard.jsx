@@ -128,7 +128,7 @@ const ProductCard = ({ product }) => {
           <Heart
             className={`w-5 h-5 transition-all duration-300 ${isWishlisted ? 'text-neon-pink fill-neon-pink' : 'text-foreground/40 group-hover/wishlist:scale-110'}`}
           />
-          <div className="absolute -top-10 right-0 px-2 py-1 bg-black/80 text-white text-[10px] rounded-md opacity-0 group-hover/wishlist:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+          <div className="absolute top-1 right-10 px-2 py-1 bg-black/80 text-white text-[10px] rounded-md opacity-0 group-hover/wishlist:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
             {isWishlisted ? t('products.remove_from_wishlist') : t('products.add_to_wishlist')}
           </div>
         </motion.button>
