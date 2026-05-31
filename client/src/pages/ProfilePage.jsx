@@ -137,15 +137,48 @@ const ProfilePage = () => {
           <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-neon-cyan/10 via-neon-pink/10 to-neon-cyan/10 blur-sm" />
           <div className="relative backdrop-blur-xl bg-card/60 border border-glass-border/30 rounded-3xl p-6 sm:p-8 shadow-luxury">
 
-            {/* User Info Section */}
+            {/* User Info Header */}
             {userInfo && (
-              <div className="mb-8 p-4 rounded-2xl bg-muted/30 border border-border">
-                <h3 className="text-lg font-medium text-foreground mb-4">{t('profile.account_details')}</h3>
-                <div className="space-y-2 text-sm text-foreground/80">
-                  <div className="flex items-center gap-3"><User className="w-4 h-4 text-gold"/><span>{userInfo.name}</span></div>
-                  <div className="flex items-center gap-3"><Mail className="w-4 h-4 text-gold"/><span>{userInfo.email}</span></div>
-                  <div className="pt-2">
-                    <button onClick={logout} className="flex items-center gap-3 text-red-500 hover:text-red-600 transition-colors font-medium"><LogOut className="w-4 h-4"/><span>{t('profile.logout')}</span></button>
+              <div className="mb-12 relative">
+                <div className="flex flex-col sm:flex-row items-center gap-6 p-6 rounded-3xl bg-muted/20 border border-glass-border/20 relative overflow-hidden group">
+                  {/* Decorative background element */}
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gold/5 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-gold/10 transition-colors duration-500" />
+                  
+                  {/* Avatar/Initial Placeholder */}
+                  <div className="relative">
+                    <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-gold/20 to-gold-dark/20 border border-gold/30 flex items-center justify-center shadow-inner relative z-10">
+                      <span className="text-3xl font-serif font-bold text-gold">
+                        {userInfo.name?.charAt(0) || 'U'}
+                      </span>
+                    </div>
+                    <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-lg bg-background border border-glass-border/50 flex items-center justify-center shadow-sm z-20">
+                      <User className="w-4 h-4 text-gold" />
+                    </div>
+                    {/* Glow effect */}
+                    <div className="absolute inset-0 bg-gold/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
+                  </div>
+
+                  <div className="flex-1 text-center sm:text-left space-y-1">
+                    <p className="text-[10px] font-bold text-gold uppercase tracking-[0.2em] mb-1">{t('profile.account_details')}</p>
+                    <h2 className="text-2xl sm:text-3xl font-serif font-bold text-foreground leading-tight">
+                      {userInfo.name}
+                    </h2>
+                    <div className="flex items-center justify-center sm:justify-start gap-2 text-muted-foreground">
+                      <Mail className="w-3.5 h-3.5 text-gold/60" />
+                      <span className="text-sm font-medium">{userInfo.email}</span>
+                    </div>
+                  </div>
+
+                  <div className="sm:pl-6 sm:border-l border-glass-border/30 w-full sm:w-auto">
+                    <motion.button 
+                      onClick={logout} 
+                      whileHover={{ scale: 1.05, x: 5 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="w-full flex items-center justify-center gap-3 px-6 py-3 rounded-xl bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white transition-all duration-300 font-bold text-xs uppercase tracking-widest border border-red-500/20"
+                    >
+                      <LogOut className="w-4 h-4"/>
+                      <span>{t('profile.logout')}</span>
+                    </motion.button>
                   </div>
                 </div>
               </div>
