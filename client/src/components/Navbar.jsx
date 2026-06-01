@@ -114,12 +114,12 @@ const Navbar = () => {
           <div className="flex items-center justify-between h-16 md:h-20">
             
             {/* Left: Brand & Mobile Menu Toggle */}
-            <div className="flex-1 flex items-center justify-start space-x-4">
+            <div className="flex-1 flex items-center justify-start space-x-6">
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.1, color: 'hsl(var(--gold))' }}
+                whileTap={{ scale: 0.9 }}
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="p-2 text-foreground/70 hover:text-gold transition-colors md:hidden"
+                className="p-1 text-foreground/70 transition-colors md:hidden"
                 aria-label="Toggle menu"
               >
                 {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -127,44 +127,48 @@ const Navbar = () => {
               <Link to="/" className="flex-shrink-0">
                 <motion.div
                   whileHover={{ scale: 1.02 }}
-                  className="flex flex-col items-start"
+                  className="flex flex-col items-center md:items-start group"
                 >
-                  <h1 className="font-serif text-2xl md:text-3xl tracking-wider leading-none">
-                    <span className="text-gradient-gold uppercase">{brand.first}</span>
-                    {brand.second && <span className="text-foreground ml-1 uppercase">{brand.second}</span>}
+                  <h1 className="font-serif text-2xl md:text-3xl tracking-[0.15em] leading-none transition-all duration-500 group-hover:tracking-[0.2em]">
+                    <span className="text-gradient-gold uppercase font-bold">{brand.first}</span>
+                    {brand.second && <span className="text-foreground ml-2 uppercase font-light">{brand.second}</span>}
                   </h1>
-                  <span className="hidden md:block text-[10px] tracking-[0.4em] text-gold/60 uppercase mt-1">
-                    Luxury Boutique
-                  </span>
+                  <div className="flex items-center gap-2 w-full mt-1.5 overflow-hidden">
+                    <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-gold/40 to-transparent md:via-gold/40 md:to-transparent" />
+                    <span className="text-[8px] md:text-[9px] font-bold tracking-[0.5em] text-gold/80 uppercase whitespace-nowrap px-2">
+                      Est. 2024
+                    </span>
+                    <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent via-gold/40 to-transparent hidden md:block" />
+                  </div>
                 </motion.div>
               </Link>
             </div>
 
             {/* Right: Actions */}
-            <div className="flex-1 flex items-center justify-end space-x-1 md:space-x-4">
+            <div className="flex-1 flex items-center justify-end space-x-2 md:space-x-6">
               {/* Theme Toggle */}
               <motion.button
                 onClick={toggleTheme}
-                whileHover={{ scale: 1.1 }}
+                whileHover={{ rotate: 15, scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                className="p-2 text-foreground/70 hover:text-gold transition-colors duration-300"
+                className="p-2 text-foreground/50 hover:text-gold transition-all duration-500"
                 aria-label="Toggle theme"
               >
-                {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+                {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
               </motion.button>
 
               {/* Language Switcher */}
               <div className="relative flex items-center" ref={langMenuRef}>
-                <div className="hidden md:flex items-center space-x-1 mr-2 border-r border-border pr-4">
+                <div className="hidden md:flex items-center p-1 bg-muted/20 rounded-full border border-glass-border/20">
                   <button
                     onClick={() => changeLanguage('en')}
-                    className={`text-xs px-2 py-1 rounded transition-colors ${i18n.language === 'en' ? 'bg-gold text-primary-foreground' : 'text-foreground/60 hover:text-foreground'}`}
+                    className={`text-[10px] font-bold px-3 py-1 rounded-full transition-all duration-500 ${i18n.language === 'en' ? 'bg-gold text-primary-foreground shadow-sm' : 'text-foreground/40 hover:text-foreground'}`}
                   >
                     EN
                   </button>
                   <button
                     onClick={() => changeLanguage('am')}
-                    className={`text-xs px-2 py-1 rounded transition-colors ${i18n.language === 'am' ? 'bg-gold text-primary-foreground' : 'text-foreground/60 hover:text-foreground'}`}
+                    className={`text-[10px] font-bold px-3 py-1 rounded-full transition-all duration-500 ${i18n.language === 'am' ? 'bg-gold text-primary-foreground shadow-sm' : 'text-foreground/40 hover:text-foreground'}`}
                   >
                     አማ
                   </button>

@@ -63,88 +63,120 @@ const CartPage = () => {
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center py-20 backdrop-blur-xl bg-card/40 border border-glass-border/30 rounded-3xl p-12 shadow-luxury"
+            className="text-center py-20 backdrop-blur-xl bg-card/40 border border-glass-border/30 rounded-[2rem] p-12 shadow-luxury max-w-2xl mx-auto"
           >
-            <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
-              <ShoppingBag className="w-10 h-10 text-muted-foreground/40" />
+            <div className="w-24 h-24 bg-muted/30 rounded-full flex items-center justify-center mx-auto mb-8 border border-glass-border/20">
+              <ShoppingBag className="w-10 h-10 text-muted-foreground/30" />
             </div>
-            <h2 className="text-2xl font-serif font-medium text-foreground mb-4">{t('cart.empty')}</h2>
-            <Link to="/" className="inline-flex items-center text-gold font-medium hover:text-gold-light transition-colors group">
+            <h2 className="text-3xl font-serif font-bold text-foreground mb-4">{t('cart.empty')}</h2>
+            <p className="text-muted-foreground mb-10 max-w-xs mx-auto">Discover our curated collection of luxury pieces selected just for you.</p>
+            <Link to="/" className="inline-flex items-center px-8 py-3 bg-gradient-to-r from-gold to-gold-dark text-white rounded-xl font-bold uppercase tracking-[0.2em] text-xs hover:shadow-neon-gold transition-all duration-500 group">
               {t('cart.continue_shopping')}
               <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </motion.div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            <div className="lg:col-span-8 space-y-6">
               <AnimatePresence>
                 {cartItems.map((item) => (
                   <motion.div
                     key={item.product._id}
                     layout
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    className="flex items-center gap-4 p-4 backdrop-blur-xl bg-card/40 border border-glass-border/30 rounded-2xl shadow-sm group"
+                    className="flex flex-col sm:flex-row items-center gap-6 p-6 backdrop-blur-xl bg-card/40 border border-glass-border/30 rounded-[1.5rem] shadow-sm hover:shadow-md transition-all duration-500 group relative overflow-hidden"
                   >
-                    <div className="relative w-24 h-32 flex-shrink-0 overflow-hidden rounded-xl border border-border">
+                    {/* Decorative glow */}
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-gold/5 rounded-full blur-3xl -mr-16 -mt-16 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                    
+                    <div className="relative w-full sm:w-32 aspect-[3/4] flex-shrink-0 overflow-hidden rounded-2xl border border-glass-border/20 bg-muted/10">
                       <img 
                         src={item.product.image} 
                         alt={item.product.name} 
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out" 
                       />
                     </div>
                     
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-lg font-serif font-medium text-foreground truncate">{item.product.name}</h3>
-                      <p className="text-gold font-serif font-semibold text-xl">${item.product.price.toFixed(2)}</p>
-                      <div className="mt-2 flex items-center gap-4">
-                        <span className="text-xs font-medium text-muted-foreground uppercase tracking-widest">{t('cart.qty')}: {item.qty}</span>
+                    <div className="flex-1 min-w-0 text-center sm:text-left space-y-2">
+                      <div className="flex items-center justify-center sm:justify-start gap-2 mb-1">
+                        <span className="text-[10px] font-bold text-gold uppercase tracking-[0.2em]">{item.product.brand || 'Diva Haus'}</span>
+                        <div className="w-1 h-1 rounded-full bg-gold/30" />
+                        <span className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-[0.2em]">{item.product.category || 'Luxury'}</span>
+                      </div>
+                      <h3 className="text-xl md:text-2xl font-serif font-bold text-foreground leading-tight">{item.product.name}</h3>
+                      <div className="flex items-center justify-center sm:justify-start gap-4">
+                        <p className="text-gold font-serif font-bold text-2xl">${item.product.price.toFixed(2)}</p>
+                        <div className="h-4 w-px bg-glass-border/30" />
+                        <span className="text-[10px] font-bold text-foreground/40 uppercase tracking-[0.2em]">{t('cart.qty')}: {item.qty}</span>
                       </div>
                     </div>
 
-                    <button
-                      onClick={() => handleRemove(item.product._id)}
-                      className="p-3 text-muted-foreground hover:text-red-500 hover:bg-red-500/10 rounded-full transition-all duration-300"
-                      aria-label={t('cart.remove')}
-                    >
-                      <Trash2 size={20} />
-                    </button>
+                    <div className="flex sm:flex-col items-center gap-4 sm:pl-6 sm:border-l border-glass-border/20">
+                      <button
+                        onClick={() => handleRemove(item.product._id)}
+                        className="p-3 text-muted-foreground/40 hover:text-red-500 hover:bg-red-500/5 rounded-2xl transition-all duration-300"
+                        title={t('cart.remove')}
+                      >
+                        <Trash2 size={20} />
+                      </button>
+                    </div>
                   </motion.div>
                 ))}
               </AnimatePresence>
             </div>
 
-            <div className="lg:col-span-1">
-              <div className="sticky top-24 p-6 backdrop-blur-xl bg-card/60 border border-glass-border/30 rounded-3xl shadow-luxury space-y-6">
-                <h3 className="text-xl font-serif font-bold text-foreground border-b border-border pb-4">{t('cart.summary')}</h3>
+            <div className="lg:col-span-4 lg:sticky lg:top-32">
+              <div className="p-8 backdrop-blur-xl bg-card/60 border border-glass-border/30 rounded-[2rem] shadow-luxury space-y-8 relative overflow-hidden">
+                {/* Subtle light effect */}
+                <div className="absolute -top-24 -left-24 w-48 h-48 bg-gold/10 rounded-full blur-[80px]" />
                 
-                <div className="space-y-3">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">{t('cart.subtotal')}</span>
-                    <span className="text-foreground font-medium">${total.toFixed(2)}</span>
+                <div className="relative">
+                  <h3 className="text-2xl font-serif font-bold text-foreground flex items-center gap-3">
+                    {t('cart.summary')}
+                    <div className="h-px flex-1 bg-gradient-to-r from-gold/30 to-transparent" />
+                  </h3>
+                </div>
+                
+                <div className="space-y-4 relative">
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground font-medium uppercase tracking-widest text-[10px]">{t('cart.subtotal')}</span>
+                    <span className="text-foreground font-serif font-bold text-lg">${total.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">{t('cart.shipping')}</span>
-                    <span className="text-gold font-medium uppercase tracking-tighter">{t('cart.complimentary')}</span>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-muted-foreground font-medium uppercase tracking-widest text-[10px]">{t('cart.shipping')}</span>
+                    <div className="flex flex-col items-end">
+                      <span className="text-gold font-bold uppercase tracking-widest text-[10px]">{t('cart.complimentary')}</span>
+                      <span className="text-[8px] text-muted-foreground/50 uppercase tracking-[0.2em]">International Express</span>
+                    </div>
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-border flex justify-between items-baseline">
-                  <span className="text-lg font-serif font-bold text-foreground">{t('cart.total')}</span>
-                  <span className="text-2xl font-serif font-bold text-gradient-gold">${total.toFixed(2)}</span>
-                </div>
+                <div className="pt-6 border-t border-glass-border/30 relative">
+                  <div className="flex justify-between items-baseline mb-8">
+                    <span className="text-lg font-serif font-bold text-foreground uppercase tracking-widest">{t('cart.total')}</span>
+                    <span className="text-3xl font-serif font-bold text-gradient-gold">${total.toFixed(2)}</span>
+                  </div>
 
-                <button 
-                  className="w-full py-4 rounded-xl bg-gradient-to-r from-gold to-gold-dark text-primary-foreground font-semibold uppercase tracking-widest shadow-neon-gold hover:shadow-[0_0_30px_hsl(var(--gold)/0.4)] transition-all duration-300 flex items-center justify-center group"
-                >
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  {t('cart.checkout')}
-                </button>
-                
-                <p className="text-[10px] text-center text-muted-foreground/60 uppercase tracking-widest pt-2">
-                  {t('cart.secure_payment')}
-                </p>
+                  <motion.button 
+                    whileHover={{ scale: 1.02, y: -2 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full py-5 rounded-[1.25rem] bg-gradient-to-r from-gold to-gold-dark text-white font-bold uppercase tracking-[0.25em] text-xs shadow-neon-gold hover:shadow-[0_20px_40px_hsl(var(--gold)/0.3)] transition-all duration-500 flex items-center justify-center gap-3"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    {t('cart.checkout')}
+                  </motion.button>
+                  
+                  <div className="mt-6 flex flex-col items-center gap-3">
+                    <div className="flex items-center gap-2 px-3 py-1 bg-muted/20 rounded-full border border-glass-border/20">
+                      <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                      <span className="text-[8px] font-bold text-muted-foreground/70 uppercase tracking-widest">
+                        {t('cart.secure_payment')}
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
