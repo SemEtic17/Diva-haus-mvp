@@ -41,7 +41,7 @@ const PublicLayout = () => {
   return (
     <div className="App min-h-screen bg-background text-foreground transition-colors duration-300">
       <Navbar />
-      <main className="container mx-auto p-4 sm:p-6 lg:p-8 pt-20 md:pt-24">
+      <main className="pt-20 md:pt-24">
         <Outlet />
       </main>
     </div>

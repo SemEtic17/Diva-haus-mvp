@@ -36,9 +36,9 @@ const Login = () => {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 relative overflow-hidden">
-      {/* Dynamic Background Elements */}
-      <div className="absolute top-1/4 -left-20 w-72 h-72 bg-gold/10 rounded-full blur-[100px] animate-pulse" />
-      <div className="absolute bottom-1/4 -right-20 w-72 h-72 bg-neon-cyan/10 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '2s' }} />
+      {/* Dynamic Background Elements - Anchored to sides */}
+      <div className="absolute top-0 -left-24 w-96 h-96 bg-gold/10 rounded-full blur-[120px] animate-pulse" />
+      <div className="absolute bottom-24 -right-24 w-96 h-96 bg-neon-cyan/10 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '2s' }} />
 
       <motion.div 
         initial={{ opacity: 0, y: 30 }}
