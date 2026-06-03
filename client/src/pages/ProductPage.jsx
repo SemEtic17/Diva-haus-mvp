@@ -35,7 +35,7 @@ const ProductPage = () => {
         setSelectedImage(data.image);
       } catch (err) {
         setError(err.message);
-        toast.error(t('products.error') + ': ' + err.message);
+        toast.error('products.error', { suffix: `: ${err.message}` });
       } finally {
         setLoading(false);
       }
@@ -46,7 +46,7 @@ const ProductPage = () => {
 
   const handleAddToCart = async () => {
     if (!isAuthenticated) {
-      toast.error(t('products.login_required_cart'));
+      toast.error('products.login_required_cart');
       return;
     }
 
@@ -59,17 +59,17 @@ const ProductPage = () => {
 
   const handleTryOn = () => {
     if (!isAuthenticated) {
-      toast.error(t('products.login_required_try_on'));
+      toast.error('products.login_required_try_on');
       return;
     }
 
     if (!userInfo || !userInfo.bodyImage) {
-      toast.info(t('products.upload_body_image_first'));
+      toast.info('products.upload_body_image_first');
       navigate('/profile');
       return;
     }
 
-    toast.info(t('products.try_on_coming_soon'));
+    toast.info('products.try_on_coming_soon');
   };
 
   const handleColorSelect = (variant) => {

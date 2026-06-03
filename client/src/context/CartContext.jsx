@@ -22,7 +22,7 @@ const CartProvider = ({ children }) => {
         setCartItems(data);
       } catch (err) {
         setError(err.message);
-        toast.error(`${t('cart.fetch_error')}: ${err.message}`); // NEW: Use toast.error
+        toast.error('cart.fetch_error', { suffix: `: ${err.message}` });
       } finally {
         setLoading(false);
       }
@@ -37,7 +37,7 @@ const CartProvider = ({ children }) => {
 
   const addItemToCart = async (productId, qty = 1) => {
     if (!isAuthenticated) {
-      toast.error(t('cart.login_required')); // NEW: Use toast.error
+      toast.error('cart.login_required');
       return;
     }
     setLoading(true);
@@ -45,10 +45,10 @@ const CartProvider = ({ children }) => {
     try {
       const updatedCart = await addToCart(productId, qty);
       setCartItems(updatedCart);
-      toast.success(t('cart.item_added')); // NEW: Use toast.success
+      toast.success('cart.item_added');
     } catch (err) {
       setError(err.message);
-      toast.error(`${t('cart.add_error')}: ${err.message}`); // NEW: Use toast.error
+      toast.error('cart.add_error', { suffix: `: ${err.message}` });
     } finally {
       setLoading(false);
     }
@@ -56,7 +56,7 @@ const CartProvider = ({ children }) => {
 
   const removeItemFromCart = async (productId) => {
     if (!isAuthenticated) {
-      toast.error(t('cart.login_required')); // NEW: Use toast.error
+      toast.error('cart.login_required');
       return;
     }
     setLoading(true);
@@ -64,10 +64,10 @@ const CartProvider = ({ children }) => {
     try {
       const updatedCart = await removeFromCart(productId);
       setCartItems(updatedCart);
-      toast.info(t('cart.item_removed')); // NEW: Use toast.info
+      toast.info('cart.item_removed');
     } catch (err) {
       setError(err.message);
-      toast.error(`${t('cart.remove_error')}: ${err.message}`); // NEW: Use toast.error
+      toast.error('cart.remove_error', { suffix: `: ${err.message}` });
     } finally {
       setLoading(false);
     }

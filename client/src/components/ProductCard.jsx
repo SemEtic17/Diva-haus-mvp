@@ -36,10 +36,10 @@ const ProductCard = ({ product }) => {
     e.stopPropagation();
     if (isInWishlist(product._id)) {
       removeFromWishlist(product._id);
-      toast.success(t('products.removed_from_wishlist'));
+      toast.success('products.removed_from_wishlist');
     } else {
       addToWishlist(product);
-      toast.success(t('products.added_to_wishlist'));
+      toast.success('products.added_to_wishlist');
     }
   };
 
