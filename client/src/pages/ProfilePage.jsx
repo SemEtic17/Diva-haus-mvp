@@ -83,7 +83,7 @@ const ProfilePage = () => {
 
       setUserBodyImage(response.bodyImage);
       await refreshUserInfo();
-      toast.success(t('profile.upload_success'));
+      toast.success('profile.upload_success');
 
       setSelectedFile(null);
       setPreviewUrl(null);
@@ -102,7 +102,7 @@ const ProfilePage = () => {
       await deleteBodyImage();
       setUserBodyImage(null);
       await refreshUserInfo(); 
-      toast.success(t('profile.delete_success'));
+      toast.success('profile.delete_success');
     } catch (error) {
       toast.error(error.message || 'Error deleting image.');
     } finally {

@@ -31,22 +31,22 @@ const Register = () => {
     e.preventDefault();
 
     if (!settings.enableRegistration) {
-      toast.error(t('auth.registration_disabled', 'Registration is currently disabled.'));
+      toast.error('auth.registration_disabled');
       return;
     }
 
     if (password !== password2) {
-      toast.error(t('auth.passwords_not_match', 'Passwords do not match')); 
+      toast.error('auth.passwords_not_match'); 
       return;
     }
     
     setIsLoading(true);
     try {
       await registerUser({ name, email, password });
-      toast.success(t('auth.registration_success', 'Registration successful! Please login.'));
+      toast.success('auth.registration_success');
       navigate('/login');
     } catch (error) {
-      toast.error(error.message || t('auth.registration_failed', 'Failed to register')); 
+      toast.error(error.message || 'auth.registration_failed'); 
     } finally {
       setIsLoading(false);
     }
