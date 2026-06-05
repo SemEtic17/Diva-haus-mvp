@@ -50,16 +50,16 @@ const Login = () => {
           {/* Subtle Shimmer Overlay */}
           <div className="absolute inset-0 bg-gradient-to-tr from-gold/5 via-transparent to-neon-cyan/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
           
-          <div className="text-center mb-10 relative">
-            <h2 className="font-serif text-4xl font-bold text-foreground tracking-tight mb-3">
+          <div className="text-center mb-12 relative">
+            <h2 className="font-serif text-4xl font-bold text-foreground tracking-tight mb-6">
               {t('auth.login_title')}
             </h2>
-            <div className="flex items-center justify-center gap-2">
-              <div className="h-px w-8 bg-gradient-to-r from-transparent to-gold/30" />
-              <p className="text-xs font-bold text-gold uppercase tracking-[0.2em]">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <div className="h-px w-12 bg-gradient-to-r from-transparent to-gold/30" />
+              <p className="text-xs font-bold text-gold uppercase tracking-[0.3em]">
                 {t('auth.subtitle', 'Boutique Access')}
               </p>
-              <div className="h-px w-8 bg-gradient-to-l from-transparent to-gold/30" />
+              <div className="h-px w-12 bg-gradient-to-l from-transparent to-gold/30" />
             </div>
           </div>
 
