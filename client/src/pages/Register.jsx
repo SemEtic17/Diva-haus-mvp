@@ -101,9 +101,6 @@ const Register = () => {
           <div className="absolute inset-0 bg-gradient-to-br from-gold/5 via-transparent to-neon-pink/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
           
           <div className="text-center mb-10 relative">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-gold/20 to-gold-dark/20 border border-gold/30 mb-6 shadow-inner">
-              <Sparkles className="w-8 h-8 text-gold" />
-            </div>
             <h2 className="font-serif text-4xl font-bold text-foreground tracking-tight mb-3">
               {t('auth.register_title')}
             </h2>
@@ -225,9 +222,6 @@ const Register = () => {
                        focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold
                        transition-all duration-500 disabled:opacity-50 mt-6"
             >
-              <span className="absolute left-0 inset-y-0 flex items-center pl-4">
-                <UserPlus className="h-4 w-4 text-white/50 group-hover/btn:text-white transition-colors" />
-              </span>
               {isLoading ? t('auth.registering') : t('auth.register_button')}
             </motion.button>
           </form>

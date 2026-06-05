@@ -176,7 +176,6 @@ const ProfilePage = () => {
                       whileTap={{ scale: 0.95 }}
                       className="w-full flex items-center justify-center gap-3 px-6 py-3 rounded-xl bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white transition-all duration-300 font-bold text-xs uppercase tracking-widest border border-red-500/20"
                     >
-                      <LogOut className="w-4 h-4"/>
                       <span>{t('profile.logout')}</span>
                     </motion.button>
                   </div>
@@ -222,7 +221,6 @@ const ProfilePage = () => {
                     disabled={uploading}
                     className="w-full sm:w-auto flex items-center justify-center bg-gradient-to-r from-gold to-gold-dark text-primary-foreground font-medium px-6 py-3 rounded-xl shadow-neon-gold transition-all duration-300 disabled:opacity-50"
                   >
-                    <Upload className="w-5 h-5 mr-2" />
                     {uploading ? t('profile.uploading') : (userBodyImage ? t('profile.update_photo') : t('profile.upload_photo'))}
                   </motion.button>
 
@@ -234,7 +232,6 @@ const ProfilePage = () => {
                       disabled={removing}
                       className="w-full sm:w-auto flex items-center justify-center bg-red-500/10 text-red-500 border border-red-500/30 font-medium px-6 py-3 rounded-xl transition-colors hover:bg-red-500/20 disabled:opacity-50"
                     >
-                      <Trash2 className="w-5 h-5 mr-2" />
                       {removing ? t('profile.removing') : t('profile.remove_photo')}
                     </motion.button>
                   )}

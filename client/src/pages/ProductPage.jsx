@@ -251,7 +251,6 @@ const ProductPage = () => {
                 disabled={!isAuthenticated}
                 className="flex-1 min-h-[56px] bg-gradient-to-r from-gold to-gold-dark text-primary-foreground font-bold uppercase tracking-widest rounded-xl shadow-neon-gold hover:shadow-[0_0_30px_hsl(var(--gold)/0.4)] transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-50"
               >
-                <ShoppingBag className="w-5 h-5" />
                 {t('products.add_to_cart')}
               </motion.button>
 
@@ -262,7 +261,6 @@ const ProductPage = () => {
                   onClick={handleTryOn}
                   className="flex-1 min-h-[56px] bg-card border border-glass-border/30 text-foreground font-bold uppercase tracking-widest rounded-xl hover:bg-muted transition-all duration-300 flex items-center justify-center gap-3 shadow-luxury"
                 >
-                  <Sparkles className="w-5 h-5 text-gold" />
                   {t('products.virtual_try_on')}
                 </motion.button>
               )}
