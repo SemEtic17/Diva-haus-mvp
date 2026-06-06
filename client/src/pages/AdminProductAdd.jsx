@@ -219,7 +219,7 @@ const AdminProductAdd = () => {
                     name="brand"
                     value={productData.brand}
                     onChange={handleChange}
-                    placeholder="e.g. Diva Haus"
+                    placeholder="e.g. Channel"
                     required
                   />
                 </div>
