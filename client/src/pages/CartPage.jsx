@@ -139,16 +139,16 @@ const CartPage = () => {
                   </h3>
                 </div>
                 
-                <div className="space-y-4 relative">
+                <div className="space-y-6 relative">
                   <div className="flex justify-between items-center text-sm">
                     <span className="text-muted-foreground font-medium uppercase tracking-widest text-[10px]">{t('cart.subtotal')}</span>
                     <span className="text-foreground font-serif font-bold text-lg">${total.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-muted-foreground font-medium uppercase tracking-widest text-[10px]">{t('cart.shipping')}</span>
-                    <div className="flex flex-col items-end">
+                  <div className="flex justify-between items-start text-sm border-t border-glass-border/10 pt-4">
+                    <span className="text-muted-foreground font-medium uppercase tracking-widest text-[10px] mt-0.5">{t('cart.shipping')}</span>
+                    <div className="flex flex-col items-end gap-1.5">
                       <span className="text-gold font-bold uppercase tracking-widest text-[10px]">{t('cart.complimentary')}</span>
-                      <span className="text-[8px] text-muted-foreground/50 uppercase tracking-[0.2em]">International Express</span>
+                      <span className="text-[9px] text-muted-foreground/60 uppercase tracking-[0.2em] leading-relaxed">International Express</span>
                     </div>
                   </div>
                 </div>
