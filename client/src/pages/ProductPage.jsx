@@ -272,7 +272,7 @@ const ProductPage = () => {
               </div>
             )}
             
-            <footer className="pt-8 text-[10px] text-muted-foreground/60 uppercase tracking-[0.2em] space-y-2">
+            <footer className="pt-8 text-[10px] text-muted-foreground/60 uppercase tracking-[0.2em] space-y-4">
               <p>• {t('products.free_shipping', 'Complimentary Express Shipping')}</p>
               <p>• {t('products.returns', 'Returns accepted within 14 days')}</p>
             </footer>
