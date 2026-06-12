@@ -79,7 +79,7 @@ const Login = () => {
                     value={email}
                     onChange={onChange}
                     required
-                    className="block w-full pl-12 pr-4 py-4 border border-glass-border/30 rounded-2xl 
+                    className="block w-full pl-12 pr-4 py-3 border border-glass-border/30 rounded-2xl 
                              bg-background/20 text-foreground placeholder-muted-foreground/40
                              focus:outline-none focus:ring-2 focus:ring-gold/20 focus:border-gold/50
                              transition-all duration-500 sm:text-sm backdrop-blur-sm"
@@ -102,7 +102,7 @@ const Login = () => {
                     value={password}
                     onChange={onChange}
                     required
-                    className="block w-full pl-12 pr-4 py-4 border border-glass-border/30 rounded-2xl 
+                    className="block w-full pl-12 pr-4 py-3 border border-glass-border/30 rounded-2xl 
                              bg-background/20 text-foreground placeholder-muted-foreground/40
                              focus:outline-none focus:ring-2 focus:ring-gold/20 focus:border-gold/50
                              transition-all duration-500 sm:text-sm backdrop-blur-sm"
