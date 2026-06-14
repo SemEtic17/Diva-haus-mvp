@@ -125,20 +125,29 @@ const Navbar = () => {
                 {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
               </motion.button>
               <Link to="/" className="flex-shrink-0">
+                {/* Mobile Logo */}
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  className="md:hidden flex items-center"
+                >
+                  <img src="/diva.svg" alt="Diva Haus" className="h-10 w-auto" />
+                </motion.div>
+
+                {/* Desktop Brand Text */}
                 <motion.div
                   whileHover={{ scale: 1.02 }}
-                  className="flex flex-col items-center md:items-start group"
+                  className="hidden md:flex flex-col items-start group"
                 >
                   <h1 className="font-serif text-2xl md:text-3xl tracking-[0.15em] leading-none transition-all duration-500 group-hover:tracking-[0.2em]">
                     <span className="text-gradient-gold uppercase font-bold">{brand.first}</span>
                     {brand.second && <span className="text-foreground ml-2 uppercase font-light">{brand.second}</span>}
                   </h1>
                   <div className="flex items-center gap-2 w-full mt-1.5 overflow-hidden">
-                    <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-gold/40 to-transparent md:via-gold/40 md:to-transparent" />
+                    <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
                     <span className="text-[8px] md:text-[9px] font-bold tracking-[0.5em] text-gold/80 uppercase whitespace-nowrap px-2">
                       Est. 2024
                     </span>
-                    <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent via-gold/40 to-transparent hidden md:block" />
+                    <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent via-gold/40 to-transparent" />
                   </div>
                 </motion.div>
               </Link>
