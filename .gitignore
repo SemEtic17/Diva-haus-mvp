@@ -5,6 +5,9 @@
 .vscode/
 gemini.md
 Diva Haus roadmap.csv
+.cursor
+.gemini
+.impeccable
 
 # Node.js
 node_modules/
