@@ -130,7 +130,7 @@ const Navbar = () => {
                   whileHover={{ scale: 1.05 }}
                   className="md:hidden flex items-center"
                 >
-                  <img src="/diva.svg" alt="Diva Haus" className="h-10 w-auto" />
+                  <img src="/diva.png" alt="Diva Haus" className="h-10 w-auto" />
                 </motion.div>
 
                 {/* Desktop Brand Text */}
