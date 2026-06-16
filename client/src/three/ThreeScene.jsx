@@ -3,7 +3,7 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment } from '@react-three/drei';
 import * as THREE from 'three';
 
-export default function ThreeScene({ children }) {
+export default function ThreeScene({ children, orbit = true }) {
   return (
     <div className="w-full h-full" style={{ minHeight: 300 }}>
       <Canvas
@@ -26,12 +26,14 @@ export default function ThreeScene({ children }) {
         <Suspense fallback={null}>
           {children}
         </Suspense>
-        <OrbitControls
-          enablePan={false}
-          minDistance={1.8}
-          maxDistance={6}
-          target={[0, 1, 0]}
-        />
+        {orbit && (
+          <OrbitControls
+            enablePan={false}
+            minDistance={1.8}
+            maxDistance={6}
+            target={[0, 1, 0]}
+          />
+        )}
       </Canvas>
     </div>
   );

@@ -15,6 +15,21 @@
     "welcome": "Welcome to Diva Haus",
     "subtitle": "Luxury Boutique"
   },
+  "landing": {
+    "hero_badge": "The Future of Fashion",
+    "hero_desc": "Experience luxury without limits. Our AI Virtual Try-On brings the boutique experience directly to you.",
+    "explore_collection": "Explore Collection",
+    "how_it_works": "How it Works",
+    "experience_eyebrow": "The Experience",
+    "experience_title": "How Virtual Try-On Works",
+    "step1_title": "Upload Your Best Shot",
+    "step1_desc": "Upload a clear, full-body photo of yourself to get started.",
+    "step2_title": "Curate Your Look",
+    "step2_desc": "Browse our exclusive collection of high-end boutique pieces.",
+    "step3_title": "See the Transformation",
+    "step3_desc": "Our AI instantly generates a realistic preview of you in the outfit.",
+    "featured_title": "The Curated Collection"
+  },
   "products": {
     "collection": "Curated Collection",
     "featured": "Featured Pieces",

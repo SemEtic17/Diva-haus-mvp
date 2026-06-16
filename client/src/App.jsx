@@ -1,5 +1,6 @@
 import { Routes, Route, Outlet, useLocation } from 'react-router-dom';
 import React, { useContext } from 'react';
+import LandingPage from './pages/LandingPage';
 import ProductPage from './pages/ProductPage';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -8,7 +9,6 @@ import WishlistPage from './pages/WishlistPage';
 import PrivateRoute from './components/PrivateRoute';
 import AdminRoute from './components/AdminRoute';
 import Navbar from './components/Navbar';
-import ProductGrid from './components/ProductGrid';
 import ProfilePage from './pages/ProfilePage';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminOverview from './pages/AdminOverview';
@@ -53,7 +53,7 @@ function App() {
     <Routes>
       {/* Public Routes */}
       <Route element={<PublicLayout />}>
-        <Route path="/" element={<ProductGrid />} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/product/:id" element={<ProductPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
