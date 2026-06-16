@@ -12,7 +12,7 @@ const HeroSection = () => {
     <section className="relative w-full min-h-[90vh] flex flex-col lg:flex-row items-center justify-between overflow-hidden bg-background pt-12">
       {/* Background Elements */}
       <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] bg-[radial-gradient(circle_at_center,hsl(var(--gold)/0.05)_0%,transparent_70%)]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] bg-[radial-gradient(circle_at_center,oklch(var(--gold-lch)/0.05)_0%,transparent_70%)]" />
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-neon-cyan/5 rounded-full blur-[120px]" />
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-neon-pink/5 rounded-full blur-[120px]" />
       </div>

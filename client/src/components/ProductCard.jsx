@@ -75,7 +75,6 @@ const ProductCard = ({ product }) => {
                  shadow-luxury
                  hover:shadow-luxury-hover
                  transition-shadow duration-500
-                 holographic-shimmer
                  cursor-pointer"
     >
       {/* Neon border gradient overlay */}
@@ -147,7 +146,7 @@ const ProductCard = ({ product }) => {
           <div className="relative z-10 text-center space-y-3">
           {/* Product Name */}
           <h3 
-          className="font-serif text-lg sm:text-xl font-medium text-foreground/90 
+          className="text-lg sm:text-xl font-medium text-foreground/90 
                        tracking-wide leading-tight line-clamp-2
                        group-hover:text-foreground transition-colors duration-300"
             title={product.name}
@@ -164,7 +163,7 @@ const ProductCard = ({ product }) => {
 
           {/* Price */}
           <motion.p 
-            className="text-2xl sm:text-3xl font-serif font-semibold text-gradient-gold"
+            className="text-2xl sm:text-3xl font-serif font-semibold text-gold"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
@@ -187,7 +186,7 @@ const ProductCard = ({ product }) => {
                        tracking-wider uppercase
                        shadow-neon-gold
                        transition-all duration-300
-                       hover:shadow-[0_0_30px_hsl(var(--gold)/0.5)]
+                       hover:shadow-[0_0_30px_rgba(oklch(var(--gold-lch)),0.5)]
                        focus:outline-none focus:ring-2 focus:ring-gold/50 focus:ring-offset-2 focus:ring-offset-background
                        disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none
                        relative overflow-hidden group/btn"

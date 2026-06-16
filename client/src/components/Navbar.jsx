@@ -116,7 +116,7 @@ const Navbar = () => {
             {/* Left: Brand & Mobile Menu Toggle */}
             <div className="flex-1 flex items-center justify-start space-x-6">
               <motion.button
-                whileHover={{ scale: 1.1, color: 'hsl(var(--gold))' }}
+                whileHover={{ scale: 1.1, color: 'oklch(var(--gold-lch))' }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="p-1 text-foreground/70 transition-colors md:hidden"
@@ -138,8 +138,8 @@ const Navbar = () => {
                   whileHover={{ scale: 1.02 }}
                   className="hidden md:flex flex-col items-start group"
                 >
-                  <h1 className="font-serif text-2xl md:text-3xl tracking-[0.15em] leading-none transition-all duration-500 group-hover:tracking-[0.2em]">
-                    <span className="text-gradient-gold uppercase font-bold">{brand.first}</span>
+                  <h1 className="text-2xl md:text-3xl tracking-[0.15em] leading-none transition-all duration-500 group-hover:tracking-[0.2em]">
+                    <span className="text-gold uppercase font-bold">{brand.first}</span>
                     {brand.second && <span className="text-foreground ml-2 uppercase font-light">{brand.second}</span>}
                   </h1>
                   <div className="flex items-center gap-2 w-full mt-1.5 overflow-hidden">

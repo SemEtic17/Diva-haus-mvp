@@ -44,7 +44,7 @@ const Toaster = () => {
         style: {
           background: theme === 'dark' ? 'hsl(222 47% 8% / 0.9)' : 'hsl(0 0% 100% / 0.9)',
           color: theme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(222 47% 12%)',
-          border: '1px solid hsl(var(--glass-border) / 0.1)',
+          border: '1px solid var(--glass-border)',
         },
       }}
     />

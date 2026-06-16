@@ -120,7 +120,7 @@ const Login = () => {
               className="group/btn relative w-full flex justify-center py-4 px-4 border border-transparent 
                        rounded-2xl text-white font-bold uppercase tracking-[0.2em] text-xs
                        bg-gradient-to-r from-gold to-gold-dark shadow-neon-gold 
-                       hover:shadow-[0_15px_30px_hsl(var(--gold)/0.4)]
+                       hover:shadow-[0_15px_30px_oklch(var(--gold-lch)/0.4)]
                        focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold
                        transition-all duration-500 disabled:opacity-50 mt-8"
             >

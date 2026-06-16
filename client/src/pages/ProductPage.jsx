@@ -249,7 +249,7 @@ const ProductPage = () => {
                 whileTap={{ scale: 0.98 }}
                 onClick={handleAddToCart}
                 disabled={!isAuthenticated}
-                className="flex-1 min-h-[56px] bg-gradient-to-r from-gold to-gold-dark text-primary-foreground font-bold uppercase tracking-widest rounded-xl shadow-neon-gold hover:shadow-[0_0_30px_hsl(var(--gold)/0.4)] transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-50"
+                className="flex-1 min-h-[56px] bg-gradient-to-r from-gold to-gold-dark text-primary-foreground font-bold uppercase tracking-widest rounded-xl shadow-neon-gold hover:shadow-[0_0_30px_oklch(var(--gold-lch)/0.4)] transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-50"
               >
                 {t('products.add_to_cart')}
               </motion.button>

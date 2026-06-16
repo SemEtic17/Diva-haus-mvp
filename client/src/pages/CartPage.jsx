@@ -164,7 +164,7 @@ const CartPage = () => {
                   <motion.button 
                     whileHover={{ scale: 1.02, y: -2 }}
                     whileTap={{ scale: 0.98 }}
-                    className="w-full py-5 rounded-[1.25rem] bg-gradient-to-r from-gold to-gold-dark text-white font-bold uppercase tracking-[0.25em] text-xs shadow-neon-gold hover:shadow-[0_20px_40px_hsl(var(--gold)/0.3)] transition-all duration-500 flex items-center justify-center gap-3"
+                    className="w-full py-5 rounded-[1.25rem] bg-gradient-to-r from-gold to-gold-dark text-white font-bold uppercase tracking-[0.25em] text-xs shadow-neon-gold hover:shadow-[0_20px_40px_oklch(var(--gold-lch)/0.3)] transition-all duration-500 flex items-center justify-center gap-3"
                   >
                     {t('cart.checkout')}
                   </motion.button>
