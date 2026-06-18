@@ -130,19 +130,14 @@ const ProductPage = () => {
               </AnimatePresence>
               <div className="absolute inset-0 bg-gradient-to-t from-background/10 via-transparent to-transparent pointer-events-none" />
             </div>
-            
-            {/* Holographic Container / 3D Viewer Placeholder */}
-            <div className="relative w-full h-[400px] rounded-3xl overflow-hidden border border-glass-border/20 shadow-inner bg-muted/20">
-              <HolographicContainer product={product} imageUrl={selectedImage} />
-            </div>
           </motion.div>
 
           {/* Product Details */}
           <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex flex-col space-y-8"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="flex flex-col space-y-8"
           >
           <header className="space-y-6">
             <div className="flex flex-wrap items-center gap-4">
@@ -276,6 +271,16 @@ const ProductPage = () => {
               <p>• {t('products.free_shipping', 'Complimentary Express Shipping')}</p>
               <p>• {t('products.returns', 'Returns accepted within 14 days')}</p>
             </footer>
+          </motion.div>
+
+          {/* Holographic Container / 3D Viewer Placeholder */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="relative w-full h-[400px] rounded-3xl overflow-hidden border border-glass-border/20 shadow-inner bg-muted/20 order-last lg:order-none lg:col-start-1 lg:row-start-2"
+          >
+            <HolographicContainer product={product} imageUrl={selectedImage} />
           </motion.div>
         </div>
       </div>
