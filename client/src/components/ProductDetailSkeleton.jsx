@@ -10,7 +10,6 @@ const ProductDetailSkeleton = () => {
           {/* Product Visuals Skeleton */}
           <div className="space-y-6">
             <Skeleton className="aspect-[3/4] w-full rounded-3xl" />
-            <Skeleton className="w-full h-[400px] rounded-3xl" />
           </div>
 
           {/* Product Details Skeleton */}
@@ -66,6 +65,11 @@ const ProductDetailSkeleton = () => {
               <Skeleton className="h-3 w-48" />
               <Skeleton className="h-3 w-40" />
             </div>
+          </div>
+
+          {/* 3D Preview Skeleton */}
+          <div className="w-full h-[400px] rounded-3xl order-last lg:order-none lg:col-start-1 lg:row-start-2">
+            <Skeleton className="w-full h-full rounded-3xl" />
           </div>
         </div>
       </div>
