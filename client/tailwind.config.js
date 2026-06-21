@@ -19,25 +19,25 @@ export default {
         sans: ['Montserrat', 'sans-serif'],
       },
       colors: {
-        border: "var(--border)",
-        input: "var(--input)",
-        ring: "var(--ring)",
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        border: "oklch(var(--border-lch) / <alpha-value>)",
+        input: "oklch(var(--input-lch) / <alpha-value>)",
+        ring: "oklch(var(--ring-lch) / <alpha-value>)",
+        background: "oklch(var(--background-lch) / <alpha-value>)",
+        foreground: "oklch(var(--foreground-lch) / <alpha-value>)",
         primary: {
           DEFAULT: "oklch(var(--primary-lch) / <alpha-value>)",
           foreground: "var(--primary-foreground)",
         },
         secondary: {
-          DEFAULT: "var(--secondary)",
+          DEFAULT: "oklch(var(--secondary-lch) / <alpha-value>)",
           foreground: "var(--secondary-foreground)",
         },
         destructive: {
-          DEFAULT: "var(--destructive)",
+          DEFAULT: "oklch(var(--destructive-lch) / <alpha-value>)",
           foreground: "var(--destructive-foreground)",
         },
         muted: {
-          DEFAULT: "var(--muted)",
+          DEFAULT: "oklch(var(--muted-lch) / <alpha-value>)",
           foreground: "var(--muted-foreground)",
         },
         accent: {
@@ -45,11 +45,11 @@ export default {
           foreground: "var(--accent-foreground)",
         },
         popover: {
-          DEFAULT: "var(--popover)",
+          DEFAULT: "oklch(var(--popover-lch) / <alpha-value>)",
           foreground: "var(--popover-foreground)",
         },
         card: {
-          DEFAULT: "var(--card)",
+          DEFAULT: "oklch(var(--card-lch) / <alpha-value>)",
           foreground: "var(--card-foreground)",
         },
         sidebar: {
