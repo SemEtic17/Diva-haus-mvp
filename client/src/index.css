@@ -57,14 +57,18 @@
     --navy-mid: oklch(0.18 0.04 260);
     --navy-light: oklch(0.30 0.08 260);
     
-    --glass-bg: oklch(1 0 0 / 0.7);
-    --glass-border: oklch(0.15 0.02 260 / 0.1);
+    --glass-bg-lch: 1 0 0;
+    --glass-border-lch: 0.15 0.02 260;
+    --glass-bg: oklch(var(--glass-bg-lch) / 0.7);
+    --glass-border: oklch(var(--glass-border-lch) / 0.1);
 
-    --sidebar-background: oklch(0.97 0.01 260);
+    --sidebar-background-lch: 0.97 0.01 260;
+    --sidebar-accent-lch: 0.92 0.01 260;
+    --sidebar-background: oklch(var(--sidebar-background-lch));
     --sidebar-foreground: var(--foreground);
     --sidebar-primary: var(--primary);
     --sidebar-primary-foreground: var(--background);
-    --sidebar-accent: oklch(0.92 0.01 260);
+    --sidebar-accent: oklch(var(--sidebar-accent-lch));
     --sidebar-accent-foreground: var(--foreground);
     --sidebar-border: var(--border);
     --sidebar-ring: var(--primary);
@@ -113,14 +117,18 @@
     --navy-mid: oklch(0.12 0.02 260);
     --navy-light: oklch(0.25 0.05 260);
     
-    --glass-bg: oklch(0.12 0.01 260 / 0.5);
-    --glass-border: oklch(0.98 0 0 / 0.1);
+    --glass-bg-lch: 0.12 0.01 260;
+    --glass-border-lch: 0.98 0 0;
+    --glass-bg: oklch(var(--glass-bg-lch) / 0.5);
+    --glass-border: oklch(var(--glass-border-lch) / 0.1);
 
-    --sidebar-background: oklch(0.10 0.01 260);
+    --sidebar-background-lch: 0.10 0.01 260;
+    --sidebar-accent-lch: 0.18 0.04 260;
+    --sidebar-background: oklch(var(--sidebar-background-lch));
     --sidebar-foreground: var(--foreground);
     --sidebar-primary: var(--primary);
     --sidebar-primary-foreground: var(--background);
-    --sidebar-accent: oklch(0.18 0.04 260);
+    --sidebar-accent: oklch(var(--sidebar-accent-lch));
     --sidebar-accent-foreground: var(--foreground);
     --sidebar-border: var(--border);
     --sidebar-ring: var(--primary);
