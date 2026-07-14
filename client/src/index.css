@@ -157,7 +157,8 @@
 
 @layer components {
   .glass-panel {
-    @apply bg-card/40 backdrop-blur-xl border border-glass-border/30;
+    @apply bg-card/40 backdrop-blur-xl border;
+    border-color: oklch(var(--glass-border-lch) / 0.3);
   }
 
   .shadow-luxury {
@@ -178,6 +179,11 @@
 
   .text-gradient-gold {
     @apply text-gold;
+  }
+
+  /* Utility fallback for components that reference border-glass-border/30 */
+  .border-glass-border-30 {
+    border-color: oklch(var(--glass-border-lch) / 0.3);
   }
 }
 
