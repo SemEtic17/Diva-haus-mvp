@@ -7,6 +7,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/Card'
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Textarea } from '../components/ui/Textarea';
+import { processProductImage } from '../services/productImageProcessing';
 
 const AdminProductEdit = () => {
   const { id: productId } = useParams();
@@ -26,6 +27,7 @@ const AdminProductEdit = () => {
   const [updating, setUpdating] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [variantUploading, setVariantUploading] = useState(null);
+  const [uploadStage, setUploadStage] = useState('');
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -60,19 +62,16 @@ const AdminProductEdit = () => {
     }));
   };
 
-  const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
+  const uploadMainImage = async (file) => {
     if (!file) return;
-
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please upload an image file');
-      return;
-    }
 
     try {
       setUploading(true);
-      const data = await uploadProductImage(file);
+      const processedFile = await processProductImage(file, setUploadStage);
+      setUploadStage('Uploading to Cloudinary');
+      const data = await uploadProductImage(processedFile);
       setProductData(prev => ({ ...prev, image: data.url }));
+      setUploadStage('Complete');
       toast.success('Main image uploaded');
     } catch (error) {
       toast.error(error.message || 'Failed to upload image');
@@ -81,22 +80,33 @@ const AdminProductEdit = () => {
     }
   };
 
-  const handleVariantImageUpload = async (e, index) => {
-    const file = e.target.files[0];
+  const handleImageUpload = (e) => uploadMainImage(e.target.files[0]);
+
+  const uploadVariantImage = async (file, index) => {
     if (!file) return;
 
     try {
       setVariantUploading(index);
-      const data = await uploadProductImage(file);
+      const processedFile = await processProductImage(file, (stage) => setUploadStage(`Variant ${index + 1}: ${stage}`));
+      setUploadStage(`Variant ${index + 1}: Uploading to Cloudinary`);
+      const data = await uploadProductImage(processedFile);
       const newVariants = [...productData.variants];
       newVariants[index].image = data.url;
       setProductData(prev => ({ ...prev, variants: newVariants }));
+      setUploadStage(`Variant ${index + 1}: Complete`);
       toast.success(`Variant ${index + 1} image uploaded`);
     } catch (error) {
       toast.error(error.message || 'Failed to upload variant image');
     } finally {
       setVariantUploading(null);
     }
+  };
+
+  const handleVariantImageUpload = (e, index) => uploadVariantImage(e.target.files[0], index);
+
+  const handleDrop = (e, upload) => {
+    e.preventDefault();
+    upload(e.dataTransfer.files[0]);
   };
 
   const addVariant = () => {
@@ -275,7 +285,11 @@ const AdminProductEdit = () => {
             <div className="space-y-4">
               <div className="flex flex-col md:flex-row items-center gap-6">
                 <div className="relative group">
-                  <div className="w-48 h-48 rounded-xl border-2 border-dashed border-glass-border/30 overflow-hidden flex items-center justify-center bg-white/5 group-hover:border-gold/50 transition-colors">
+                  <div
+                    className="w-48 h-48 rounded-xl border-2 border-dashed border-glass-border/30 overflow-hidden flex items-center justify-center bg-white/5 group-hover:border-gold/50 transition-colors"
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => handleDrop(e, uploadMainImage)}
+                  >
                     {productData.image ? (
                       <img 
                         src={productData.image} 
@@ -288,7 +302,10 @@ const AdminProductEdit = () => {
                     
                     {uploading && (
                       <div className="absolute inset-0 bg-black/60 flex items-center justify-center backdrop-blur-sm">
-                        <Loader2 className="w-10 h-10 text-gold animate-spin" />
+                        <div className="flex flex-col items-center gap-2 px-3 text-center">
+                          <Loader2 className="w-10 h-10 text-gold animate-spin" />
+                          <span className="text-xs text-white">{uploadStage}</span>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -298,7 +315,7 @@ const AdminProductEdit = () => {
                   <div>
                     <h4 className="font-medium">Upload Main Image</h4>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Recommended: Square aspect ratio, high resolution.
+                      Drag and drop or select an image. Its background is removed and it is uploaded as WebP.
                     </p>
                   </div>
                   <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
@@ -362,7 +379,11 @@ const AdminProductEdit = () => {
               <div className="space-y-6">
                 {productData.variants.map((variant, index) => (
                   <div key={index} className="flex flex-col md:flex-row gap-6 p-4 rounded-xl bg-white/5 border border-glass-border/30">
-                    <div className="w-full md:w-32 h-32 relative group rounded-lg overflow-hidden border border-glass-border/30 bg-black/20 flex items-center justify-center">
+                    <div
+                      className="w-full md:w-32 h-32 relative group rounded-lg overflow-hidden border border-glass-border/30 bg-black/20 flex items-center justify-center"
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={(e) => handleDrop(e, (file) => uploadVariantImage(file, index))}
+                    >
                       {variant.image ? (
                         <img src={variant.image} alt={`Variant ${index}`} className="w-full h-full object-cover" />
                       ) : (
@@ -383,7 +404,10 @@ const AdminProductEdit = () => {
                       
                       {variantUploading === index && (
                         <div className="absolute inset-0 bg-black/60 flex items-center justify-center backdrop-blur-sm">
-                          <Loader2 className="w-6 h-6 text-gold animate-spin" />
+                          <div className="flex flex-col items-center gap-1 px-2 text-center">
+                            <Loader2 className="w-6 h-6 text-gold animate-spin" />
+                            <span className="text-[10px] text-white">{uploadStage}</span>
+                          </div>
                         </div>
                       )}
                       
