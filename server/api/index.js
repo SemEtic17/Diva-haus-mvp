@@ -43,6 +43,30 @@ app.use(cookieParser()); // Added
 const uploadsPath = path.join(__dirname, '../uploads');
 app.use('/uploads', express.static(uploadsPath));
 
+// Proxy IMG.LY's background-removal assets through the backend. Some browsers
+// receive ERR_HTTP2_SERVER_REFUSED_STREAM from staticimgly.com, while the
+// server can fetch the same immutable assets over its normal HTTP client.
+app.get('/api/imgly-assets/:asset', async (req, res, next) => {
+  try {
+    const { asset } = req.params;
+    if (!/^[a-f0-9]+$/.test(asset)) {
+      return res.status(400).send('Invalid IMG.LY asset');
+    }
+    const assetUrl = `https://staticimgly.com/@imgly/background-removal-data/1.7.0/dist/${asset}`;
+    const assetResponse = await fetch(assetUrl);
+
+    if (!assetResponse.ok) {
+      return res.status(assetResponse.status).send('Unable to fetch IMG.LY asset');
+    }
+
+    res.set('Cache-Control', 'public, max-age=31536000, immutable');
+    res.type(assetResponse.headers.get('content-type') || 'application/octet-stream');
+    res.send(Buffer.from(await assetResponse.arrayBuffer()));
+  } catch (error) {
+    next(error);
+  }
+});
+
 if (MONGO_URI) {
   // If URI contains <PASSWORD> placeholder, try to replace it
   const connectionString = MONGO_URI.includes('<PASSWORD>') && process.env.MONGO_PASSWORD

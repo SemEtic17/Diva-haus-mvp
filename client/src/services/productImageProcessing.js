@@ -1,4 +1,19 @@
 let removeBackgroundLoader;
+// Product listings do not need camera-resolution images. Keeping the long edge
+// at 2,048px preserves detail on high-density displays while avoiding multi-MB
+// transparent images.
+const MAX_PRODUCT_IMAGE_DIMENSION = 2048;
+const WEBP_QUALITY = 0.92;
+const BACKGROUND_REMOVAL_CONFIG = {
+  // The quantized model is ~40MB (instead of ~80MB), which is substantially
+  // less likely to fail on slower or restricted networks. It still produces
+  // high-quality product cutouts.
+  model: 'isnet_quint8',
+  output: { format: 'image/png', type: 'foreground' },
+  // Use the backend proxy by default. It avoids browser HTTP/2 stream resets
+  // from staticimgly.com. A self-hosted path can still be supplied in prod.
+  publicPath: import.meta.env.VITE_IMGLY_ASSET_PATH || `${window.location.origin}/api/imgly-assets/`,
+};
 
 const loadRemoveBackground = async () => {
   removeBackgroundLoader ??= import('@imgly/background-removal').then(({ removeBackground }) => removeBackground);
@@ -6,7 +21,8 @@ const loadRemoveBackground = async () => {
 };
 
 /**
- * Converts a transparent image Blob to WebP without changing its dimensions.
+ * Converts a transparent image Blob to high-quality WebP. Very large source
+ * images are downscaled to a 2,048px long edge before encoding.
  *
  * @param {Blob} blob
  * @returns {Promise<Blob>}
@@ -16,8 +32,9 @@ export const toWebpBlob = async (blob) => {
 
   try {
     const canvas = document.createElement('canvas');
-    canvas.width = bitmap.width;
-    canvas.height = bitmap.height;
+    const scale = Math.min(1, MAX_PRODUCT_IMAGE_DIMENSION / Math.max(bitmap.width, bitmap.height));
+    canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+    canvas.height = Math.max(1, Math.round(bitmap.height * scale));
 
     const context = canvas.getContext('2d');
     if (!context) {
@@ -34,7 +51,7 @@ export const toWebpBlob = async (blob) => {
         }
 
         reject(new Error('Unable to convert the image to WebP.'));
-      }, 'image/webp', 0.9);
+      }, 'image/webp', WEBP_QUALITY);
     });
   } finally {
     bitmap.close();
@@ -62,7 +79,18 @@ export const processProductImage = async (file, onProgress) => {
   onProgress?.('Preparing image');
   onProgress?.('Removing background');
   const removeBackground = await loadRemoveBackground();
-  const transparentImage = await removeBackground(file);
+  let transparentImage;
+  try {
+    transparentImage = await removeBackground(file, BACKGROUND_REMOVAL_CONFIG);
+  } catch (error) {
+    const message = String(error?.message || error || '');
+    if (/fetch|network|connection|reset/i.test(message)) {
+      throw new Error(
+        'Background-removal assets could not be downloaded. Check your connection or set VITE_IMGLY_ASSET_PATH to a self-hosted IMG.LY asset path and try again.',
+      );
+    }
+    throw error;
+  }
 
   onProgress?.('Converting to WebP');
   const webpBlob = await toWebpBlob(transparentImage);

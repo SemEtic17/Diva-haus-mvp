@@ -162,13 +162,19 @@ const cloudinaryProvider = {
       
       // Convert buffer to base64 data URI for Cloudinary
       const base64Data = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
+      const isProcessedProductImage = folder === 'products';
       
       const result = await cloudinary.uploader.upload(base64Data, {
         folder: folder,
         resource_type: 'image',
+        // Processed product images are converted before upload. Set the stored
+        // original's format too, so secure_url ends in .webp instead of .png.
+        ...(isProcessedProductImage && { format: 'webp' }),
         transformation: [
-          { quality: 'auto:good' },
-          { fetch_format: 'auto' },
+          // The browser has already encoded product images at high quality;
+          // preserve that visual quality while Cloudinary performs the final
+          // WebP encoding and strips unnecessary metadata.
+          { quality: '92' },
         ],
       });
 
