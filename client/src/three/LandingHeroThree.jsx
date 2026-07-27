@@ -18,7 +18,7 @@ const ScanLine = ({ color = '#00ffff' }) => {
   return (
     <group ref={lineRef}>
       <mesh rotation={[Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[1.1, 1.15, 64]} />
+        <ringGeometry args={[0.3, 0.32, 64]} />
         <meshBasicMaterial 
           color={color} 
           transparent 
@@ -28,7 +28,7 @@ const ScanLine = ({ color = '#00ffff' }) => {
         />
       </mesh>
       <mesh rotation={[Math.PI / 2, 0, 0]}>
-        <circleGeometry args={[1.1, 64]} />
+        <circleGeometry args={[0.55, 64]} />
         <meshBasicMaterial 
           color={color} 
           transparent 
@@ -106,11 +106,11 @@ const InteractiveMannequin = ({ scrollProgress }) => {
   return (
     <group ref={groupRef}>
       <Float speed={2} rotationIntensity={0.2} floatIntensity={0.5}>
-        <primitive object={clonedScene} ref={mannequinRef} scale={0.7} position={[0, -1.2, 0]} />
+        <primitive object={clonedScene} ref={mannequinRef} scale={0.06} position={[0, 0.4, 0]} />
       </Float>
 
       {/* Pedestal to ground the model */}
-      <HoloPedestal position={[0, -1.25, 0]} radius={1.2} color="#7C5CFF" />
+      <HoloPedestal position={[0, 0.35, 0]} radius={0.4} color="#7C5CFF" />
 
       {/* High-tech HUD lines */}
       <ScanLine color="#00ffff" />
@@ -118,7 +118,7 @@ const InteractiveMannequin = ({ scrollProgress }) => {
       {/* Data stream particles */}
       <Sparkles 
         count={60} 
-        scale={[2.5, 4, 2.5]} 
+        scale={[1.2, 2, 1.2]} 
         size={3} 
         speed={0.4} 
         opacity={0.3} 
@@ -126,7 +126,7 @@ const InteractiveMannequin = ({ scrollProgress }) => {
       />
       <Sparkles 
         count={40} 
-        scale={[2, 3, 2]} 
+        scale={[1, 1.5, 1]} 
         size={2} 
         speed={0.8} 
         opacity={0.5} 
@@ -152,7 +152,7 @@ export default function LandingHeroThree() {
 
   return (
     <>
-      <PerspectiveCamera makeDefault position={[0, 0, 4.5]} fov={40} />
+      <PerspectiveCamera makeDefault position={[0, 0.5, 1.8]} fov={40} />
       
       {/* Cinematic Lighting */}
       <ambientLight intensity={0.2} />
