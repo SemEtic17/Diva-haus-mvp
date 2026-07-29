@@ -113,7 +113,7 @@ const InteractiveMannequin = ({ scrollProgress }) => {
   return (
     <group ref={groupRef}>
       <Float speed={2} rotationIntensity={0.2} floatIntensity={0.5}>
-        <primitive object={clonedScene} ref={mannequinRef} />
+        <primitive object={clonedScene} ref={mannequinRef} position={[0, 0.12, 0]} />
       </Float>
 
       <HoloPedestal position={[0, -0.02, 0]} radius={0.6} color="#7C5CFF" />
