@@ -8,6 +8,7 @@ import VirtualTryOnPlaceholder from '../components/VirtualTryOnPlaceholder';
 import HolographicContainer from '../components/HolographicContainer';
 import BrandLogo from '../components/BrandLogo';
 import ProductDetailSkeleton from '../components/ProductDetailSkeleton';
+import CartConfirmModal from '../components/CartConfirmModal';
 import { toast } from '../components/Toaster';
 import { isTryOnEnabled } from '../config/features';
 import { useTranslation } from 'react-i18next';
@@ -23,9 +24,10 @@ const ProductPage = () => {
   const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState('');
   const [selectedColor, setSelectedColor] = useState(null);
+  const [showCartModal, setShowCartModal] = useState(false);
 
   const { isAuthenticated, userInfo } = useContext(AuthContext);
-  const { addItemToCart } = useContext(CartContext);
+  const { cartItems, addItemToCart } = useContext(CartContext);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -44,17 +46,24 @@ const ProductPage = () => {
     fetchProduct();
   }, [id, t]);
 
-  const handleAddToCart = async () => {
+  const inCart = cartItems.find((item) => item.product._id === product._id);
+
+  const handleAddToCart = () => {
     if (!isAuthenticated) {
       toast.error('products.login_required_cart');
       return;
     }
 
-    try {
-      await addItemToCart(product._id, 1);
-    } catch (err) {
-      toast.error(`Error: ${err.message}`);
+    if (inCart) {
+      setShowCartModal(true);
+    } else {
+      addItemToCart(product._id, 1);
     }
+  };
+
+  const handleDoubleQuantity = () => {
+    setShowCartModal(false);
+    addItemToCart(product._id, inCart.qty * 2);
   };
 
   const handleTryOn = () => {
@@ -284,6 +293,13 @@ const ProductPage = () => {
           </motion.div>
         </div>
       </div>
+
+      <CartConfirmModal
+        isOpen={showCartModal}
+        onClose={() => setShowCartModal(false)}
+        onDouble={handleDoubleQuantity}
+        productName={product.name}
+      />
     </div>
   );
 };
