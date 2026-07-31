@@ -87,6 +87,7 @@
     "login_required": "Please log in to add items to your cart.",
     "fetch_error": "Error fetching cart",
     "add_error": "Error adding to cart",
+    "update_error": "Error updating item quantity",
     "remove_error": "Error removing from cart"
   },
   "wishlist": {

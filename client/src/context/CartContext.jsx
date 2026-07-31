@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect, useContext } from 'react';
-import { getCart, addToCart, removeFromCart } from '../api';
+import { getCart, addToCart, removeFromCart, updateCartItem } from '../api';
 import { AuthContext } from './AuthContext';
 import { toast } from '../components/Toaster'; // NEW: Import toast
 import { useTranslation } from 'react-i18next';
@@ -73,6 +73,24 @@ const CartProvider = ({ children }) => {
     }
   };
 
+  const updateItemQuantity = async (productId, qty) => {
+    if (!isAuthenticated) {
+      toast.error('cart.login_required');
+      return;
+    }
+    if (qty < 1) {
+      return;
+    }
+    setError(null);
+    try {
+      const updatedCart = await updateCartItem(productId, qty);
+      setCartItems(updatedCart);
+    } catch (err) {
+      setError(err.message);
+      toast.error('cart.update_error', { suffix: `: ${err.message}` });
+    }
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -81,6 +99,7 @@ const CartProvider = ({ children }) => {
         error,
         addItemToCart,
         removeItemFromCart,
+        updateItemQuantity,
         fetchUserCart,
       }}
     >

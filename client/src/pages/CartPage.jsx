@@ -3,17 +3,27 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AuthContext } from '../context/AuthContext';
 import { CartContext } from '../context/CartContext'; 
 import { useTranslation } from 'react-i18next';
-import { Trash2, ShoppingBag, ArrowRight, Sparkles } from 'lucide-react';
+import { Trash2, ShoppingBag, ArrowRight, Sparkles, Minus, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import CartSkeleton from '../components/CartSkeleton';
 
 const CartPage = () => {
   const { isAuthenticated } = useContext(AuthContext); 
-  const { cartItems, loading, error, removeItemFromCart } = useContext(CartContext); 
+  const { cartItems, loading, error, removeItemFromCart, updateItemQuantity } = useContext(CartContext); 
   const { t } = useTranslation();
 
   const handleRemove = async (productId) => {
     await removeItemFromCart(productId); 
+  };
+
+  const handleDecrease = (item) => {
+    if (item.qty > 1) {
+      updateItemQuantity(item.product._id, item.qty - 1);
+    }
+  };
+
+  const handleIncrease = (item) => {
+    updateItemQuantity(item.product._id, item.qty + 1);
   };
 
   const containerVariants = {
@@ -108,8 +118,27 @@ const CartPage = () => {
                       <h3 className="text-xl md:text-2xl font-serif font-bold text-foreground leading-tight">{item.product.name}</h3>
                       <div className="flex items-center justify-center sm:justify-start gap-4">
                         <p className="text-gold font-serif font-bold text-2xl">${item.product.price.toFixed(2)}</p>
-                        <div className="h-4 w-px bg-glass-border/30" />
-                        <span className="text-[10px] font-bold text-foreground/40 uppercase tracking-[0.2em]">{t('cart.qty')}: {item.qty}</span>
+                      </div>
+                      <div className="flex items-center justify-center sm:justify-start gap-3">
+                        <span className="text-[10px] font-bold text-foreground/40 uppercase tracking-[0.2em]">{t('cart.qty')}</span>
+                        <div className="flex items-center gap-1 rounded-full border border-glass-border/30 bg-muted/20 p-1">
+                          <button
+                            onClick={() => handleDecrease(item)}
+                            disabled={item.qty <= 1}
+                            className="w-7 h-7 flex items-center justify-center rounded-full text-foreground/70 hover:bg-gold/10 hover:text-gold disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-300"
+                            aria-label="Decrease quantity"
+                          >
+                            <Minus size={14} />
+                          </button>
+                          <span className="w-8 text-center text-sm font-bold text-foreground">{item.qty}</span>
+                          <button
+                            onClick={() => handleIncrease(item)}
+                            className="w-7 h-7 flex items-center justify-center rounded-full text-foreground/70 hover:bg-gold/10 hover:text-gold transition-all duration-300"
+                            aria-label="Increase quantity"
+                          >
+                            <Plus size={14} />
+                          </button>
+                        </div>
                       </div>
                     </div>
 

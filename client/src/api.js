@@ -234,3 +234,10 @@ export const removeFromCart = async (productId) => {
     method: 'DELETE',
   });
 };
+
+export const updateCartItem = async (productId, qty) => {
+  return fetchWithAuth(`${API_BASE_URL}/cart/${productId}`, {
+    method: 'PUT',
+    body: JSON.stringify({ qty }),
+  });
+};

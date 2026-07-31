@@ -57,6 +57,44 @@ export const getCart = async (req, res, next) => {
   }
 };
 
+// @desc    Update cart item quantity
+// @route   PUT /api/cart/:productId
+// @access  Private
+export const updateCartItem = async (req, res, next) => {
+  try {
+    const { qty } = req.body;
+
+    if (!qty || qty < 1) {
+      res.status(400);
+      throw new Error('Quantity must be at least 1');
+    }
+
+    const user = await User.findById(req.user.id);
+
+    if (user) {
+      const item = user.cart.find(
+        (item) => item.product.toString() === req.params.productId
+      );
+
+      if (!item) {
+        res.status(404);
+        throw new Error('Item not found in cart');
+      }
+
+      item.qty = qty;
+
+      await user.save();
+      const updatedUser = await User.findById(req.user.id).populate('cart.product');
+      res.json(updatedUser.cart);
+    } else {
+      res.status(404);
+      throw new Error('User not found');
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 // @desc    Remove item from cart
 // @route   DELETE /api/cart/:productId
 // @access  Private
