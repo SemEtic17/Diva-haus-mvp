@@ -46,15 +46,17 @@ const ProductPage = () => {
     fetchProduct();
   }, [id, t]);
 
-  const inCart = cartItems.find((item) => item.product._id === product._id);
-
   const handleAddToCart = () => {
     if (!isAuthenticated) {
       toast.error('products.login_required_cart');
       return;
     }
 
-    if (inCart) {
+    const alreadyInCart = cartItems.find(
+      (item) => item.product?._id === product?._id
+    );
+
+    if (alreadyInCart) {
       setShowCartModal(true);
     } else {
       addItemToCart(product._id, 1);
@@ -63,7 +65,12 @@ const ProductPage = () => {
 
   const handleDoubleQuantity = () => {
     setShowCartModal(false);
-    addItemToCart(product._id, inCart.qty * 2);
+    const existing = cartItems.find(
+      (item) => item.product?._id === product?._id
+    );
+    if (existing) {
+      addItemToCart(product._id, existing.qty * 2);
+    }
   };
 
   const handleTryOn = () => {
