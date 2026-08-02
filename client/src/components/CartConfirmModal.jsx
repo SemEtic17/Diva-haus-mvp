@@ -1,7 +1,8 @@
 import { motion, AnimatePresence } from 'framer-motion';
+import { createPortal } from 'react-dom';
 
 const CartConfirmModal = ({ isOpen, onClose, onDouble, productName }) => {
-  return (
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
         <motion.div
@@ -48,7 +49,8 @@ const CartConfirmModal = ({ isOpen, onClose, onDouble, productName }) => {
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 };
 

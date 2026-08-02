@@ -6,10 +6,12 @@ import { Heart } from 'lucide-react';
 import { CartContext } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useTranslation } from 'react-i18next';
+import CartConfirmModal from './CartConfirmModal';
 
 const ProductCard = ({ product }) => {
   const [isAdding, setIsAdding] = useState(false);
-  const { addItemToCart } = useContext(CartContext);
+  const [showCartModal, setShowCartModal] = useState(false);
+  const { cartItems, addItemToCart } = useContext(CartContext);
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -22,6 +24,15 @@ const ProductCard = ({ product }) => {
     e.stopPropagation(); 
     if (product.isSoldOut) return;
 
+    const alreadyInCart = cartItems.find(
+      (item) => item.product?._id === product._id
+    );
+
+    if (alreadyInCart) {
+      setShowCartModal(true);
+      return;
+    }
+
     setIsAdding(true);
     try {
       await addItemToCart(product._id);
@@ -29,6 +40,23 @@ const ProductCard = ({ product }) => {
       console.error(error.message || 'Could not add item to cart.');
     } finally {
       setIsAdding(false);
+    }
+  };
+
+  const handleDoubleQuantity = async () => {
+    setShowCartModal(false);
+    const existing = cartItems.find(
+      (item) => item.product?._id === product._id
+    );
+    if (existing) {
+      setIsAdding(true);
+      try {
+        await addItemToCart(product._id, existing.qty * 2);
+      } catch (error) {
+        console.error(error.message || 'Could not add item to cart.');
+      } finally {
+        setIsAdding(false);
+      }
     }
   };
 
@@ -229,6 +257,13 @@ const ProductCard = ({ product }) => {
 
       {/* Bottom accent line */}
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
+
+      <CartConfirmModal
+        isOpen={showCartModal}
+        onClose={() => setShowCartModal(false)}
+        onDouble={handleDoubleQuantity}
+        productName={product.name}
+      />
     </motion.div>
   );
 };
