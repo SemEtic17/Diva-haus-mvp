@@ -1,0 +1,2 @@
+# Git LFS: 3D models are too large for GitHub's 100 MB limit
+client/public/models/*.glb filter=lfs diff=lfs merge=lfs -text
