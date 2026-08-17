@@ -7,6 +7,7 @@ import { CartContext } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useTranslation } from 'react-i18next';
 import CartConfirmModal from './CartConfirmModal';
+import { sceneStore } from '../three/sceneStore';
 
 const ProductCard = ({ product }) => {
   const [isAdding, setIsAdding] = useState(false);
@@ -91,6 +92,8 @@ const ProductCard = ({ product }) => {
   return (
     <motion.div
       onClick={handleNavigate}
+      onMouseEnter={() => sceneStore.set({ cardHover: true })}
+      onMouseLeave={() => sceneStore.set({ cardHover: false })}
       variants={cardVariants}
       
       

@@ -8,6 +8,7 @@ import { useWishlist } from '../context/WishlistContext';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../context/ThemeContext';
 import { useConfig } from '../context/ConfigContext';
+import { bagTransitionApi } from '../three/bagTransitionContext';
 
 const Navbar = () => {
   const { isAuthenticated, userInfo, logout } = useContext(AuthContext);
@@ -96,6 +97,12 @@ const Navbar = () => {
 
   const cartItemCount = cartItems.reduce((acc, item) => acc + item.qty, 0);
   const wishlistItemCount = wishlist.length;
+
+  // route through the 3D bag zoom transition when available
+  const transitionTo = (e, path, bagIndex) => {
+    e.preventDefault();
+    bagTransitionApi.navigateWithBag(path, bagIndex);
+  };
 
   return (
     <motion.header
@@ -222,7 +229,7 @@ const Navbar = () => {
                   </motion.div>
                 </Link>
 
-                <Link to="/cart" aria-label="Shopping cart">
+                <Link to="/cart" aria-label="Shopping cart" onClick={(e) => transitionTo(e, '/cart', 6)}>
                   <motion.div whileHover={linkHover} className="relative p-2 text-foreground/70 hover:text-gold transition-colors duration-300">
                     <ShoppingBag size={20} />
                     {cartItemCount > 0 && (
@@ -233,7 +240,11 @@ const Navbar = () => {
                   </motion.div>
                 </Link>
 
-                <Link to={isAuthenticated ? '/profile' : '/login'} aria-label={isAuthenticated ? 'Profile' : 'Login'}>
+                <Link
+                  to={isAuthenticated ? '/profile' : '/login'}
+                  aria-label={isAuthenticated ? 'Profile' : 'Login'}
+                  onClick={(e) => isAuthenticated && transitionTo(e, '/profile', 0)}
+                >
                   <motion.div whileHover={linkHover} className="relative p-2 text-foreground/70 hover:text-gold transition-colors duration-300">
                     <User size={20} />
                     {isAuthenticated && <span className="absolute top-1 right-1 w-2 h-2 bg-gold rounded-full" />}
@@ -272,7 +283,7 @@ const Navbar = () => {
               <div className="bg-background/95 backdrop-blur-xl px-4 py-6 space-y-1 pointer-events-auto">
                 {isAuthenticated ? (
                   <>
-                    <Link to="/profile" className="flex items-center gap-3 py-3 px-4 text-base font-medium text-foreground/80 hover:text-gold hover:bg-muted rounded-lg transition-all duration-200">
+                    <Link to="/profile" onClick={(e) => transitionTo(e, '/profile', 0)} className="flex items-center gap-3 py-3 px-4 text-base font-medium text-foreground/80 hover:text-gold hover:bg-muted rounded-lg transition-all duration-200">
                       <User size={18} />
                       {t('nav.my_account')}
                     </Link>
@@ -325,7 +336,7 @@ const Navbar = () => {
             )}
           </Link>
           
-          <Link to="/cart" className="relative p-2 text-foreground/70 active:text-gold transition-colors">
+          <Link to="/cart" onClick={(e) => transitionTo(e, '/cart', 6)} className="relative p-2 text-foreground/70 active:text-gold transition-colors">
             <ShoppingBag size={18} />
             {cartItemCount > 0 && (
               <span className="absolute top-1 right-1 min-w-[14px] h-[14px] flex items-center justify-center text-[8px] font-bold bg-gradient-to-r from-neon-cyan to-neon-pink text-white rounded-full">
@@ -334,7 +345,11 @@ const Navbar = () => {
             )}
           </Link>
 
-          <Link to={isAuthenticated ? '/profile' : '/login'} className="p-2 text-foreground/70 active:text-gold transition-colors">
+          <Link
+            to={isAuthenticated ? '/profile' : '/login'}
+            onClick={(e) => isAuthenticated && transitionTo(e, '/profile', 0)}
+            className="p-2 text-foreground/70 active:text-gold transition-colors"
+          >
             <User size={18} />
           </Link>
 

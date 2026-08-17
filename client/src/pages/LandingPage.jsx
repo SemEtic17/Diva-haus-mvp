@@ -4,12 +4,16 @@ import { useTranslation } from 'react-i18next';
 import ProductGrid from '../components/ProductGrid';
 import HeroSection from '../components/HeroSection';
 import ValueProp from '../components/ValueProp';
+import ScrollJourney from '../three/ScrollJourney';
 
 const LandingPage = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full relative">
+      {/* GSAP ScrollTrigger driver for the persistent 3D scene */}
+      <ScrollJourney />
+
       {/* Hero Section */}
       <HeroSection />
 
@@ -17,7 +21,7 @@ const LandingPage = () => {
       <ValueProp />
 
       {/* Featured Collection */}
-      <div id="collection" className="bg-background py-16">
+      <div id="featured" className="bg-background/30 backdrop-blur-[2px] py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center mb-12">
             <motion.h2 
@@ -40,7 +44,7 @@ const LandingPage = () => {
       </div>
 
       {/* Social / Branding Section */}
-      <section className="relative overflow-hidden bg-navy-deep py-24 text-white">
+      <section className="relative overflow-hidden bg-navy-deep/70 py-24 text-white">
         <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-30">
           <div className="absolute -top-24 -left-24 w-96 h-96 bg-neon-cyan/20 rounded-full blur-[120px]" />
           <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-neon-pink/20 rounded-full blur-[120px]" />

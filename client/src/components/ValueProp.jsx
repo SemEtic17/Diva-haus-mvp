@@ -28,7 +28,7 @@ const ValueProp = () => {
   ];
 
   return (
-    <section className="py-24 bg-card/10 backdrop-blur-sm border-y border-glass-border/10">
+    <section id="how-it-works" className="py-24 bg-card/5 border-y border-glass-border/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <motion.span 
@@ -53,6 +53,7 @@ const ValueProp = () => {
           {steps.map((step, index) => (
             <motion.div
               key={index}
+              data-scene-step={index}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}

@@ -20,6 +20,11 @@ import AdminSettings from './pages/AdminSettings';
 import MaintenanceMode from './components/MaintenanceMode';
 import { useConfig } from './context/ConfigContext';
 import { AuthContext } from './context/AuthContext';
+import MainScene from './three/MainScene';
+import { BagTransitionProvider } from './three/BagTransitionEngine';
+import BagHotspots from './components/BagHotspots';
+import CursorParticles from './components/CursorParticles';
+import SmoothScroll from './components/SmoothScroll';
 import './App.css';
 
 // Public Layout Wrapper
@@ -40,8 +45,11 @@ const PublicLayout = () => {
 
   return (
     <div className="App min-h-screen bg-background text-foreground transition-colors duration-300">
+      {/* Persistent 3D layer — stays mounted across all routes */}
+      <MainScene />
+      <BagHotspots />
       <Navbar />
-      <main className="pt-20 md:pt-24">
+      <main className="relative z-10 pt-20 md:pt-24">
         <Outlet />
       </main>
     </div>
@@ -50,7 +58,10 @@ const PublicLayout = () => {
 
 function App() {
   return (
-    <Routes>
+    <BagTransitionProvider>
+      <SmoothScroll />
+      <CursorParticles />
+      <Routes>
       {/* Public Routes */}
       <Route element={<PublicLayout />}>
         <Route path="/" element={<LandingPage />} />
@@ -69,8 +80,7 @@ function App() {
         </Route>
       </Route>
 
-      {/* Admin Routes - No Public Navbar, No Centering Container */}
-      <Route path="/admin" element={<AdminRoute />}>
+      {/* Admin Routes - No Public Navbar, No Centering Container */}        <Route path="/admin" element={<AdminRoute />}>
         <Route element={<AdminDashboard />}>
           <Route index element={<AdminOverview />} />
           <Route path="products" element={<AdminProductList />} />
@@ -80,7 +90,8 @@ function App() {
           <Route path="settings" element={<AdminSettings />} />
         </Route>
       </Route>
-    </Routes>
+      </Routes>
+    </BagTransitionProvider>
   );
 }
 
