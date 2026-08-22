@@ -6,20 +6,25 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
 /**
- * SmoothScroll — global Lenis inertia scrolling wired into GSAP's ticker and
- * ScrollTrigger so scroll-driven scene animations stay perfectly in sync.
+ * SmoothScroll — optional inertia scrolling only on capable devices. We skip it
+ * on low-power machines or when the user prefers reduced motion to keep the app
+ * fluid and lightweight.
  */
 export default function SmoothScroll() {
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduced) return;
+    const lowPower =
+      (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) ||
+      (navigator.deviceMemory && navigator.deviceMemory <= 4);
+
+    if (reduced || lowPower) return;
 
     const lenis = new Lenis({
-      duration: 1.15,
+      duration: 0.9,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
-      touchMultiplier: 1.6,
-      anchors: true, // smooth-scroll in-page anchors (#featured, #how-it-works)
+      touchMultiplier: 1.2,
+      anchors: true,
     });
 
     lenis.on('scroll', ScrollTrigger.update);

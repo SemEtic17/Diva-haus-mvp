@@ -18,33 +18,28 @@ export default function MainScene() {
       style={{ background: 'transparent' }}
     >
       <Canvas
-        dpr={[1, 1.75]}
+        dpr={[1, 1.1]}
         gl={{
-          antialias: true,
+          antialias: false,
           alpha: true,
-          powerPreference: 'high-performance',
+          powerPreference: 'default',
           outputColorSpace: THREE.SRGBColorSpace,
           toneMapping: THREE.ACESFilmicToneMapping,
-          toneMappingExposure: 1.15,
+          toneMappingExposure: 1.0,
         }}
         camera={{ position: [0, 1, 3.4], fov: 42 }}
       >
-        {/* Lighting rig */}
-        <ambientLight intensity={0.35} />
-        <hemisphereLight args={['#ffffff', '#0b0b0b', 0.4]} />
-
-        {/* Gold key light (rim) */}
+        {/* Lighting rig — streamlined for performance */}
+        <ambientLight intensity={0.4} />
+        <hemisphereLight args={['#ffffff', '#0b0b0b', 0.3]} />
         <spotLight
           position={[4, 5, 3]}
           angle={0.35}
           penumbra={1}
-          intensity={2.4}
+          intensity={2.0}
           color="#E5C158"
         />
-        {/* Rim / fill accents */}
-        <pointLight position={[-4, 2, -2]} intensity={0.8} color="#7C5CFF" />
-        <pointLight position={[3, -1, 3]} intensity={0.5} color="#00d9ff" />
-        <pointLight position={[0, 3, -4]} intensity={0.6} color="#E5C158" />
+        <pointLight position={[-4, 2, -2]} intensity={0.7} color="#7C5CFF" />
 
         <Suspense fallback={null}>
           <Mannequin />

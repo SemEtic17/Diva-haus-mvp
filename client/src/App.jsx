@@ -1,5 +1,5 @@
 import { Routes, Route, Outlet, useLocation } from 'react-router-dom';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import LandingPage from './pages/LandingPage';
 import ProductPage from './pages/ProductPage';
 import Login from './pages/Login';
@@ -26,6 +26,21 @@ import BagHotspots from './components/BagHotspots';
 import CursorParticles from './components/CursorParticles';
 import SmoothScroll from './components/SmoothScroll';
 import './App.css';
+
+function useLowPowerMode() {
+  const [lowPower, setLowPower] = useState(false);
+
+  useEffect(() => {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isLowPower =
+      (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) ||
+      (navigator.deviceMemory && navigator.deviceMemory <= 4);
+
+    setLowPower(reduced || isLowPower);
+  }, []);
+
+  return lowPower;
+}
 
 // Public Layout Wrapper
 const PublicLayout = () => {
@@ -57,10 +72,12 @@ const PublicLayout = () => {
 };
 
 function App() {
+  const lowPower = useLowPowerMode();
+
   return (
     <BagTransitionProvider>
-      <SmoothScroll />
-      <CursorParticles />
+      {!lowPower && <SmoothScroll />}
+      {!lowPower && <CursorParticles />}
       <Routes>
       {/* Public Routes */}
       <Route element={<PublicLayout />}>

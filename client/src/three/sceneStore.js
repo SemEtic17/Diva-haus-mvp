@@ -42,8 +42,8 @@ export function useSceneStore(selector) {
 }
 
 /**
- * Plain (non-reactive) per-frame output: projected screen positions of the 10
+ * Plain (non-reactive) per-frame output: projected screen positions of the 5
  * bags in pixels. Written by FloatingEdgeBags in useFrame, read by the DOM
  * hotspot overlay in its own rAF loop. Never triggers React re-renders.
  */
-export const bagPositions = []; // [{ x, y, visible }] indices 0..9
+export const bagPositions = []; // [{ x, y, visible }] indices 0..1

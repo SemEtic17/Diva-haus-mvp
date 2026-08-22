@@ -1,121 +1,12 @@
 import React, { Suspense, useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import { useGLTF, Float, Sparkles } from '@react-three/drei';
+import { useGLTF, Float } from '@react-three/drei';
 import * as THREE from 'three';
 import { normalizeModel } from './normalizeModel';
 import { sceneStore } from './sceneStore';
 import HoloPedestal from './HoloPedestal';
 
 useGLTF.preload('/models/female-mannequin.glb');
-
-/* ------------------------------------------------------------------ */
-/* Laser Scan Ring — custom shader pass ("Neural Mesh v2.0.4-DIVA")    */
-/* ------------------------------------------------------------------ */
-const scanVertex = /* glsl */ `
-  varying vec2 vUv;
-  void main() {
-    vUv = uv;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-  }
-`;
-
-const scanFragment = /* glsl */ `
-  uniform float uTime;
-  uniform float uIntensity;
-  uniform vec3 uColor;
-  varying vec2 vUv;
-
-  void main() {
-    // radial falloff so the ring reads as a crisp laser edge
-    float dist = abs(vUv.x - 0.5) * 2.0;
-    float edge = smoothstep(1.0, 0.82, dist);
-    float pulse = 0.65 + 0.35 * sin(uTime * 4.0);
-    float alpha = edge * uIntensity * pulse;
-    gl_FragColor = vec4(uColor, alpha);
-  }
-`;
-
-function ScanRing({ radius = 0.42, color = '#E5C158', speed = 0.55, heightRange = 1.5, baseY = 0.78 }) {
-  const meshRef = useRef();
-  const matRef = useRef();
-  const uniforms = useMemo(
-    () => ({ uTime: { value: 0 }, uIntensity: { value: 1 }, uColor: { value: new THREE.Color(color) } }),
-    [color]
-  );
-
-  useFrame((state) => {
-    const t = state.clock.elapsedTime;
-    const store = sceneStore.get();
-    // sweep vertically up and down the mannequin body
-    const sweep = Math.sin(t * speed) * heightRange * 0.5;
-    if (meshRef.current) meshRef.current.position.y = baseY + sweep;
-    if (matRef.current) {
-      matRef.current.uniforms.uTime.value = t;
-      const target = store.section === 'how' ? 1.6 + store.step * 0.7 : 1.0;
-      matRef.current.uniforms.uIntensity.value = THREE.MathUtils.damp(
-        matRef.current.uniforms.uIntensity.value,
-        target,
-        3,
-        0.016
-      );
-    }
-  });
-
-  return (
-    <mesh ref={meshRef} rotation={[-Math.PI / 2, 0, 0]}>
-      <ringGeometry args={[radius, radius + 0.012, 96]} />
-      <shaderMaterial
-        ref={matRef}
-        vertexShader={scanVertex}
-        fragmentShader={scanFragment}
-        uniforms={uniforms}
-        transparent
-        blending={THREE.AdditiveBlending}
-        depthWrite={false}
-        side={THREE.DoubleSide}
-      />
-    </mesh>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* Step highlight lights — Upload / Curate / Transformation            */
-/* ------------------------------------------------------------------ */
-const STEP_COLORS = ['#00d9ff', '#E5C158', '#ff4ecd'];
-
-function StepHighlights() {
-  const lights = useRef([]);
-  useFrame((_, delta) => {
-    const store = sceneStore.get();
-    lights.current.forEach((light, i) => {
-      if (!light) return;
-      const active = store.section === 'how' && store.step === i;
-      const target = active ? 14 : 0;
-      light.intensity = THREE.MathUtils.damp(light.intensity, target, 5, delta);
-    });
-  });
-
-  const positions = [
-    [-1.4, 0.6, 0.8],
-    [1.4, 0.4, 0.6],
-    [0, 1.1, -1.4],
-  ];
-
-  return (
-    <group>
-      {positions.map((pos, i) => (
-        <pointLight
-          key={i}
-          ref={(el) => (lights.current[i] = el)}
-          position={pos}
-          intensity={0}
-          distance={4}
-          color={STEP_COLORS[i]}
-        />
-      ))}
-    </group>
-  );
-}
 
 /* ------------------------------------------------------------------ */
 /* Podium — glass glowing platform under the avatar                    */
@@ -137,13 +28,12 @@ function Podium() {
   return (
     <group position={[0, 0, 0]}>
       <primitive object={normalized} />
-      {/* glow disc under the platform */}
-      <mesh position={[0, -0.02, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <circleGeometry args={[0.62, 48]} />
+      <mesh position={[0, -0.04, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <circleGeometry args={[0.7, 48]} />
         <meshBasicMaterial
           color="#E5C158"
           transparent
-          opacity={0.08}
+          opacity={0.04}
           blending={THREE.AdditiveBlending}
           depthWrite={false}
         />
@@ -164,6 +54,11 @@ export default function Mannequin() {
 
   const normalized = useMemo(() => {
     const s = normalizeModel(scene, 1.55);
+
+    // The source GLB's origin sits too low for the intended hero composition.
+    // Lift the figure to match the podium height and keep the feet grounded.
+    s.position.y += 1.1;
+
     // luxury neural material treatment
     s.traverse((child) => {
       if (child.isMesh) {
@@ -266,30 +161,20 @@ export default function Mannequin() {
       innerRef.current.rotation.x = targetRotX;
     }
 
-    // subtle vertical breathing on inner group
+    // keep the hero composition grounded and static instead of floating above the podium
     if (innerRef.current) {
-      innerRef.current.position.y = Math.sin(t * 0.6) * 0.02;
+      innerRef.current.position.y = 0;
     }
   });
 
   return (
     <group ref={groupRef}>
       <group ref={innerRef}>
-        <Float speed={2} rotationIntensity={0.12} floatIntensity={0.35}>
-          <primitive object={normalized} position={[0, 0, 0]} />
-        </Float>
+        <primitive object={normalized} position={[0, 0, 0]} />
 
         <Suspense fallback={<HoloPedestal position={[0, 0, 0]} radius={0.55} color="#E5C158" />}>
           <Podium />
         </Suspense>
-
-        <ScanRing radius={0.46} color="#E5C158" speed={0.5} heightRange={1.5} baseY={0.85} />
-        <ScanRing radius={0.5} color="#7C5CFF" speed={0.35} heightRange={1.2} baseY={0.85} />
-
-        <StepHighlights />
-
-        {/* gold ambient particles (intensify during featured) */}
-        <Sparkles count={70} scale={[1.6, 2.6, 1.6]} size={2.6} speed={0.4} opacity={0.55} color="#E5C158" />
       </group>
     </group>
   );

@@ -82,55 +82,8 @@ const HeroSection = () => {
       </div>
 
       {/* Right Content: transparent stage — the persistent global canvas draws
-          the Neural Avatar here (hero = right half, gold rim light) */}
-      <div className="relative z-10 w-full lg:w-1/2 h-[60vh] lg:h-screen flex items-center justify-center pointer-events-none">
-        {/* Holographic Interface Overlays */}
-        <div className="absolute inset-0 p-12">
-          <div className="flex justify-between items-start w-full">
-            <div className="space-y-4">
-              <div className="w-12 h-px bg-gold/50" />
-              <div className="space-y-1">
-                <p className="text-[9px] font-bold text-gold uppercase tracking-[0.5em]">Neural Mesh</p>
-                <p className="text-[9px] text-neon-cyan font-mono opacity-80 animate-pulse">STATUS: OPTIMIZED</p>
-              </div>
-            </div>
-
-            <div className="text-right space-y-4">
-              <div className="w-12 h-px bg-gold/50 ml-auto" />
-              <div className="space-y-1">
-                <p className="text-[9px] font-bold text-gold uppercase tracking-[0.5em]">Render Engine</p>
-                <p className="text-[9px] text-neon-pink font-mono opacity-80">v2.0.4-DIVA</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="absolute bottom-12 left-12 right-12 flex justify-between items-end">
-            <div className="space-y-2">
-              <p className="text-[8px] text-white/30 font-mono tracking-widest uppercase">Location: GLOBAL_ATELIER_01</p>
-              <div className="flex gap-2">
-                <div className="w-1 h-1 bg-neon-cyan rounded-full animate-ping" />
-                <div className="w-1 h-1 bg-neon-pink rounded-full animate-ping [animation-delay:0.2s]" />
-                <div className="w-1 h-1 bg-gold rounded-full animate-ping [animation-delay:0.4s]" />
-              </div>
-            </div>
-
-            <div className="font-mono text-[8px] text-white/20 text-right">
-              <p>34.0522° N, 118.2437° W</p>
-              <p>TIMESTAMP: {new Date().getFullYear()}.06.20</p>
-            </div>
-          </div>
-
-          {/* Scanned Area Frame */}
-          <div className="absolute inset-16 border border-white/5 rounded-[3rem] pointer-events-none" />
-
-          {/* Animated HUD scanning line (CSS fallback for 3D scan) */}
-          <motion.div
-            animate={{ top: ['10%', '90%', '10%'] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
-            className="absolute left-16 right-16 h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent z-20"
-          />
-        </div>
-      </div>
+          the luxury mannequin scene here without the noisy HUD overlays */}
+      <div className="relative z-10 w-full lg:w-1/2 h-[60vh] lg:h-screen flex items-center justify-center pointer-events-none" />
     </section>
   );
 };

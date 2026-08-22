@@ -3,15 +3,14 @@ import { bagPositions } from '../three/sceneStore';
 import { useBagTransition } from '../three/bagTransitionContext';
 
 /**
- * BagHotspots — invisible DOM hit-targets that track the 10 floating bags in the
+ * BagHotspots — invisible DOM hit-targets that track the 2 floating bags in the
  * persistent canvas. The canvas itself is pointer-events-none (so page content
  * stays interactive); these buttons provide the click surface for the
  * "wild" 3D zoom transition.
- * Left bags -> /profile, right bags -> /cart (change targets here).
  */
 const TARGETS = [
-  '/profile', '/profile', '/profile', '/profile', '/profile',
-  '/cart', '/cart', '/cart', '/cart', '/cart',
+  '/profile',
+  '/cart',
 ];
 
 export default function BagHotspots() {
@@ -44,7 +43,7 @@ export default function BagHotspots() {
 
   return (
     <div className="fixed inset-0 z-30 pointer-events-none" aria-hidden="true">
-      {Array.from({ length: 10 }, (_, i) => (
+      {Array.from({ length: TARGETS.length }, (_, i) => (
         <button
           key={i}
           ref={(el) => (refs.current[i] = el)}
@@ -69,7 +68,7 @@ export default function BagHotspots() {
                            text-[9px] font-bold tracking-[0.25em] uppercase text-gold
                            opacity-0 group-hover:opacity-100 whitespace-nowrap
                            transition-opacity duration-300">
-            {i < 5 ? 'Profile' : 'Cart'}
+            {TARGETS[i] === '/profile' ? 'Profile' : 'Cart'}
           </span>
         </button>
       ))}

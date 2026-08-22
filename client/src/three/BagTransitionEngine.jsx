@@ -7,8 +7,10 @@ import { normalizeModel } from './normalizeModel';
 import { bagPositions, sceneStore } from './sceneStore';
 import { TransitionContext, bagTransitionApi } from './bagTransitionContext';
 
-const BAG_PATHS = Array.from({ length: 10 }, (_, i) => `/models/bag-${i + 1}.glb`);
-const SIZES = [0.5, 0.62, 0.72, 0.68, 0.48, 0.6, 0.55, 0.7, 0.58, 0.64];
+// Kept only the 2 smallest bags for performance
+const BAG_PATHS = ['/models/bag-7.glb', '/models/bag-10.glb'];
+const SIZES = [0.55, 0.64];
+const BAG_COUNT = BAG_PATHS.length;
 
 /**
  * Overlay bag — rendered in its own full-screen canvas (z-index above all DOM)
@@ -149,7 +151,7 @@ export function BagTransitionProvider({ children }) {
     (path, bagIndex = 0) => {
       // guard against overlapping transitions
       if (sceneStore.get().transition) return;
-      const idx = Math.max(0, Math.min(9, bagIndex));
+      const idx = Math.max(0, Math.min(BAG_COUNT - 1, bagIndex));
       const pos = bagPositions[idx];
       if (!pos || !pos.visible) {
         navigate(path);

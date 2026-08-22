@@ -6,12 +6,14 @@ import { normalizeModel } from './normalizeModel';
 import { sceneStore, bagPositions } from './sceneStore';
 
 
-const BAG_PATHS = Array.from({ length: 10 }, (_, i) => `/models/bag-${i + 1}.glb`);
-const SIZES = [0.5, 0.62, 0.72, 0.68, 0.48, 0.6, 0.55, 0.7, 0.58, 0.64];
+// Kept only the 2 smallest bags for performance
+const BAG_PATHS = ['/models/bag-7.glb', '/models/bag-10.glb'];
+const SIZES = [0.55, 0.64];
+const BAG_COUNT = BAG_PATHS.length;
 
-// 5 bags per edge, y positions expressed as fraction of viewport height (-0.5..0.5)
-const LEFT_SLOTS = [0.34, 0.16, -0.05, -0.24, -0.4];
-const RIGHT_SLOTS = [0.38, 0.2, -0.02, -0.22, -0.42];
+// 1 bag on each side
+const LEFT_SLOTS = [0.0];
+const RIGHT_SLOTS = [0.0];
 
 function BagModel({ index, side, slot }) {
   const { scene } = useGLTF(BAG_PATHS[index]);
@@ -76,7 +78,7 @@ function BagModel({ index, side, slot }) {
       </group>
       {/* soft glow halo around each bag */}
       <mesh position={[0, 0, -0.15]}>
-        <sphereGeometry args={[0.55, 24, 24]} />
+        <sphereGeometry args={[0.55, 16, 16]} />
         <meshBasicMaterial
           color="#E5C158"
           transparent
@@ -103,12 +105,11 @@ function FallbackBag() {
 }
 
 export default function FloatingEdgeBags() {
-  // preload small bags eagerly; heavy ones stream through their own Suspense
   return (
     <>
-      {Array.from({ length: 10 }, (_, i) => {
-        const side = i < 5 ? 'left' : 'right';
-        const slot = (i < 5 ? LEFT_SLOTS : RIGHT_SLOTS)[i % 5];
+      {Array.from({ length: BAG_COUNT }, (_, i) => {
+        const side = i < LEFT_SLOTS.length ? 'left' : 'right';
+        const slot = (side === 'left' ? LEFT_SLOTS : RIGHT_SLOTS)[side === 'left' ? i : i - LEFT_SLOTS.length];
         return (
           <Suspense key={i} fallback={<FallbackBag />}>
             <BagModel index={i} side={side} slot={slot} />
